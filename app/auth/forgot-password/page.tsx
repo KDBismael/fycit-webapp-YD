@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconEye, IconEyeOff, IconLock, IconMail } from '@tabler/icons-react';
+import { IconMail } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import {
-  Anchor,
   Box,
   Button,
   Center,
@@ -14,34 +13,33 @@ import {
   Group,
   Image,
   Paper,
-  PasswordInput,
   Stack,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
-import { LoginFormData, loginSchema } from '../../../validation/login.validation';
-import styles from '../../../public/css/auth/login.module.css';
+import {
+  ForgotPasswordFormData,
+  forgotPasswordSchema,
+} from '../../../validation/forgot-password.validation';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
-export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-
+export default function ForgotPassword() {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      console.log('Login data:', data);
+      console.log('Forgot password data:', data);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Forgot password error:', error);
     }
   };
 
@@ -86,16 +84,18 @@ export default function Login() {
                 <Group gap="sm">
                   <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
                 </Group>
+                <Text size="xs" c="gray.6" ta="center">
+                  Améliorer l'habitat, c'est notre métier.
+                </Text>
               </Stack>
 
               <Stack gap="lg">
                 <Stack gap="xs" align="center">
                   <Title order={1} size="h2" ta="center" c="gray.9">
-                    Welcome Back to FYCit
+                    Forgot Your Password?
                   </Title>
                   <Text size="sm" c="gray.6" ta="center">
-                    Log in to manage your profile, connect with your guilds, and access all your
-                    tools.
+                    Enter your email address and we'll send you a code to reset your password.
                   </Text>
                 </Stack>
 
@@ -115,27 +115,6 @@ export default function Login() {
                       />
                     </Stack>
 
-                    <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Enter password
-                      </Text>
-                      <PasswordInput
-                        {...register('password')}
-                        placeholder="Enter your password"
-                        leftSection={<IconLock size={ICON_SIZE} />}
-                        error={errors.password?.message}
-                        className={styles.visibilityToggle}
-                        radius="md"
-                        size="md"
-                      />
-                    </Stack>
-
-                    <Group justify="flex-end">
-                      <Anchor size="sm" c="brand.8" href="/auth/forgot-password">
-                        Forgot Password
-                      </Anchor>
-                    </Group>
-
                     <Button
                       type="submit"
                       fullWidth
@@ -143,16 +122,15 @@ export default function Login() {
                       radius="md"
                       bg="brand.8"
                       loading={isSubmitting}
+                      style={{
+                        backgroundColor: '#A98A13',
+                        '&:hover': {
+                          backgroundColor: '#B89A1A',
+                        },
+                      }}
                     >
-                      Login
+                      Next
                     </Button>
-
-                    <Text size="sm" ta="center" c="gray.6">
-                      Don't have an account?{' '}
-                      <Anchor c="brand.8" fw={500}>
-                        Register
-                      </Anchor>
-                    </Text>
                   </Stack>
                 </form>
               </Stack>
