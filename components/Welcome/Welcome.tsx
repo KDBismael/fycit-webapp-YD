@@ -1,13 +1,16 @@
-import { Anchor, Text, Title } from '@mantine/core';
+'use client';
+import { Anchor, Button, Text, Title } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import classes from './Welcome.module.css';
 
 export function Welcome() {
+  const router = useRouter();
   return (
     <>
       <Title className={classes.title} ta="center" mt={100}>
         Welcome to{' '}
         <Text inherit variant="gradient" component="span" gradient={{ from: 'pink', to: 'yellow' }}>
-          Mantine
+          FYCit
         </Text>
       </Title>
       <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
@@ -17,6 +20,8 @@ export function Welcome() {
           this guide
         </Anchor>
         . To get started edit page.tsx file.
+        {/* Navigate to /auth/login */}
+        <Button onClick={() => router.push('/auth/login')}>Login</Button>
       </Text>
     </>
   );
