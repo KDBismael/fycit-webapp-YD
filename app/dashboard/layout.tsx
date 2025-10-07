@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   IconBrandApple,
   IconBrandGooglePlay,
@@ -26,8 +26,6 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
-const IMAGE_SIZE = 16;
-
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
   { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
@@ -38,6 +36,7 @@ const navigationItems = [
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [opened, { toggle }] = useDisclosure();
   const router = useRouter();
+  const pathname = usePathname();
 
   return (
     <AppShell
@@ -48,6 +47,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         collapsed: { mobile: !opened },
       }}
       padding="md"
+      withBorder={false}
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             style={{ maxHeight: '40px' }}
           />
           <Group gap="sm">
-            <Avatar size="sm" src="/images/profile-pic.jpg" alt="User profile" />
+            <Avatar size="sm" src="/images/profile-pic.png" alt="User profile" />
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           </Group>
         </Group>
@@ -68,6 +68,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <AppShell.Navbar p="md">
         <Stack gap="lg" h="100%">
+          {/* Logo Section */}
+
+          <Divider 
+            size="xs" 
+            color="gray.1" 
+            style={{ opacity: 0.3 }}
+          />
 
           {/* Navigation */}
           <Stack gap="xs">
@@ -78,18 +85,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 label={item.label}
                 leftSection={<item.icon size={20} stroke={1.5} />}
                 onClick={() => router.push(item.href)}
+                active={pathname === item.href}
+                variant={pathname === item.href ? "filled" : "subtle"}
+                color="brand"
                 styles={{
                   root: {
                     borderRadius: 'var(--mantine-radius-md)',
                     padding: '12px 16px',
                     '&[data-active]': {
-                      backgroundColor: '#BAAD3E',
-                      color: 'white',
+                      fontWeight: 700,
                       '& .mantine-NavLink-label': {
-                        color: 'white',
-                      },
-                      '& .mantine-NavLink-icon': {
-                        color: 'white',
+                        fontWeight: 700,
                       },
                     },
                     '&:hover:not([data-active])': {
@@ -101,7 +107,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ))}
           </Stack>
 
-          <Divider />
+          <Divider 
+            size="xs" 
+            color="gray.1" 
+            style={{ opacity: 0.3 }}
+          />
 
           {/* Logout */}
           <NavLink
@@ -176,7 +186,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </Stack>
       </AppShell.Navbar>
 
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main bg="gray.0">{children}</AppShell.Main>
     </AppShell>
   );
 }
