@@ -1,0 +1,175 @@
+'use client';
+
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  IconBrandApple,
+  IconBrandGooglePlay,
+  IconDashboard,
+  IconHeart,
+  IconLogout,
+  IconShieldCheck,
+  IconUser,
+} from '@tabler/icons-react';
+import {
+  AppShell,
+  Avatar,
+  Box,
+  Burger,
+  Button,
+  Divider,
+  Group,
+  Image,
+  NavLink,
+  Stack,
+  Text,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+
+const IMAGE_SIZE = 16;
+
+const navigationItems = [
+  { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
+  { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
+  { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
+  { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
+];
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [opened, { toggle }] = useDisclosure();
+  const router = useRouter();
+
+  return (
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 280,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
+          <Group gap="sm">
+            <Avatar size="sm" src="/profile-pic.jpg" alt="User profile" />
+            <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+          </Group>
+        </Group>
+      </AppShell.Header>
+
+      <AppShell.Navbar p="md">
+        <Stack gap="lg" h="100%">
+
+          {/* Navigation */}
+          <Stack gap="xs">
+            {navigationItems.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                leftSection={<item.icon size={20} stroke={1.5} />}
+                onClick={() => router.push(item.href)}
+                styles={{
+                  root: {
+                    borderRadius: 'var(--mantine-radius-md)',
+                    padding: '12px 16px',
+                    '&[data-active]': {
+                      backgroundColor: '#BAAD3E',
+                      color: 'white',
+                      '& .mantine-NavLink-label': {
+                        color: 'white',
+                      },
+                      '& .mantine-NavLink-icon': {
+                        color: 'white',
+                      },
+                    },
+                    '&:hover:not([data-active])': {
+                      backgroundColor: 'var(--mantine-color-gray-0)',
+                    },
+                  },
+                }}
+              />
+            ))}
+          </Stack>
+
+          <Divider />
+
+          {/* Logout */}
+          <NavLink
+            href="/auth/login"
+            label="Log out"
+            leftSection={<IconLogout size={20} stroke={1.5} />}
+            onClick={() => router.push('/auth/login')}
+            styles={{
+              root: {
+                borderRadius: 'var(--mantine-radius-md)',
+                padding: '12px 16px',
+                color: 'var(--mantine-color-gray-7)',
+                '&:hover': {
+                  backgroundColor: 'var(--mantine-color-gray-0)',
+                },
+              },
+            }}
+          />
+
+          {/* App download section */}
+          <Box 
+            mt="auto" 
+            p="md" 
+            style={{ 
+              backgroundColor: '#FEF3C7', 
+              borderRadius: 'var(--mantine-radius-md)',
+              border: '1px solid #FDE68A'
+            }}
+          >
+            <Text size="sm" fw={500} mb="sm" c="gray.8" ta="center">
+              Get the FYCit app here
+            </Text>
+            <Stack gap="xs">
+              <Button
+                variant="outline"
+                leftSection={<IconBrandGooglePlay size={16} />}
+                size="sm"
+                fullWidth
+                styles={{
+                  root: {
+                    backgroundColor: 'white',
+                    borderColor: 'var(--mantine-color-gray-3)',
+                    color: 'var(--mantine-color-gray-7)',
+                    '&:hover': {
+                      backgroundColor: 'var(--mantine-color-gray-0)',
+                    },
+                  },
+                }}
+              >
+                Google play
+              </Button>
+              <Button
+                variant="outline"
+                leftSection={<IconBrandApple size={16} />}
+                size="sm"
+                fullWidth
+                styles={{
+                  root: {
+                    backgroundColor: 'white',
+                    borderColor: 'var(--mantine-color-gray-3)',
+                    color: 'var(--mantine-color-gray-7)',
+                    '&:hover': {
+                      backgroundColor: 'var(--mantine-color-gray-0)',
+                    },
+                  },
+                }}
+              >
+                Apple store
+              </Button>
+            </Stack>
+          </Box>
+        </Stack>
+      </AppShell.Navbar>
+
+      <AppShell.Main>{children}</AppShell.Main>
+    </AppShell>
+  );
+}
