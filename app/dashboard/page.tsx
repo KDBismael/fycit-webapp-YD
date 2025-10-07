@@ -12,9 +12,10 @@ import {
   Group,
   Image,
   List,
+  Paper,
   Stack,
   Text,
-  ThemeIcon,
+  Title,
 } from '@mantine/core';
 
 const verificationBadges = [
@@ -55,7 +56,6 @@ export default function DashboardPage() {
     >
       <Container size="lg">
         <Stack gap="xl">
-
           {/* User Profile Card */}
           <Card
             shadow="sm"
@@ -79,11 +79,26 @@ export default function DashboardPage() {
             </Box>
 
             <Group gap="xl" align="flex-start">
-              <Avatar size={120} src="/images/profile-pic.png" alt="Jane Cooper" radius="md" />
+              {/* Image Container */}
+              <Box style={{ height: '100%', display: 'flex', alignItems: 'flex-start' }}>
+                <Avatar
+                  src="/images/profile-pic.png"
+                  alt="Jane Cooper"
+                  radius="md"
+                  style={{
+                    height: '100%',
+                    width: 'auto',
+                    aspectRatio: '1/1',
+                    minHeight: '120px',
+                  }}
+                />
+              </Box>
+
+              {/* Content Container */}
               <Stack gap="md" style={{ flex: 1 }}>
-                <Text size="2xl" fw={700} c="gray.9">
+                <Title order={2} size="h3" fw={700} c="gray.9">
                   Jane Cooper
-                </Text>
+                </Title>
                 <Text size="md" c="gray.6" style={{ lineHeight: 1.4 }}>
                   23 Main Street
                   <br />
@@ -104,6 +119,10 @@ export default function DashboardPage() {
                         padding: '12px 20px',
                         fontSize: '14px',
                         fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
                       }}
                     >
                       {badge.name}
@@ -115,13 +134,15 @@ export default function DashboardPage() {
           </Card>
 
           {/* Key Benefits Card */}
-          <Card
+          <Paper
             shadow="lg"
-            padding="xl"
+            withBorder
             radius="lg"
+            p="xl"
             style={{
-              backgroundColor: '#f5f5f0',
-              border: 'none',
+              backgroundColor: '#FFFFF8',
+              position: 'relative',
+              border: '1px solid #FDE68A',
             }}
           >
             <Group justify="space-between" mb="lg">
@@ -142,39 +163,22 @@ export default function DashboardPage() {
                 Start verification
               </Button>
             </Group>
-            <List spacing="md" size="md">
-              <List.Item
-                icon={
-                  <ThemeIcon color="brand" size={28} radius="xl">
-                    <IconCheck size={16} />
-                  </ThemeIcon>
-                }
-                style={{ fontSize: '16px', fontWeight: 500 }}
-              >
+            <List 
+              type="ordered"
+              spacing="md"
+              size="md"
+            >
+              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
                 Gain Credibility Within the Community
               </List.Item>
-              <List.Item
-                icon={
-                  <ThemeIcon color="brand" size={28} radius="xl">
-                    <IconCheck size={16} />
-                  </ThemeIcon>
-                }
-                style={{ fontSize: '16px', fontWeight: 500 }}
-              >
+              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
                 Access Guild or Organization Features
               </List.Item>
-              <List.Item
-                icon={
-                  <ThemeIcon color="brand" size={28} radius="xl">
-                    <IconCheck size={16} />
-                  </ThemeIcon>
-                }
-                style={{ fontSize: '16px', fontWeight: 500 }}
-              >
+              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
                 Ensure Secure and Authentic Interactions
               </List.Item>
             </List>
-          </Card>
+          </Paper>
 
           {/* Verified Member Benefits Section */}
           {/* <Box>
