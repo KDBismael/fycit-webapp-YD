@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconEye, IconEyeOff, IconLock, IconMail } from '@tabler/icons-react';
+import {  IconLock, IconMail } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import {
   Anchor,
@@ -21,14 +21,11 @@ import {
   Title,
 } from '@mantine/core';
 import { LoginFormData, loginSchema } from '../../../validation/login.validation';
-import styles from '../../../public/css/auth/login.module.css';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -124,7 +121,6 @@ export default function Login() {
                         placeholder="Enter your password"
                         leftSection={<IconLock size={ICON_SIZE} />}
                         error={errors.password?.message}
-                        className={styles.visibilityToggle}
                         radius="md"
                         size="md"
                       />

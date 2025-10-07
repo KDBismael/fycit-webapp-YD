@@ -26,6 +26,16 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 
+const getPageTitle = (pathname: string) => {
+  const titles: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/dashboard/verifications': 'Verifications',
+    '/dashboard/profile': 'Profile',
+    '/dashboard/favorites': 'Favorites',
+  };
+  return titles[pathname] || 'Dashboard';
+};
+
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
   { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
@@ -51,14 +61,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Image 
-            src="/logo.svg" 
-            alt="FYCit Logo" 
-            h="100%" 
-            w="auto" 
-            fit="contain"
-            style={{ maxHeight: '40px' }}
-          />
+          <Group gap="md">
+            <Image 
+              src="/logo.svg" 
+              alt="FYCit Logo" 
+              h="100%" 
+              w="auto" 
+              fit="contain"
+              style={{ maxHeight: '40px' }}
+            />
+            <Text size="xl" fw={700} c="gray.9">
+              {getPageTitle(pathname)}
+            </Text>
+          </Group>
           <Group gap="sm">
             <Avatar size="sm" src="/images/profile-pic.png" alt="User profile" />
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
