@@ -1,0 +1,33 @@
+.control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  min-width: 80px;
+  border-radius: 0;
+
+  &[data-expanded] {
+    background-color: var(--mantine-color-gray-0);
+  }
+
+  &:hover {
+    background-color: var(--mantine-color-gray-0);
+  }
+}
+
+.label {
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.icon {
+  transition: transform 150ms ease;
+  transform: rotate(0deg);
+
+  [data-expanded] & {
+    transform: rotate(180deg);
+  }
+}

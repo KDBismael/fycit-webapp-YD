@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLock, IconMail, IconUser } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
@@ -28,7 +29,7 @@ const ICON_SIZE = 18;
 
 export default function Signup() {
   const [opened, setOpened] = useState(false);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -58,6 +59,7 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
+      router.push('/auth/2fa');
       console.log('Signup data:', data);
     } catch (error) {
       console.error('Signup error:', error);
@@ -99,13 +101,15 @@ export default function Signup() {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <Box style={{ 
-            height: '100vh', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            padding: '1rem'
-          }}>
+          <Box
+            style={{
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem',
+            }}
+          >
             <Stack gap="md" style={{ maxWidth: '400px', width: '100%' }}>
               <Stack gap="sm" align="center">
                 <Group gap="sm">
