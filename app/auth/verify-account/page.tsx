@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconMail } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import {
+  Anchor,
   Box,
   Button,
   Center,
@@ -14,37 +13,45 @@ import {
   Group,
   Image,
   Paper,
+  PinInput,
   Stack,
   Text,
-  TextInput,
   Title,
 } from '@mantine/core';
 import {
-  ForgotPasswordFormData,
-  forgotPasswordSchema,
-} from '../../../validation/forgot-password.validation';
+  VerifyAccountFormData,
+  verifyAccountSchema,
+} from '../../../validation/verify-account.validation';
+import styles from '../../../public/css/auth/verify-account.module.css';
 
 const IMAGE_SIZE = 60;
-const ICON_SIZE = 18;
 
-export default function ForgotPassword() {
+export default function VerifyAccount() {
+  const [otpValue, setOtpValue] = useState('');
+
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<ForgotPasswordFormData>({
-    resolver: zodResolver(forgotPasswordSchema),
+    setValue,
+    watch,
+  } = useForm<VerifyAccountFormData>({
+    resolver: zodResolver(verifyAccountSchema),
+    defaultValues: {
+      code: '',
+    },
   });
 
-  const router = useRouter();
-
-  const onSubmit = async (data: ForgotPasswordFormData) => {
+  const onSubmit = async (data: VerifyAccountFormData) => {
     try {
-      console.log('Forgot password data:', data);
-      router.push('/auth/verify-account');
+      console.log('Verify account data:', data);
     } catch (error) {
-      console.error('Forgot password error:', error);
+      console.error('Verify account error:', error);
     }
+  };
+
+  const handleOtpChange = (value: string) => {
+    setOtpValue(value);
+    setValue('code', value);
   };
 
   return (
@@ -89,35 +96,45 @@ export default function ForgotPassword() {
                   <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
                 </Group>
                 <Text size="xs" c="gray.6" ta="center">
-                  Améliorer l'habitat, c'est notre métier.
+                  AMÉLIORER L'HABITAT, C'EST NOTRE MÉTIER.
                 </Text>
               </Stack>
 
               <Stack gap="lg">
                 <Stack gap="xs" align="center">
                   <Title order={1} size="h2" ta="center" c="gray.9">
-                    Forgot Your Password?
+                    Verifying Your Account
                   </Title>
                   <Text size="sm" c="gray.6" ta="center">
-                    Enter your email address and we'll send you a code to reset your password.
+                    Enter the just sent you 4 digit code that we have sent to your email.
                   </Text>
                 </Stack>
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack gap="md">
-                    <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Email address
-                      </Text>
-                      <TextInput
-                        {...register('email')}
-                        placeholder="Enter your email"
-                        leftSection={<IconMail size={ICON_SIZE} />}
-                        error={errors.email?.message}
+                    <Stack gap="xs" align="center">
+                      <PinInput
+                        length={4}
+                        value={otpValue}
+                        onChange={handleOtpChange}
+                        size="lg"
                         radius="md"
-                        size="md"
+                        type="number"
+                        gap="md"
+                        error={!!errors.code}
                       />
+                      {errors.code && (
+                        <Text size="sm" c="red.6" ta="center">
+                          {errors.code.message}
+                        </Text>
+                      )}
                     </Stack>
+
+                    <Group justify="center">
+                      <Anchor size="sm" c="gray.6" td="underline">
+                        Resend code
+                      </Anchor>
+                    </Group>
 
                     <Button
                       type="submit"
