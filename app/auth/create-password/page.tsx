@@ -18,9 +18,10 @@ import {
   Group,
   Checkbox,
   Modal,
-  ThemeIcon,
 } from '@mantine/core';
-import { IconLock, IconCheck } from '@tabler/icons-react';
+import { IconLock } from '@tabler/icons-react';
+import Lottie from 'lottie-react';
+import successAnimation from '../../../public/lotties/success.json';
 import { createPasswordSchema, CreatePasswordFormData } from '../../../validation/create-password.validation';
 
 const IMAGE_SIZE = 60;
@@ -210,9 +211,14 @@ export default function CreatePassword() {
         radius="md"
       >
         <Stack gap="lg" align="center" p="xl">
-          <ThemeIcon size="2xl" radius="xl" color="green" variant="light">
-            <IconCheck size={36} />
-          </ThemeIcon>
+          <Box style={{ width: 120, height: 120 }}>
+            <Lottie
+              animationData={successAnimation}
+              loop={false}
+              autoplay={true}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </Box>
           
           <Stack gap="xs" align="center">
             <Title order={3} ta="center" c="gray.9">
