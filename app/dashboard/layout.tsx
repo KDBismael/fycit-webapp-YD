@@ -51,9 +51,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
-          <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
+          <Image 
+            src="/logo.svg" 
+            alt="FYCit Logo" 
+            h="100%" 
+            w="auto" 
+            fit="contain"
+            style={{ maxHeight: '40px' }}
+          />
           <Group gap="sm">
-            <Avatar size="sm" src="/profile-pic.jpg" alt="User profile" />
+            <Avatar size="sm" src="/images/profile-pic.jpg" alt="User profile" />
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           </Group>
         </Group>
