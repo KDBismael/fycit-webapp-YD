@@ -149,7 +149,7 @@ export default function Login() {
 
                     <Text size="sm" ta="center" c="gray.6">
                       Don't have an account?{' '}
-                      <Anchor c="brand.8" fw={500}>
+                      <Anchor href="/auth/signup" c="brand.8" fw={500}>
                         Register
                       </Anchor>
                     </Text>
