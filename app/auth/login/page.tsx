@@ -21,8 +21,10 @@ import {
   Title,
 } from '@mantine/core';
 import { LoginFormData, loginSchema } from '../../../validation/login.validation';
+import styles from '../../../public/css/auth/login.module.css';
 
 const IMAGE_SIZE = 60;
+const ICON_SIZE = 18;
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -46,11 +48,11 @@ export default function Login() {
   return (
     <Container fluid p={0} style={{ height: '100vh' }}>
       <Grid gutter={0} style={{ height: '100vh' }}>
-        <Grid.Col span={{ base: 12, md: 5 }}>
+        <Grid.Col span={{ base: 0, md: 5 }} visibleFrom="md">
           <Box
             style={{
               height: '100vh',
-              background: 'linear-gradient(135deg, #BAAD3E 0%, #768820 100%)',
+              background: 'linear-gradient(135deg, #BAAD3E 0%, #A98A13 100%)',
               position: 'relative',
               display: 'flex',
               alignItems: 'flex-end',
@@ -61,7 +63,7 @@ export default function Login() {
               p="xl"
               radius="md"
               style={{
-                backgroundColor: '#464716',
+                backgroundColor: '#A98A13',
                 color: 'white',
                 maxWidth: '400px',
               }}
@@ -69,7 +71,7 @@ export default function Login() {
               <Title order={2} fw={700} mb="md">
                 Lorem ipsum dolor sit amet, consectetur.
               </Title>
-              <Text size="sm" c="gray.3">
+              <Text size="sm" c="gray.2">
                 Semper in cursus magna et eu varius nunc adipiscing. Elementum justo, laoreet id sem
                 semper parturient.
               </Text>
@@ -106,7 +108,7 @@ export default function Login() {
                       <TextInput
                         {...register('email')}
                         placeholder="Enter your email"
-                        leftSection={<IconMail size={16} />}
+                        leftSection={<IconMail size={ICON_SIZE} />}
                         error={errors.email?.message}
                         radius="md"
                         size="md"
@@ -120,18 +122,9 @@ export default function Login() {
                       <PasswordInput
                         {...register('password')}
                         placeholder="Enter your password"
-                        leftSection={<IconLock size={16} />}
-                        rightSection={
-                          <Button
-                            variant="transparent"
-                            size="xs"
-                            onClick={() => setShowPassword(!showPassword)}
-                            style={{ border: 'none', background: 'transparent' }}
-                          >
-                            {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-                          </Button>
-                        }
+                        leftSection={<IconLock size={ICON_SIZE} />}
                         error={errors.password?.message}
+                        className={styles.visibilityToggle}
                         radius="md"
                         size="md"
                       />
@@ -150,12 +143,6 @@ export default function Login() {
                       radius="md"
                       bg="brand.8"
                       loading={isSubmitting}
-                      style={{
-                        backgroundColor: '#464716',
-                        '&:hover': {
-                          backgroundColor: '#5A5A2A',
-                        },
-                      }}
                     >
                       Login
                     </Button>
