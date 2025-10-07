@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import {
@@ -41,9 +42,11 @@ export default function VerifyAccount() {
     },
   });
 
+  const router = useRouter();
   const onSubmit = async (data: VerifyAccountFormData) => {
     try {
       console.log('Verify account data:', data);
+      router.push('/auth/create-password');
     } catch (error) {
       console.error('Verify account error:', error);
     }
@@ -95,9 +98,6 @@ export default function VerifyAccount() {
                 <Group gap="sm">
                   <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
                 </Group>
-                <Text size="xs" c="gray.6" ta="center">
-                  AMÉLIORER L'HABITAT, C'EST NOTRE MÉTIER.
-                </Text>
               </Stack>
 
               <Stack gap="lg">
@@ -121,6 +121,8 @@ export default function VerifyAccount() {
                         radius="md"
                         type="number"
                         gap="md"
+                        placeholder="
+                        "
                         error={!!errors.code}
                       />
                       {errors.code && (

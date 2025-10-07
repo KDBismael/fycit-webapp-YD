@@ -88,9 +88,6 @@ export default function ForgotPassword() {
                 <Group gap="sm">
                   <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
                 </Group>
-                <Text size="xs" c="gray.6" ta="center">
-                  Améliorer l'habitat, c'est notre métier.
-                </Text>
               </Stack>
 
               <Stack gap="lg">
