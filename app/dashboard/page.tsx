@@ -1,10 +1,8 @@
 'use client';
 
 import React from 'react';
-import { IconCheck, IconCircle, IconX } from '@tabler/icons-react';
 import {
   Avatar,
-  Badge,
   Box,
   Button,
   Card,
@@ -17,31 +15,24 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import GuildBadge from '../../components/GuildBadge';
 
 const verificationBadges = [
   {
     name: 'AMPAS',
-    status: 'verified',
-    color: 'green',
-    icon: IconCheck,
+    status: 'verified' as const,
   },
   {
     name: 'ADG',
-    status: 'pending',
-    color: 'gray',
-    icon: IconCircle,
+    status: 'pending' as const,
   },
   {
     name: 'ASIFA',
-    status: 'pending',
-    color: 'yellow',
-    icon: IconCircle,
+    status: 'pending' as const,
   },
   {
     name: 'ASC',
-    status: 'rejected',
-    color: 'red',
-    icon: IconX,
+    status: 'rejected' as const,
   },
 ];
 
@@ -106,27 +97,13 @@ export default function DashboardPage() {
                   <br />
                   United States
                 </Text>
-                <Group gap="md" mt="md">
+                <Group gap="md" mt="md" grow>
                   {verificationBadges.map((badge) => (
-                    <Badge
+                    <GuildBadge
                       key={badge.name}
-                      leftSection={<badge.icon size={18} />}
-                      color={badge.color}
-                      variant="light"
-                      size="xl"
-                      style={{
-                        borderRadius: '25px',
-                        padding: '12px 20px',
-                        fontSize: '14px',
-                        fontWeight: 600,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        textAlign: 'center',
-                      }}
-                    >
-                      {badge.name}
-                    </Badge>
+                      name={badge.name}
+                      status={badge.status}
+                    />
                   ))}
                 </Group>
               </Stack>
@@ -163,11 +140,7 @@ export default function DashboardPage() {
                 Start verification
               </Button>
             </Group>
-            <List 
-              type="ordered"
-              spacing="md"
-              size="md"
-            >
+            <List type="ordered" spacing="md" size="md">
               <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
                 Gain Credibility Within the Community
               </List.Item>

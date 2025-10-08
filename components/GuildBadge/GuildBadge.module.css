@@ -1,0 +1,39 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  gap: var(--mantine-spacing-xs);
+  padding: var(--mantine-spacing-lg) var(--mantine-spacing-md);
+  border: 1px solid #FDE68A;
+  background-color: #FFFFF8;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+  width: 100%;
+  justify-content: center;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

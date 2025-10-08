@@ -23,7 +23,6 @@ import {
   VerifyAccountFormData,
   verifyAccountSchema,
 } from '../../../validation/verify-account.validation';
-import styles from '../../../public/css/auth/verify-account.module.css';
 
 const IMAGE_SIZE = 60;
 
@@ -34,7 +33,6 @@ export default function VerifyAccount() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
-    watch,
   } = useForm<VerifyAccountFormData>({
     resolver: zodResolver(verifyAccountSchema),
     defaultValues: {

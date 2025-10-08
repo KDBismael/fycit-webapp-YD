@@ -1,28 +1,31 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Container,
-  Grid,
-  Paper,
-  Text,
-  PasswordInput,
-  Button,
-  Stack,
-  Image,
-  Box,
-  Title,
-  Center,
-  Group,
-  Checkbox,
-  Modal,
-} from '@mantine/core';
 import { IconLock } from '@tabler/icons-react';
 import Lottie from 'lottie-react';
+import { useForm } from 'react-hook-form';
+import {
+  Box,
+  Button,
+  Center,
+  Checkbox,
+  Container,
+  Grid,
+  Group,
+  Image,
+  Modal,
+  Paper,
+  PasswordInput,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 import successAnimation from '../../../public/lotties/success.json';
-import { createPasswordSchema, CreatePasswordFormData } from '../../../validation/create-password.validation';
+import {
+  CreatePasswordFormData,
+  createPasswordSchema,
+} from '../../../validation/create-password.validation';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
@@ -101,7 +104,12 @@ export default function CreatePassword() {
               <Stack gap="xl" style={{ maxWidth: '400px', width: '100%' }}>
                 <Stack gap="md" align="center">
                   <Group gap="sm">
-                    <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
+                    <Image
+                      src="/logo.svg"
+                      alt="FYCit Logo"
+                      width={IMAGE_SIZE}
+                      height={IMAGE_SIZE}
+                    />
                   </Group>
                 </Stack>
 
@@ -156,17 +164,18 @@ export default function CreatePassword() {
                               checked={requirement.met}
                               readOnly
                               label={
-                                <Text
-                                  size="sm"
-                                  c={requirement.met ? 'green.6' : 'gray.6'}
-                                >
+                                <Text size="sm" c={requirement.met ? 'green.6' : 'gray.6'}>
                                   {requirement.label}
                                 </Text>
                               }
                               styles={{
                                 input: {
-                                  borderColor: requirement.met ? 'var(--mantine-color-green-6)' : 'var(--mantine-color-gray-4)',
-                                  backgroundColor: requirement.met ? 'var(--mantine-color-green-6)' : 'transparent',
+                                  borderColor: requirement.met
+                                    ? 'var(--mantine-color-green-6)'
+                                    : 'var(--mantine-color-gray-4)',
+                                  backgroundColor: requirement.met
+                                    ? 'var(--mantine-color-green-6)'
+                                    : 'transparent',
                                 },
                                 icon: {
                                   color: 'white',
@@ -215,11 +224,11 @@ export default function CreatePassword() {
             <Lottie
               animationData={successAnimation}
               loop={false}
-              autoplay={true}
+              autoplay
               style={{ width: '100%', height: '100%' }}
             />
           </Box>
-          
+
           <Stack gap="xs" align="center">
             <Title order={3} ta="center" c="gray.9">
               Your password has been updated

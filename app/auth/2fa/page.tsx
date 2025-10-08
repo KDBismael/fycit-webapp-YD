@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconInfoCircle, IconPhone } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 import {
   Alert,
@@ -19,16 +19,14 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { TwoFactorAuthFormData, twoFactorAuthSchema } from '../../../validation/2fa.validation';
 import { CountryPicker } from '../../../components/CountryPicker/CountryPicker';
+import { TwoFactorAuthFormData, twoFactorAuthSchema } from '../../../validation/2fa.validation';
 
 const IMAGE_SIZE = 40;
-const ICON_SIZE = 18;
-
 
 export default function TwoFactorAuth() {
   const [countryCode, setCountryCode] = useState('+1');
-  
+
   const {
     register,
     handleSubmit,
@@ -121,15 +119,12 @@ export default function TwoFactorAuth() {
                           overflow: 'hidden',
                         }}
                       >
-                        <CountryPicker
-                          value={countryCode}
-                          onChange={setCountryCode}
-                        />
+                        <CountryPicker value={countryCode} onChange={setCountryCode} />
                         <Box style={{ width: '1px', backgroundColor: '#E0E0E0' }} />
                         <TextInput
                           {...register('phoneNumber')}
                           placeholder="Phone no"
-                        //   leftSection={<IconPhone size={ICON_SIZE} />}
+                          //   leftSection={<IconPhone size={ICON_SIZE} />}
                           error={errors.phoneNumber?.message}
                           radius="md"
                           size="sm"

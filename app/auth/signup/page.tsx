@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLock, IconMail, IconUser } from '@tabler/icons-react';
@@ -9,7 +9,6 @@ import {
   Anchor,
   Box,
   Button,
-  Center,
   Checkbox,
   Container,
   Grid,
@@ -24,11 +23,9 @@ import {
 } from '@mantine/core';
 import { SignupFormData, signupSchema } from '../../../validation/signup.validation';
 
-const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function Signup() {
-  const [opened, setOpened] = useState(false);
   const router = useRouter();
   const {
     register,
