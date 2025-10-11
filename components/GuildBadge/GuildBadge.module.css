@@ -6,13 +6,19 @@
   min-width: 0;
   gap: var(--mantine-spacing-xs);
   padding: var(--mantine-spacing-lg) var(--mantine-spacing-md);
-  border: 1px solid #FDE68A;
-  background-color: #FFFFF8;
+  border: 1px solid #FDE68A !important;
+  background-color: #FFFFF8 !important;
   border-radius: 25px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--text-color);
   transition: all 0.2s ease;
+}
+
+@media (min-width: 769px) {
+  .badge {
+    flex: 1;
+    max-width: none;
+  }
 }
 
 .badge:hover {
@@ -26,14 +32,63 @@
   gap: var(--mantine-spacing-xs);
   width: 100%;
   justify-content: center;
+  flex-wrap: nowrap;
 }
 
 .icon {
   flex-shrink: 0;
+  width: 22px;
+  height: 22px;
 }
 
 .text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  .badge {
+    padding: var(--mantine-spacing-md) var(--mantine-spacing-sm);
+    min-height: 40px;
+    flex: 0 0 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+  }
+
+  .content {
+    gap: 6px;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .text {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .badge {
+    padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
+    min-height: 36px;
+    flex: 0 0 calc(50% - 6px);
+    max-width: calc(50% - 6px);
+  }
+
+  .content {
+    gap: 4px;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .text {
+    font-size: 11px;
+  }
 }

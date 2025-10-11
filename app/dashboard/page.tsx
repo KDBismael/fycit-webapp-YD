@@ -131,7 +131,7 @@ export default function DashboardPage() {
                   <br />
                   United States
                 </Text>
-                <Group gap="md" mt="md" grow>
+                <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)', marginTop: 'var(--mantine-spacing-md)' }}>
                   {verificationBadges.map((badge) => (
                     <GuildBadge
                       key={badge.name}
@@ -139,7 +139,7 @@ export default function DashboardPage() {
                       status={badge.status}
                     />
                   ))}
-                </Group>
+                </Box>
               </Stack>
             </Group>
           </Card>

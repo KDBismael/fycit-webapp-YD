@@ -1,8 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ActionIcon, Box, Button, Grid, Group, Image, Select, Stack, Text, TextInput } from '@mantine/core';
-import { IconUpload, IconMail, IconPhoto, IconX } from '@tabler/icons-react';
+import { IconMail, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Grid,
+  Group,
+  Image,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { CountryPicker } from '../CountryPicker/CountryPicker';
 
@@ -56,7 +67,7 @@ export default function MyInfoTab() {
         <Text size="lg" fw={600} c="gray.9">
           Profile picture
         </Text>
-        
+
         <Box style={{ display: 'flex', justifyContent: 'flex-start', position: 'relative' }}>
           {files.length > 0 ? (
             <Box
@@ -113,7 +124,7 @@ export default function MyInfoTab() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: 0,
-                }
+                },
               }}
             >
               <Group justify="center" gap="xl" style={{ padding: '1rem' }}>
@@ -158,7 +169,7 @@ export default function MyInfoTab() {
                 },
               }}
             />
-            
+
             <TextInput
               label="Email address"
               placeholder="Enter your email"
@@ -176,7 +187,7 @@ export default function MyInfoTab() {
                 },
               }}
             />
-            
+
             <Box>
               <Text size="sm" fw={500} c="gray.9" mb="xs">
                 My Country
@@ -202,12 +213,15 @@ export default function MyInfoTab() {
                   defaultValue="usa"
                   size="md"
                   styles={{
+                    root: {
+                      width: '100%',
+                    },
                     input: {
                       border: 'none',
                       borderRadius: 0,
                       backgroundColor: '#F5F5F5',
                       '&:focus': {
-                        backgroundColor: 'white',
+                        backgroundColor: '#F5F5F5',
                       },
                     },
                   }}
@@ -235,7 +249,7 @@ export default function MyInfoTab() {
                 },
               }}
             />
-            
+
             <Box>
               <Text size="sm" fw={500} c="gray.9" mb="xs">
                 Phone no (optional)
@@ -249,10 +263,7 @@ export default function MyInfoTab() {
                   backgroundColor: '#F5F5F5',
                 }}
               >
-                <CountryPicker
-                  value="+1"
-                  onChange={() => {}}
-                />
+                <CountryPicker value="+1" onChange={() => {}} />
                 <Box style={{ width: '1px', backgroundColor: '#E5E7EB' }} />
                 <TextInput
                   placeholder="Phone no"
@@ -271,7 +282,7 @@ export default function MyInfoTab() {
                 />
               </Box>
             </Box>
-            
+
             <TextInput
               label="Zip/Postal Code (Optional)"
               placeholder="Enter postal code"

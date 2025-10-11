@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {SquarePen} from "lucide-react"
-import { Button, Group, List, Paper, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, List, Paper, Stack, Text } from '@mantine/core';
 import GuildBadge from '../GuildBadge';
 
 const verificationBadges = [
@@ -44,11 +44,11 @@ export default function GuildsTab() {
           </Button>
         </Group>
 
-        <Group gap="md" grow>
+        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>
           {verificationBadges.map((badge) => (
             <GuildBadge key={badge.name} name={badge.name} status={badge.status} />
           ))}
-        </Group>
+        </Box>
       </Stack>
 
       {/* Key Benefits Card */}

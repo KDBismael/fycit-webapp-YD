@@ -29,7 +29,7 @@ import { useDisclosure } from '@mantine/hooks';
 const getPageTitle = (pathname: string) => {
   const titles: Record<string, string> = {
     '/dashboard': 'Dashboard',
-    '/dashboard/verifications': 'Verifications',
+    '/dashboard/verification': 'Verifications',
     '/dashboard/profile': 'Profile',
     // '/dashboard/favorites': 'Favorites',
   };
@@ -39,7 +39,7 @@ const getPageTitle = (pathname: string) => {
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
-  { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
+  { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verification' },
   // { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
 ];
 

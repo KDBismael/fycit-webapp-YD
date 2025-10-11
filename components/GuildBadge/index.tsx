@@ -3,6 +3,7 @@
 import React from 'react';
 import { Badge, Group, Text } from '@mantine/core';
 import { IconRosette, IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
+import classes from './GuildBadge.module.css';
 
 export interface GuildBadgeProps {
   name: string;
@@ -40,23 +41,13 @@ export default function GuildBadge({
       size="xl"
       c="dark"
       bg="#FFFFF8"
-      style={{
-        border: '1px solid #FDE68A',
-        flex: 1,
-        justifyContent: 'center',
-        display: 'flex',
-        alignItems: 'center',
-        minWidth: 0,
-        gap: 'var(--mantine-spacing-xs)',
-        padding: 'var(--mantine-spacing-lg) var(--mantine-spacing-md)',
-      }}
-      className={className}
+      className={`${classes.badge} ${className || ''}`}
     >
-      <Group gap="xs" align="center">
-        <Text size="sm" fw={600} c={colorValue}>
+      <Group gap="xs" align="center" className={classes.content}>
+        <Text className={classes.text} fw={600} c={colorValue}>
           {name}
         </Text>
-        <IconComponent size={22} color={colorValue} />
+        <IconComponent className={classes.icon} color={colorValue} />
       </Group>
     </Badge>
   );
