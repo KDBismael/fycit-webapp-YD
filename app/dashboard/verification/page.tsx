@@ -1,18 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Grid,
-  Group,
-  List,
-  Paper,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
+import { Box, Button, Checkbox, Group, List, Paper, Stack, Text, Title } from '@mantine/core';
 import VerificationCard from '../../../components/VerificationCard';
 
 const verificationData = [
@@ -106,22 +95,21 @@ export default function VerificationPage() {
       />
 
       {/* Verification Cards Grid */}
-      <Grid gutter="lg">
+      <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>
         {verificationData.map((item) => (
-          <Grid.Col key={item.id} span={{ base: 12, sm: 6 }}>
-            <VerificationCard
-              title={item.title}
-              status={item.status}
-              memberId={item.memberId}
-              websiteLink={item.websiteLink}
-              validUntil={item.validUntil}
-              actionLabel={item.actionLabel}
-              actionType={item.actionType}
-              onAction={() => handleAction(item.id, item.actionLabel)}
-            />
-          </Grid.Col>
+          <VerificationCard
+            key={item.id}
+            title={item.title}
+            status={item.status}
+            memberId={item.memberId}
+            websiteLink={item.websiteLink}
+            validUntil={item.validUntil}
+            actionLabel={item.actionLabel}
+            actionType={item.actionType}
+            onAction={() => handleAction(item.id, item.actionLabel)}
+          />
         ))}
-      </Grid>
+      </Box>
 
       {/* Key Benefits Section */}
       <Paper

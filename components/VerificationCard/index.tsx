@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { IconCheck, IconClock, IconEdit, IconX } from '@tabler/icons-react';
-import { Box, Button, Group, Image, Stack, Text } from '@mantine/core';
+import { Box, Button, Image, Stack, Text } from '@mantine/core';
+import classes from './VerificationCard.module.css';
 
 export interface VerificationCardProps {
   title: string;
@@ -58,74 +59,36 @@ export default function VerificationCard({
   const statusColor = getStatusColor(status);
 
   return (
-    <Box style={{ display: 'flex', alignItems: 'flex-start' }}>
-      {/* Verification Details with ID Card Image */}
-      <Box
-        style={{
-          backgroundColor: 'white',
-          padding: '1.5rem',
-          borderRadius: '8px',
-          border: '1px solid #E5E7EB',
-          flex: '1',
-          minWidth: '600px',
-          height: 'fit-content',
-        }}
-      >
-        <Group gap="lg" align="flex-start">
+    <Box className={classes.verificationCard}>
+      <Box className={classes.verificationCardContainer}>
+        <div className={classes.cardContent}>
           {/* ID Card Image - Left Side */}
-          <Box
-            style={{
-              flex: '0 0 auto',
-              maxWidth: '300px',
-            }}
-          >
-            <Box
-              style={
-                {
-                  //   transform: 'rotate(-2deg)',
-                }
-              }
-            >
-              <Image
-                src="/images/ProfileCard.png"
-                alt="ID Card"
-                width="100%"
-                height={180}
-                radius="md"
-                style={{ objectFit: 'contain' }}
-              />
-            </Box>
+          <Box className={classes.idCardSection}>
+            <Image
+              src="/images/ProfileCard.png"
+              alt="ID Card"
+              className={classes.idCardImage}
+              radius="md"
+            />
           </Box>
 
           {/* Verification Details - Right Side */}
-          <Box
-            style={{
-              flex: '1',
-              minWidth: '250px',
-            }}
-          >
+          <Box className={classes.detailsSection}>
             {/* Header with Status */}
-            <Group justify="space-between" align="center" mb="md">
-              <Text size="lg" fw={700} c="black">
+            <div className={classes.headerSection}>
+              <Text className={classes.title}>
                 {title}
               </Text>
               <Box
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: '50%',
-                  backgroundColor: statusColor,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className={classes.statusIcon}
+                style={{ backgroundColor: statusColor }}
               >
                 {statusIcon}
               </Box>
-            </Group>
+            </div>
 
             {/* Details List */}
-            <Stack gap="sm" mb="lg">
+            <Stack gap="sm" className={classes.detailsList}>
               <Text size="sm" c="black">
                 Member ID :{' '}
                 <Text component="span" fw={600}>
@@ -155,23 +118,15 @@ export default function VerificationCard({
               </Text>
             </Stack>
           </Box>
-        </Group>
+        </div>
+        
         {/* Action Button */}
         <Button
           size="md"
           radius="md"
           onClick={onAction}
           variant="outline"
-          style={{
-            borderColor: '#BAAD3E',
-            color: '#BAAD3E',
-            backgroundColor: 'white',
-            width: '100%',
-            '&:hover': {
-              backgroundColor: '#BAAD3E',
-              color: 'white',
-            },
-          }}
+          className={classes.actionButton}
         >
           {actionLabel}
         </Button>

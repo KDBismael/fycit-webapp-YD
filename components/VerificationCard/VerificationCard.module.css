@@ -1,0 +1,152 @@
+.verificationCard {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.verificationCardContainer {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  width: 100%;
+  height: fit-content;
+}
+
+.cardContent {
+  display: flex;
+  gap: var(--mantine-spacing-lg);
+  align-items: flex-start;
+}
+
+.idCardSection {
+  flex: 0 0 auto;
+  max-width: 200px;
+}
+
+.idCardImage {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  border-radius: var(--mantine-radius-md);
+}
+
+.detailsSection {
+  flex: 1;
+  min-width: 180px;
+}
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: black;
+  margin: 0;
+}
+
+.statusIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detailsList {
+  margin-bottom: var(--mantine-spacing-lg);
+}
+
+.actionButton {
+  width: 100%;
+  border-color: #BAAD3E;
+  color: #BAAD3E;
+  background-color: white;
+}
+
+.actionButton:hover {
+  background-color: #BAAD3E !important;
+  color: white !important;
+}
+
+/* Desktop: 50% width, 2 cards per row */
+@media (min-width: 1024px) {
+  .verificationCard {
+    flex: 0 0 calc(50% - var(--mantine-spacing-md) / 2);
+    max-width: calc(50% - var(--mantine-spacing-md) / 2);
+  }
+}
+
+/* Tablet: 50% width, 2 cards per row */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .verificationCard {
+    flex: 0 0 calc(50% - var(--mantine-spacing-md) / 2);
+    max-width: calc(50% - var(--mantine-spacing-md) / 2);
+  }
+  
+  .idCardSection {
+    max-width: 180px;
+  }
+  
+  .idCardImage {
+    height: 100px;
+  }
+  
+  .title {
+    font-size: 16px;
+  }
+}
+
+/* Mobile: Full width, 1 card per row */
+@media (max-width: 767px) {
+  .verificationCard {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+  
+  .cardContent {
+    flex-direction: column;
+    gap: var(--mantine-spacing-md);
+  }
+  
+  .idCardSection {
+    max-width: 100%;
+    align-self: center;
+  }
+  
+  .idCardImage {
+    height: 150px;
+    max-width: 250px;
+  }
+  
+  .detailsSection {
+    min-width: unset;
+  }
+  
+  .title {
+    font-size: 16px;
+  }
+}
+
+/* Small mobile: Adjust image size */
+@media (max-width: 480px) {
+  .verificationCardContainer {
+    padding: 0.75rem;
+  }
+  
+  .idCardImage {
+    height: 120px;
+    max-width: 200px;
+  }
+  
+  .title {
+    font-size: 14px;
+  }
+}
