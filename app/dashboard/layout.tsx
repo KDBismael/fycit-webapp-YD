@@ -6,7 +6,7 @@ import {
   IconBrandApple,
   IconBrandGooglePlay,
   IconDashboard,
-  IconHeart,
+  // IconHeart,
   IconLogout,
   IconShieldCheck,
   IconUser,
@@ -31,16 +31,16 @@ const getPageTitle = (pathname: string) => {
     '/dashboard': 'Dashboard',
     '/dashboard/verifications': 'Verifications',
     '/dashboard/profile': 'Profile',
-    '/dashboard/favorites': 'Favorites',
+    // '/dashboard/favorites': 'Favorites',
   };
   return titles[pathname] || 'Dashboard';
 };
 
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
-  { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
-  { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
+  { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verifications' },
+  // { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

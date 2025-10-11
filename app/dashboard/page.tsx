@@ -7,15 +7,19 @@ import {
   Button,
   Card,
   Container,
+  Grid,
   Group,
   Image,
   List,
   Paper,
   Stack,
   Text,
+  ThemeIcon,
   Title,
 } from '@mantine/core';
 import GuildBadge from '../../components/GuildBadge';
+import EventCard from '../../components/EventCard';
+import { IconCheck } from '@tabler/icons-react';
 
 const verificationBadges = [
   {
@@ -34,6 +38,36 @@ const verificationBadges = [
     name: 'ASC',
     status: 'rejected' as const,
   },
+];
+
+const recentEvents = [
+  {
+    title: 'Awards season starts here',
+    description: 'FYCit is the number one smartphone app for awards voters and guild',
+    location: 'San-francisco theater.',
+    date: '12th July 2025.',
+    time: '10.30 AM.',
+    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
+    imageAlt: 'Film Festival Awards Nomination'
+  },
+  {
+    title: 'Awards season starts here',
+    description: 'FYCit is the number one smartphone app for awards voters and guild',
+    location: 'San-francisco theater.',
+    date: '12th July 2025.',
+    time: '10.30 AM.',
+    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
+    imageAlt: 'Film Awards Lorem Ipsum Dolor'
+  },
+  {
+    title: 'Awards season starts here',
+    description: 'FYCit is the number one smartphone app for awards voters and guild',
+    location: 'San-francisco theater.',
+    date: '12th July 2025.',
+    time: '10.30 AM.',
+    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
+    imageAlt: 'Film Awards Nominations'
+  }
 ];
 
 export default function DashboardPage() {
@@ -154,68 +188,100 @@ export default function DashboardPage() {
           </Paper>
 
           {/* Verified Member Benefits Section */}
-          {/* <Box>
+          <Box>
             <Text size="xl" fw={700} c="gray.9" mb="lg">
               Verified member benefits
             </Text>
             <Card 
-              shadow="lg" 
-              padding="xl" 
+              shadow="sm" 
+              padding={0} 
               radius="lg" 
               style={{ 
-                backgroundColor: '#f5f5f0',
-                border: 'none'
+                backgroundColor: 'white',
+                border: 'none',
+                overflow: 'hidden'
               }}
             >
-              <Group gap="lg" align="flex-start">
-                <Box>
+              <Group gap={0} align="stretch" style={{ height: '100%' }}>
+                {/* Image Section - 1/3 of width */}
+                <Box style={{ width: '33.333%', position: 'relative' }}>
                   <Image
                     src="/images/magazine-cover.jpg"
                     alt="MovieMaker Magazine"
-                    radius="md"
+                    radius="lg"
                     style={{ 
-                      maxWidth: '200px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
                     }}
                   />
                 </Box>
-                <Stack gap="md" style={{ flex: 1 }}>
-                  <Text size="lg" fw={700} c="gray.9">
+                
+                {/* Content Section - 2/3 of width */}
+                <Stack 
+                  gap="lg" 
+                  p="xl" 
+                  style={{ 
+                    flex: 1,
+                    justifyContent: 'center',
+                    backgroundColor: 'white'
+                  }}
+                >
+                  <Text size="xl" fw={700} c="gray.9">
                     50% Discount on FYCit
                   </Text>
-                  <List spacing="sm" size="sm">
-                    <List.Item
-                      icon={
-                        <ThemeIcon color="green" size={24} radius="xl">
-                          <IconCheck size={14} />
-                        </ThemeIcon>
-                      }
-                    >
-                      Lorem Ipsum is simply dummy text of the print.
-                    </List.Item>
-                    <List.Item
-                      icon={
-                        <ThemeIcon color="green" size={24} radius="xl">
-                          <IconCheck size={14} />
-                        </ThemeIcon>
-                      }
-                    >
-                      Lorem Ipsum is simply dummy text.
-                    </List.Item>
-                    <List.Item
-                      icon={
-                        <ThemeIcon color="green" size={24} radius="xl">
-                          <IconCheck size={14} />
-                        </ThemeIcon>
-                      }
-                    >
-                      Lorem Ipsum is simply dummy text of the print.
-                    </List.Item>
-                  </List>
+                  <Stack gap="md">
+                    <Group gap="sm" align="flex-start">
+                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
+                      </ThemeIcon>
+                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                        Lorem Ipsum is simply dummy text of the print.
+                      </Text>
+                    </Group>
+                    <Group gap="sm" align="flex-start">
+                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
+                      </ThemeIcon>
+                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                        Lorem Ipsum is simply dummy text.
+                      </Text>
+                    </Group>
+                    <Group gap="sm" align="flex-start">
+                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
+                      </ThemeIcon>
+                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                        Lorem Ipsum is simply dummy text of the print.
+                      </Text>
+                    </Group>
+                  </Stack>
                 </Stack>
               </Group>
             </Card>
-          </Box> */}
+          </Box>
+
+          {/* Recent Events Section */}
+          <Box>
+            <Text size="xl" fw={700} c="gray.9" mb="lg">
+              Recent events
+            </Text>
+            <Grid>
+              {recentEvents.map((event, index) => (
+                <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
+                  <EventCard
+                    title={event.title}
+                    description={event.description}
+                    location={event.location}
+                    date={event.date}
+                    time={event.time}
+                    image={event.image}
+                    imageAlt={event.imageAlt}
+                  />
+                </Grid.Col>
+              ))}
+            </Grid>
+          </Box>
         </Stack>
       </Container>
     </Box>
