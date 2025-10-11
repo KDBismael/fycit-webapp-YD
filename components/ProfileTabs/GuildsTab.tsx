@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { IconPencil } from '@tabler/icons-react';
+import {SquarePen} from "lucide-react"
 import { Button, Group, List, Paper, Stack, Text } from '@mantine/core';
 import GuildBadge from '../GuildBadge';
 
@@ -35,7 +35,7 @@ export default function GuildsTab() {
           </Text>
           <Button
             color="violet.8"
-            leftSection={<IconPencil size={16} />}
+            leftSection={<SquarePen size={16} />}
             variant="outline"
             size="sm"
             radius="xl"
