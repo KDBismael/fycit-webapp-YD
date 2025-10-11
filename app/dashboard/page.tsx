@@ -19,7 +19,7 @@ import {
 } from '@mantine/core';
 import GuildBadge from '../../components/GuildBadge';
 import EventCard from '../../components/EventCard';
-import { IconCheck } from '@tabler/icons-react';
+import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 
 const verificationBadges = [
   {
@@ -192,73 +192,76 @@ export default function DashboardPage() {
             <Text size="xl" fw={700} c="gray.9" mb="lg">
               Verified member benefits
             </Text>
-            <Card 
-              shadow="sm" 
-              padding={0} 
-              radius="lg" 
-              style={{ 
-                backgroundColor: 'white',
-                border: 'none',
-                overflow: 'hidden'
-              }}
-            >
-              <Group gap={0} align="stretch" style={{ height: '100%' }}>
-                {/* Image Section - 1/3 of width */}
-                <Box style={{ width: '33.333%', position: 'relative' }}>
-                  <Image
-                    src="/images/magazine-cover.jpg"
-                    alt="MovieMaker Magazine"
-                    radius="lg"
-                    style={{ 
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                </Box>
-                
-                {/* Content Section - 2/3 of width */}
-                <Stack 
-                  gap="lg" 
-                  p="xl" 
+            <Grid>
+              <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+                <Card 
+                  shadow="sm" 
+                  padding={0} 
+                  radius="lg" 
                   style={{ 
-                    flex: 1,
-                    justifyContent: 'center',
-                    backgroundColor: 'white'
+                    backgroundColor: 'white',
+                    border: 'none',
+                    overflow: 'hidden',
+                    height: '100%'
                   }}
                 >
-                  <Text size="xl" fw={700} c="gray.9">
-                    50% Discount on FYCit
-                  </Text>
-                  <Stack gap="md">
-                    <Group gap="sm" align="flex-start">
-                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
-                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
-                      </ThemeIcon>
-                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
-                        Lorem Ipsum is simply dummy text of the print.
-                      </Text>
-                    </Group>
-                    <Group gap="sm" align="flex-start">
-                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
-                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
-                      </ThemeIcon>
-                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
-                        Lorem Ipsum is simply dummy text.
-                      </Text>
-                    </Group>
-                    <Group gap="sm" align="flex-start">
-                      <ThemeIcon color="gray.4" size={20} radius="xl" style={{ backgroundColor: 'transparent' }}>
-                        <IconCheck size={12} color="var(--mantine-color-gray-6)" />
-                      </ThemeIcon>
-                      <Text size="sm" c="gray.7" style={{ flex: 1 }}>
-                        Lorem Ipsum is simply dummy text of the print.
-                      </Text>
-                    </Group>
+                  {/* Image Section - Same height as EventCard images */}
+                  <Box style={{ position: 'relative', height: '200px' }}>
+                    <Image
+                      src="https://img7.yna.co.kr/mpic/YH/2022/03/31/MYH20220331019600038_P4.jpg"
+                      alt="MovieMaker Magazine"
+                      radius="lg"
+                      style={{ 
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </Box>
+                  
+                  {/* Content Section */}
+                  <Stack 
+                    gap="md" 
+                    p="lg" 
+                    style={{ 
+                      flex: 1,
+                      justifyContent: 'center',
+                      backgroundColor: 'white'
+                    }}
+                  >
+                    <Text size="lg" fw={700} c="gray.9">
+                      50% Discount on FYCit
+                    </Text>
+                    <Stack gap="xs">
+                      <Group gap="sm" align="flex-start">
+                        <ThemeIcon color="gray.4" size={16} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                          <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                        </ThemeIcon>
+                        <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                          Lorem Ipsum is simply dummy text of the print.
+                        </Text>
+                      </Group>
+                      <Group gap="sm" align="flex-start">
+                        <ThemeIcon color="gray.4" size={16} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                          <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                        </ThemeIcon>
+                        <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                          Lorem Ipsum is simply dummy text.
+                        </Text>
+                      </Group>
+                      <Group gap="sm" align="flex-start">
+                        <ThemeIcon color="gray.4" size={16} radius="xl" style={{ backgroundColor: 'transparent' }}>
+                          <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                        </ThemeIcon>
+                        <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                          Lorem Ipsum is simply dummy text of the print.
+                        </Text>
+                      </Group>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </Group>
-            </Card>
+                </Card>
+              </Grid.Col>
+            </Grid>
           </Box>
 
           {/* Recent Events Section */}
