@@ -8,6 +8,7 @@ import {
   IconDashboard,
   // IconHeart,
   IconLogout,
+  IconNews,
   IconShieldCheck,
   IconUser,
 } from '@tabler/icons-react';
@@ -29,6 +30,7 @@ import { useDisclosure } from '@mantine/hooks';
 const getPageTitle = (pathname: string) => {
   const titles: Record<string, string> = {
     '/dashboard': 'Dashboard',
+    '/dashboard/news': 'FYCit News',
     '/dashboard/verification': 'Verifications',
     '/dashboard/profile': 'Profile',
     // '/dashboard/favorites': 'Favorites',
@@ -38,6 +40,7 @@ const getPageTitle = (pathname: string) => {
 
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
+  { label: 'FYCit News', icon: IconNews, href: '/dashboard/news' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
   { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verification' },
   // { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
@@ -83,8 +86,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <AppShell.Navbar p="md">
         <Stack gap="lg" h="100%">
-          {/* Logo Section */}
-
           <Divider 
             size="xs" 
             color="gray.1" 
