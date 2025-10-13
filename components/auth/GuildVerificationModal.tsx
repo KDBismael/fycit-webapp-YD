@@ -72,14 +72,14 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
         blur: 3,
       }}
     >
-      <Stack gap="xl">
+      <Stack gap="md">
         {/* Header */}
         <Group justify="space-between" w="100%">
           <Group gap="sm">
-            <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
+            <Image src="/logo.svg" alt="FYCit Logo" width={32} height={32} />
           </Group>
           <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
-            <Text size="lg" fw={500}>
+            <Text size="md" fw={400}>
               ×
             </Text>
           </Button>
@@ -87,51 +87,51 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
 
         {/* Title and Subtitle */}
         <Stack gap="xs" align="center">
-          <Title order={2} fw={700} c="gray.9">
+          <Title order={3} fw={700} c="gray.9" size="h3">
             Good News!
           </Title>
-          <Text size="md" c="gray.7" ta="center">
+          <Text size="sm" c="gray.7" ta="center">
             Two of your selected guilds are verifiable.
           </Text>
         </Stack>
 
         {/* Progress Timeline */}
-        <Box mb="xl">
+        <Box mb="md">
           <VerificationTimeline
             currentStep={currentStep}
             brandColor="#A98D34"
             stepActiveColor="#D4B75C"
-            size="md"
+            size="sm"
           />
         </Box>
 
         {/* Guild Tabs */}
-        <Tabs value={activeTab} onChange={setActiveTab} mt="xl" mb="md">
+        <Tabs value={activeTab} onChange={setActiveTab} mt="md" mb="sm">
           <Tabs.List>
             <Tabs.Tab value="verifiable">Verifiable Guilds</Tabs.Tab>
             <Tabs.Tab value="not-verifiable">Not Verifiable Guilds</Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="verifiable" pt="md">
-            <Stack w="100%" gap="md">
+          <Tabs.Panel value="verifiable" pt="sm">
+            <Stack w="100%" gap="sm">
               {/* Verifiable Guilds List */}
               {verifiableGuilds.map((guild) => (
                 <Group
                   key={guild.id}
                   justify="space-between"
-                  p="md"
+                  p="sm"
                   style={{
                     border: '1px solid var(--mantine-color-gray-3)',
                     borderRadius: 'var(--mantine-radius-md)',
                   }}
                 >
-                  <Text size="md" fw={500}>
+                  <Text size="sm" fw={500}>
                     {guild.fullName}
                   </Text>
                   {guild.isVerified && (
                     <Group gap="xs">
-                      <IconCheck size={16} color="var(--mantine-color-success-6)" />
-                      <Text size="sm" c="success.6" fw={500}>
+                      <IconCheck size={14} color="var(--mantine-color-success-6)" />
+                      <Text size="xs" c="success.6" fw={500}>
                         Verified
                       </Text>
                     </Group>
@@ -153,7 +153,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
                   }))}
                   placeholder="Select a guild to verify"
                   radius="md"
-                  size="md"
+                  size="sm"
                   styles={{
                     input: {
                       borderColor: 'var(--mantine-color-gray-3)',
@@ -167,7 +167,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
 
               {/* Verification Instructions */}
               <Alert
-                icon={<IconExclamationMark size="1.2rem" />}
+                icon={<IconExclamationMark size="1rem" />}
                 title={`To Validate ${verifiableGuilds.find((g) => g.id === selectedGuildForVerification)?.name || 'AMPAS'}, we will take you through the following steps.`}
                 color="yellow"
                 variant="light"
@@ -189,11 +189,11 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
                   },
                 }}
               >
-                <List size="sm" spacing="xs" mt="md">
+                <List size="xs" spacing="xs" mt="sm">
                   {verificationSteps.map((step, index) => (
                     <List.Item key={index}>
                       {step.includes(`${selectedGuildName}.com`) ? (
-                        <Text size="sm">
+                        <Text size="xs">
                           {step.split(`${selectedGuildName}.com`)[0]}
                           <Text component="span" td="underline" c="brand.8">
                             {selectedGuildName}.com
@@ -201,7 +201,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
                           {step.split(`${selectedGuildName}.com`)[1]}
                         </Text>
                       ) : (
-                        <Text size="sm">{step}</Text>
+                        <Text size="xs">{step}</Text>
                       )}
                     </List.Item>
                   ))}
@@ -210,14 +210,14 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
             </Stack>
           </Tabs.Panel>
 
-          <Tabs.Panel value="not-verifiable" pt="md">
-            <Stack w="100%" gap="md">
+          <Tabs.Panel value="not-verifiable" pt="sm">
+            <Stack w="100%" gap="sm">
               {/* Not Verifiable Guilds List */}
               {notVerifiableGuilds.map((guild) => (
                 <Text
                   key={guild.id}
-                  size="md"
-                  p="md"
+                  size="sm"
+                  p="sm"
                   style={{
                     border: '1px solid var(--mantine-color-gray-3)',
                     borderRadius: 'var(--mantine-radius-md)',
@@ -229,7 +229,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
 
               {/* Information Alert */}
               <Alert
-                icon={<IconExclamationMark size="1.2rem" />}
+                icon={<IconExclamationMark size="1rem" />}
                 title="We are actively adding new partners"
                 color="yellow"
                 variant="light"
@@ -259,16 +259,16 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
         </Tabs>
 
         {/* Action Button */}
-        <Group justify="flex-end" mt="xl">
+        <Group justify="flex-end" mt="md">
           <Button
             onClick={onNext}
-            size="lg"
+            size="md"
             radius="md"
-            bg="brand.8"
             styles={{
               root: {
+                backgroundColor: '#BAAD3E',
                 '&:hover': {
-                  backgroundColor: 'var(--mantine-color-brand-7)',
+                  backgroundColor: '#A98A13',
                 },
               },
             }}

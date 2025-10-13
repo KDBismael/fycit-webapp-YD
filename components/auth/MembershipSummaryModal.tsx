@@ -32,30 +32,30 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
       onClose={onClose}
       centered
       size="xl"
-      padding="xl"
+      padding="lg"
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
       }}
     >
-      <Stack gap="xl" align="center">
+      <Stack gap="md" align="center">
         {/* Header with Logo */}
         <Group justify="center" w="100%">
           <Group gap="sm" align="center">
-            <Image src="/logo.svg" alt="FYCit Logo" width={64} height={64} />
+            <Image src="/logo.svg" alt="FYCit Logo" width={32} height={32} />
           </Group>
         </Group>
 
         {/* Success Message */}
-        <Stack gap="md" align="center">
-          <Title order={2} fw={700} c="gray.9" ta="center">
+        <Stack gap="xs" align="center">
+          <Title order={4} fw={700} c="gray.9" ta="center" size="h4">
             Your membership details have been successfully submitted.
           </Title>
-          <Text size="lg" fw={600} c="gray.8" ta="center">
+          <Text size="sm" fw={600} c="gray.8" ta="center">
             Your verification is pending for 48 hours.
           </Text>
-          <Text size="md" c="gray.7" ta="center" maw={600}>
+          <Text size="xs" c="gray.7" ta="center" maw={350}>
             It may take up to 48 hours to confirm your membership details. You'll receive an email
             once verification is completed. Please ensure you've uploaded a clear screenshot of your
             Member Card with all required details visible.
@@ -68,7 +68,7 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
             currentStep={3}
             brandColor={brandColor}
             stepActiveColor={brandColor}
-            size="lg"
+            size="sm"
           />
         </Box>
 
@@ -78,42 +78,42 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
           style={{
             border: `2px solid ${brandColor}`,
             borderRadius: 'var(--mantine-radius-md)',
-            padding: '1.5rem',
+            padding: '1rem',
             backgroundColor: '#FFFBEB',
           }}
         >
-          <Stack gap="lg">
+          <Stack gap="sm">
             {/* Membership Information - Horizontal Layout */}
             <Group gap="sm" wrap="wrap" justify="space-between">
               <Stack gap="xs">
-                <Text size="sm" c="gray.6" fw={400}>
+                <Text size="xs" c="gray.6" fw={400}>
                   Guilds:
                 </Text>
-                <Text size="sm" c="gray.9" fw={600}>
+                <Text size="xs" c="gray.9" fw={600}>
                   {membershipData.guild}
                 </Text>
               </Stack>
               <Stack gap="xs">
-                <Text size="sm" c="gray.6" fw={400}>
+                <Text size="xs" c="gray.6" fw={400}>
                   Member ID:
                 </Text>
-                <Text size="sm" c="gray.9" fw={600}>
+                <Text size="xs" c="gray.9" fw={600}>
                   {membershipData.memberId}
                 </Text>
               </Stack>
               <Stack gap="xs">
-                <Text size="sm" c="gray.6" fw={400}>
+                <Text size="xs" c="gray.6" fw={400}>
                   Valid Through:
                 </Text>
-                <Text size="sm" c="gray.9" fw={600}>
+                <Text size="xs" c="gray.9" fw={600}>
                   {membershipData.validThrough}
                 </Text>
               </Stack>
             </Group>
             
             {/* Member Card */}
-            <Stack gap="sm" mt="md">
-              <Text size="sm" c="gray.6" fw={400} ta="center">
+            <Stack gap="xs" mt="sm">
+              <Text size="xs" c="gray.6" fw={400} ta="center">
                 Your member card:
               </Text>
               <Box
@@ -121,7 +121,7 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
                   border: '1px solid #E5E7EB',
                   borderRadius: 'var(--mantine-radius-md)',
                   overflow: 'hidden',
-                  maxWidth: '300px',
+                  maxWidth: '200px',
                   margin: '0 auto',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                 }}
@@ -142,16 +142,26 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
         </Box>
 
         {/* Continue Message */}
-        <Text size="md" c="gray.7" ta="center">
+        <Text size="sm" c="gray.7" ta="center">
           You have more guilds to verify. Click continue to proceed.
         </Text>
 
         {/* Action Buttons */}
-        <Group gap="md" justify='center' w="100%">
-          <Button onClick={onGoToDashboard} variant="outline" size="lg" radius="md">
+        <Group gap="sm" justify='center' w="100%">
+          <Button onClick={onGoToDashboard} variant="outline" size="sm" radius="md">
             Go to dashboard
           </Button>
-          <Button onClick={onContinue} size="lg" radius="md">
+          <Button 
+            onClick={onContinue} 
+            size="sm" 
+            radius="md"
+            style={{
+              backgroundColor: '#BAAD3E',
+              '&:hover': {
+                backgroundColor: '#A98A13',
+              },
+            }}
+          >
             Continue
           </Button>
         </Group>

@@ -10,7 +10,7 @@ interface WelcomeModalProps {
   onSkip: () => void;
 }
 
-const IMAGE_SIZE = 64;
+const IMAGE_SIZE = 48;
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   opened,
   onClose,
@@ -29,15 +29,14 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
       onClose={onClose}
       centered
       size="xl"
-      padding="xl"
+      padding="lg"
       radius="md"
-    
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
       }}
     >
-      <Stack gap="xl" align="center">
+      <Stack gap="md" align="center">
         {/* Header with Logo and Close Button */}
         <Group justify="center" w="100%">
           {/* Logo Section */}
@@ -47,11 +46,11 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         </Group>
 
         {/* Welcome Message */}
-        <Stack gap="md" align="center">
-          <Title order={2} fw={700} c="gray.9" ta="center" size="h2">
+        <Stack gap="sm" align="center">
+          <Title order={3} fw={700} c="gray.9" ta="center" size="h3">
             Welcome to our new web platform
           </Title>
-          <Text size="md" c="gray.7" ta="center" maw={400}>
+          <Text size="sm" c="gray.7" ta="center" maw={350}>
             Complete the verification steps to ensure your profile is trusted and eligible for guild
             interactions.
           </Text>
@@ -61,10 +60,10 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         <Box
           style={{
             width: '100%',
-            maxWidth: '400px',
+            maxWidth: '300px',
             borderRadius: 'var(--mantine-radius-md)',
             overflow: 'hidden',
-            margin: '1rem 0',
+            margin: '0.5rem 0',
           }}
         >
           <Image
@@ -103,8 +102,8 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         </Stack>
 
         {/* Action Buttons */}
-        <Stack gap="md" mt="xl">
-          <Button onClick={onStartVerification} fullWidth size="lg" radius="md">
+        <Stack gap="sm" mt="md">
+          <Button onClick={onStartVerification} fullWidth size="md" radius="md">
             Start verification
           </Button>
 

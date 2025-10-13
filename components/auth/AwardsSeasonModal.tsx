@@ -75,6 +75,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
     try {
       onNext(data);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Awards season modal error:', error);
     }
   };
@@ -86,7 +87,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
       withCloseButton={false}
       centered
       size="xl"
-      padding="xl"
+      padding="lg"
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,
@@ -94,25 +95,35 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
       }}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Stack gap="xl">
-          {/* Header */}
-          <Group justify="space-between" w="100%">
-            <Group gap="sm">
-              <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
+        <Stack gap="md">
+          {/* Header with Logo and Close Button */}
+          <Group justify="center" w="100%">
+            <Group gap="sm" justify="center" >
+              <Image src="/logo.svg" alt="FYCit Logo" width={32} height={32} />
             </Group>
-            <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
-              <Text size="lg" fw={500}>
+            {/* <Button
+              variant="subtle"
+              color="gray"
+              onClick={onClose}
+              style={{
+                padding: 0,
+                width: 24,
+                height: 24,
+                minWidth: 24,
+              }}
+            >
+              <Text size="lg" fw={400} c="gray.6">
                 ×
               </Text>
-            </Button>
+            </Button> */}
           </Group>
 
           {/* Title and Description */}
-          <Stack gap="md">
-            <Title order={2} fw={700} c="gray.9">
+          <Stack gap="sm">
+            <Title order={3} fw={700} c="gray.9" ta="center" size="h3">
               We've added some exciting new features for Awards Season 2025/26
             </Title>
-            <Text size="md" c="gray.7" style={{ lineHeight: 1.6 }}>
+            <Text size="sm" c="gray.7" style={{ lineHeight: 1.5 }}>
               FYCit has gone global! We will now list any publicly available screenings in any city.
               New locales will roll out throughout the season as they are scheduled. Please choose
               your preferred locale(s) and decide if you'd like to Automatically View Events in New
@@ -121,10 +132,10 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
           </Stack>
 
           {/* Form Fields */}
-          <Stack gap="lg">
+          <Stack gap="md">
             {/* Select Guild */}
             <Stack gap="xs">
-              <Text size="sm" fw={500} c="gray.8">
+              <Text size="sm" fw={600} c="gray.9">
                 Select Guild
               </Text>
               <Select
@@ -142,12 +153,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 placeholder="Select a guild"
                 error={errors.selectedGuild?.message}
                 radius="md"
-                size="md"
+                size="sm"
                 styles={{
                   input: {
-                    borderColor: 'var(--mantine-color-gray-3)',
+                    backgroundColor: '#F9FAFB',
+                    borderColor: '#E5E7EB',
                     '&:focus': {
                       borderColor: 'var(--mantine-color-brand-8)',
+                      backgroundColor: 'white',
                     },
                   },
                 }}
@@ -157,7 +170,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
             {/* Warning Alert */}
             <Alert
               icon={<IconExclamationMark size={16} />}
-              title="Careful"
+              title="Careful :"
               color="warning"
               variant="light"
               radius="md"
@@ -165,6 +178,9 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 root: {
                   backgroundColor: '#FEF3C7',
                   border: '1px solid #FDE68A',
+                },
+                title: {
+                  fontWeight: 600,
                 },
               }}
             >
@@ -176,7 +192,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
 
             {/* View events in these locals */}
             <Stack gap="xs">
-              <Text size="sm" fw={500} c="gray.8">
+              <Text size="sm" fw={600} c="gray.9">
                 View events in these locals
               </Text>
               <Select
@@ -186,12 +202,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 placeholder="Select your local area"
                 error={errors.viewEventsInLocals?.message}
                 radius="md"
-                size="md"
+                size="sm"
                 styles={{
                   input: {
-                    borderColor: 'var(--mantine-color-gray-3)',
+                    backgroundColor: '#F9FAFB',
+                    borderColor: '#E5E7EB',
                     '&:focus': {
                       borderColor: 'var(--mantine-color-brand-8)',
+                      backgroundColor: 'white',
                     },
                   },
                 }}
@@ -200,7 +218,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
 
             {/* My Country */}
             <Stack gap="xs">
-              <Text size="sm" fw={500} c="gray.8">
+              <Text size="sm" fw={600} c="gray.9">
                 My Country
               </Text>
               <Select
@@ -210,12 +228,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 placeholder="Select your country"
                 error={errors.myCountry?.message}
                 radius="md"
-                size="md"
+                size="sm"
                 styles={{
                   input: {
-                    borderColor: 'var(--mantine-color-gray-3)',
+                    backgroundColor: '#F9FAFB',
+                    borderColor: '#E5E7EB',
                     '&:focus': {
                       borderColor: 'var(--mantine-color-brand-8)',
+                      backgroundColor: 'white',
                     },
                   },
                 }}
@@ -224,7 +244,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
 
             {/* Zip/Postal Code (Optional) */}
             <Stack gap="xs">
-              <Text size="sm" fw={500} c="gray.8">
+              <Text size="sm" fw={600} c="gray.9">
                 Zip/Postal Code (Optional)
               </Text>
               <TextInput
@@ -232,12 +252,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 placeholder="Enter your zip code"
                 error={errors.zipPostalCode?.message}
                 radius="md"
-                size="md"
+                size="sm"
                 styles={{
                   input: {
-                    borderColor: 'var(--mantine-color-gray-3)',
+                    backgroundColor: '#F9FAFB',
+                    borderColor: '#E5E7EB',
                     '&:focus': {
                       borderColor: 'var(--mantine-color-brand-8)',
+                      backgroundColor: 'white',
                     },
                   },
                 }}
@@ -249,14 +271,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
           <Button
             type="submit"
             fullWidth
-            size="lg"
+            size="md"
             radius="md"
-            bg="brand.8"
             loading={isSubmitting}
             styles={{
               root: {
+                backgroundColor: '#BAAD3E',
                 '&:hover': {
-                  backgroundColor: 'var(--mantine-color-brand-7)',
+                  backgroundColor: '#A98A13',
                 },
               },
             }}
