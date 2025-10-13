@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Checkbox, Group, List, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Group, List, Paper, Select, Stack, Text } from '@mantine/core';
 import VerificationCard from '../../../components/VerificationCard';
 
 const verificationData = [
@@ -48,7 +48,7 @@ const verificationData = [
 ];
 
 export default function VerificationPage() {
-  const [selectedAll, setSelectedAll] = useState(true);
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
   const handleAction = (id: string, action: string) => {
     // eslint-disable-next-line no-console
@@ -59,9 +59,40 @@ export default function VerificationPage() {
     <Stack gap="xl">
       {/* Header */}
       <Group justify="space-between" align="center">
-        <Title order={1} c="gray.9">
-          Verification
-        </Title>
+        {/* Filter Select */}
+        <Select
+          placeholder="Select filter"
+          data={[
+            { value: 'all', label: 'All' },
+            { value: 'verified', label: 'Verified' },
+            { value: 'available', label: 'Available for verification' },
+            { value: 'pending', label: 'Pending' },
+            { value: 'rejected', label: 'Rejected' },
+            { value: 'not-available', label: 'Verification not available' },
+          ]}
+          value={selectedFilter}
+          onChange={(value) => setSelectedFilter(value || 'all')}
+          size="md"
+          radius="md"
+          styles={{
+            input: {
+              backgroundColor: '#F9FAFB',
+              borderColor: '#D1D5DB',
+              fontSize: '16px',
+              fontWeight: 500,
+              color: '#374151',
+            },
+            dropdown: {
+              border: '1px solid #E5E7EB',
+              borderRadius: '8px',
+            },
+            option: {
+              fontSize: '14px',
+              color: '#374151',
+              padding: '12px 16px',
+            },
+          }}
+        />
         <Button
           size="md"
           radius="md"
@@ -72,27 +103,9 @@ export default function VerificationPage() {
             },
           }}
         >
-          Add
+          Add guild
         </Button>
       </Group>
-
-      {/* All Checkbox */}
-      <Checkbox
-        label="All"
-        checked={selectedAll}
-        onChange={(event) => setSelectedAll(event.currentTarget.checked)}
-        styles={{
-          label: {
-            fontSize: '16px',
-            fontWeight: 500,
-            color: '#374151',
-          },
-          input: {
-            backgroundColor: '#F9FAFB',
-            borderColor: '#D1D5DB',
-          },
-        }}
-      />
 
       {/* Verification Cards Grid */}
       <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>

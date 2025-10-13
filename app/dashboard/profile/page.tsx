@@ -19,9 +19,9 @@ export default function ProfilePage() {
       }}
     >
       <Tabs.List>
-        <Tabs.Tab value="event-locales">Event locales</Tabs.Tab>
-        <Tabs.Tab value="guilds">Guilds</Tabs.Tab>
         <Tabs.Tab value="my-info">My info</Tabs.Tab>
+        <Tabs.Tab value="event-locales">Event locales</Tabs.Tab>
+        <Tabs.Tab value="guilds">Voting Groups</Tabs.Tab>
       </Tabs.List>
 
       <Tabs.Panel value="event-locales" pt="lg">
