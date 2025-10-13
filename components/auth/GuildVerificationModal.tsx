@@ -77,14 +77,6 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
         <Group justify="space-between" w="100%">
           <Group gap="sm">
             <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
-            <Stack gap={0}>
-              <Text size="sm" fw={500} c="brand.8">
-                FYCit
-              </Text>
-              <Text size="xs" c="gray.6">
-                AWARDS SEASON STARTS HERE
-              </Text>
-            </Stack>
           </Group>
           <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
             <Text size="lg" fw={500}>

@@ -84,9 +84,6 @@ export default function NoVerifiableGuildsPage() {
                   <Image src="/logo.svg" alt="FYCit Logo" width={60} height={60} />
                 </Group>
                 <Stack gap="xs" align="center">
-                  <Text size="sm" c="gray.6" ta="center" fw={500}>
-                    AWARDS SEASON STARTS HERE
-                  </Text>
                   <Title order={1} size="h2" ta="center" c="gray.9" fw={700}>
                     Good News!
                   </Title>

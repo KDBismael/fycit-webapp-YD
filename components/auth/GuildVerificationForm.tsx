@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IconCalendar, IconCheck, IconUpload } from '@tabler/icons-react';
 import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { DatePicker } from '@mantine/dates';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { IconCheck, IconUpload } from '@tabler/icons-react';
+import React, { useState } from 'react';
 
 interface Guild {
   id: string;
@@ -21,7 +22,7 @@ interface GuildVerificationFormProps {
 
 interface VerificationData {
   memberId: string;
-  validThrough: string;
+  validThrough: string | null;
   memberCardFile: File | null;
 }
 
@@ -33,7 +34,7 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
   onBack,
 }) => {
   const [memberId, setMemberId] = useState('');
-  const [validThrough, setValidThrough] = useState('');
+  const [validThrough, setValidThrough] = useState<string | null>(null);
   const [memberCardFile, setMemberCardFile] = useState<File | null>(null);
 
   const handleSubmit = () => {
@@ -53,14 +54,6 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
       <Group justify="space-between" mb="xl">
         <Group gap="sm">
           <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
-          <Stack gap={0}>
-            <Text size="sm" fw={500} c="brand.8">
-              FYCit
-            </Text>
-            <Text size="xs" c="gray.6">
-              AWARDS SEASON STARTS HERE
-            </Text>
-          </Stack>
         </Group>
         <Button variant="subtle" color="gray">
           <Text size="lg" fw={500}>
@@ -211,22 +204,7 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
             <Text size="sm" fw={500} c="gray.8">
               Valid Through
             </Text>
-            <TextInput
-              value={validThrough}
-              onChange={(e) => setValidThrough(e.target.value)}
-              placeholder="Choose your validation date"
-              radius="md"
-              size="md"
-              rightSection={<IconCalendar size={16} />}
-              styles={{
-                input: {
-                  borderColor: 'var(--mantine-color-gray-3)',
-                  '&:focus': {
-                    borderColor: 'var(--mantine-color-brand-8)',
-                  },
-                },
-              }}
-            />
+            <DatePicker value={validThrough} onChange={setValidThrough} size="md" allowDeselect />
           </Stack>
 
           {/* File Upload */}

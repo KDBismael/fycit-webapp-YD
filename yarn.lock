@@ -3534,6 +3534,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mantine/dates@npm:^8.3.4":
+  version: 8.3.4
+  resolution: "@mantine/dates@npm:8.3.4"
+  dependencies:
+    clsx: "npm:^2.1.1"
+  peerDependencies:
+    "@mantine/core": 8.3.4
+    "@mantine/hooks": 8.3.4
+    dayjs: ">=1.0.0"
+    react: ^18.x || ^19.x
+    react-dom: ^18.x || ^19.x
+  checksum: 10c0/02d2565b8a4886ae690a2d7a122993e84b09d5bb803ea66b020004d55661ec9aa756d4282405ede2c7dfa7b11fd3e566692d237f108f28af9067d036948da4fe
+  languageName: node
+  linkType: hard
+
 "@mantine/dropzone@npm:^8.3.4":
   version: 8.3.4
   resolution: "@mantine/dropzone@npm:8.3.4"
@@ -5169,6 +5184,7 @@ __metadata:
     "@hookform/resolvers": "npm:^5.2.2"
     "@ianvs/prettier-plugin-sort-imports": "npm:^4.7.0"
     "@mantine/core": "npm:8.3.3"
+    "@mantine/dates": "npm:^8.3.4"
     "@mantine/dropzone": "npm:^8.3.4"
     "@mantine/hooks": "npm:8.3.3"
     "@next/bundle-analyzer": "npm:^15.5.4"
@@ -5185,6 +5201,7 @@ __metadata:
     "@types/node": "npm:^24.6.1"
     "@types/react": "npm:19.1.16"
     babel-loader: "npm:^10.0.0"
+    dayjs: "npm:^1.11.18"
     eslint: "npm:^9.36.0"
     eslint-config-mantine: "npm:^4.0.3"
     eslint-config-next: "npm:15.5.4"
@@ -6983,6 +7000,13 @@ __metadata:
     es-errors: "npm:^1.3.0"
     is-data-view: "npm:^1.0.1"
   checksum: 10c0/fa7aa40078025b7810dcffc16df02c480573b7b53ef1205aa6a61533011005c1890e5ba17018c692ce7c900212b547262d33279fde801ad9843edc0863bf78c4
+  languageName: node
+  linkType: hard
+
+"dayjs@npm:^1.11.18":
+  version: 1.11.18
+  resolution: "dayjs@npm:1.11.18"
+  checksum: 10c0/83b67f5d977e2634edf4f5abdd91d9041a696943143638063016915d2cd8c7e57e0751e40379a07ebca8be7a48dd380bef8752d22a63670f2d15970e34f96d7a
   languageName: node
   linkType: hard
 

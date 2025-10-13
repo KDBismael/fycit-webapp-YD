@@ -1,8 +1,9 @@
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
 
-import React from 'react';
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
+import { DatesProvider } from '@mantine/dates';
 import { theme } from '../theme';
 
 export const metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <DatesProvider settings={{ firstDayOfWeek: 0 }}>{children}</DatesProvider>
+        </MantineProvider>
       </body>
     </html>
   );
