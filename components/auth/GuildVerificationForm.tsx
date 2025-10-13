@@ -1,11 +1,14 @@
 'use client';
 
+import React from 'react';
+import { IconCalendar, IconUpload } from '@tabler/icons-react';
 import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
-import { DatePicker } from '@mantine/dates';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { IconCheck, IconUpload } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import { DatePickerInput } from '@mantine/dates';
+import { Dropzone } from '@mantine/dropzone';
+import { VerificationTimeline } from '../../components/Timeline';
+import { useVerificationStore } from '../../stores/verificationStore';
 
+// Définition des types comme dans votre code original
 interface Guild {
   id: string;
   name: string;
@@ -14,265 +17,299 @@ interface Guild {
 
 interface GuildVerificationFormProps {
   selectedGuild: Guild;
-  currentStep: number;
-  totalSteps: number;
-  onNext: (data: VerificationData) => void;
+  onNext: (data: any) => void;
   onBack: () => void;
 }
 
-interface VerificationData {
-  memberId: string;
-  validThrough: string | null;
-  memberCardFile: File | null;
-}
+// Composant pour l'icône de la Marque (FYCit) - Assurez-vous d'avoir l'image à /FYCit.png ou utilisez un placeholder
+const BrandLogo = () => (
+  <Group gap={4}>
+    <Image src="/logo.svg" alt="FYCit Logo" h={20} w={20} />
+  </Group>
+);
 
 export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
   selectedGuild,
-  currentStep,
-  totalSteps,
   onNext,
-  onBack,
 }) => {
-  const [memberId, setMemberId] = useState('');
-  const [validThrough, setValidThrough] = useState<string | null>(null);
-  const [memberCardFile, setMemberCardFile] = useState<File | null>(null);
+  const { verificationData, updateVerificationData, completeStep } = useVerificationStore();
+
+  // Pour ce formulaire, nous sommes à l'étape 2 (Verification)
+  const currentStep = 2;
 
   const handleSubmit = () => {
-    const data: VerificationData = {
-      memberId,
-      validThrough,
-      memberCardFile,
-    };
-    onNext(data);
+    // La logique de soumission est conservée
+    completeStep(currentStep);
+    onNext(verificationData);
   };
 
-  const isFormValid = memberId.trim() && validThrough && memberCardFile;
+  const isFormValid =
+    verificationData.memberId?.trim() &&
+    verificationData.validThrough &&
+    verificationData.memberCardFile;
 
-  return (
-    <Box style={{ maxWidth: '800px', margin: '0 auto' }}>
-      {/* Header */}
-      <Group justify="space-between" mb="xl">
-        <Group gap="sm">
-          <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
-        </Group>
-        <Button variant="subtle" color="gray">
-          <Text size="lg" fw={500}>
-            ×
-          </Text>
-        </Button>
-      </Group>
+  // Définir les couleurs personnalisées pour Mantine (ajuster si vous utilisez un thème personnalisé)
+  const brandColor = '#A98D34'; // Un jaune-doré proche du bouton "Next"
+  const stepActiveColor = '#D4B75C'; // Un jaune plus clair pour les cercles de progression
 
-      {/* Title */}
-      <Stack gap="xs" align="center" mb="xl">
-        <Title order={2} fw={700} c="gray.9">
-          Let's verify your association
-        </Title>
-        <Text size="md" c="gray.7" ta="center">
-          You can edit all the details below to update your profile
+  // --- Composant minimaliste pour le Champ d'Upload de Fichier ---
+  const MinimalDropzone: React.FC<{ fileName: string | null; onDrop: (files: File[]) => void }> = ({
+    fileName,
+    onDrop,
+  }) => {
+    // Placeholder pour l'upload dans le design
+    const UploadPlaceholder = (
+      <Stack align="center" justify="center" h={120} p="md">
+        <IconUpload size={32} style={{ opacity: 0.5 }} />
+      </Stack>
+    );
+
+    // Affichage du nom de fichier après upload
+    const UploadedFile = (
+      <Stack align="center" justify="center" h={120} p="md">
+        <Text size="sm" c="dark" fw={500} ta="center">
+          {fileName}
+        </Text>
+        <Text size="xs" c="gray.6" ta="center">
+          Click to replace
         </Text>
       </Stack>
+    );
 
-      {/* Progress Indicator */}
-      <Group gap="xs" justify="center" mb="xl">
-        {Array.from({ length: totalSteps }).map((_, index) => (
-          <React.Fragment key={index}>
-            <Box
-              style={{
-                width: 32,
-                height: 32,
-                borderRadius: '50%',
-                backgroundColor:
-                  index + 1 === currentStep
-                    ? 'var(--mantine-color-brand-8)'
-                    : index + 1 < currentStep
-                      ? 'var(--mantine-color-brand-8)'
-                      : 'var(--mantine-color-gray-3)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border:
-                  index + 1 === currentStep ? '2px solid var(--mantine-color-brand-8)' : 'none',
-              }}
-            >
-              <Text size="sm" c={index + 1 <= currentStep ? 'white' : 'gray.7'} fw={700}>
-                {index + 1}
-              </Text>
-            </Box>
-            {index < totalSteps - 1 && (
-              <Box
-                style={{
-                  width: 40,
-                  height: 2,
-                  backgroundColor:
-                    index + 1 < currentStep
-                      ? 'var(--mantine-color-brand-8)'
-                      : 'var(--mantine-color-gray-3)',
-                }}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </Group>
+    return (
+      <Dropzone
+        onDrop={onDrop}
+        onReject={() => {}}
+        maxSize={5 * 1024 * 1024} // 5MB
+        accept={['image/png', 'image/jpeg', 'image/webp']}
+        maxFiles={1}
+        radius="md"
+        styles={{
+          root: {
+            // Utilise la couleur claire du design pour le fond
+            backgroundColor: '#F7F7F7',
+            border: '1px solid #E0E0E0',
+            minHeight: 120,
+            transition: 'border-color 0.2s',
+            '&:hover': {
+              borderColor: brandColor,
+            },
+          },
+        }}
+      >
+        {fileName ? UploadedFile : UploadPlaceholder}
+      </Dropzone>
+    );
+  };
 
-      {/* Main Content - Two Columns */}
-      <Group gap="xl" align="flex-start">
-        {/* Left Column - Instructions */}
-        <Stack gap="md" style={{ flex: 1 }}>
-          <Title order={4} fw={600} c="gray.8">
-            To Validate {selectedGuild.name}, we will take you through the following 5 steps.
-          </Title>
-
-          <Text size="sm" c="gray.7">
-            1. Browse to{' '}
-            <Text component="span" td="underline" c="brand.8">
-              {selectedGuild.name}.com
+  return (
+    <Box p="xl" style={{ maxWidth: '900px', margin: '0 auto' }}>
+      <Paper p="xl" shadow="xs" radius="xl" style={{ border: '1px solid #E0E0E0' }}>
+        {/* Header */}
+        <Group justify="space-between" mb="xl">
+          <BrandLogo />
+          <Button variant="subtle" color="gray" style={{ width: 20, height: 20, padding: 0 }}>
+            <Text size="xl" fw={300} c="dark">
+              ×
             </Text>
-          </Text>
+          </Button>
+        </Group>
 
-          {/* Video/Image Placeholder */}
-          <Box
+        {/* Title */}
+        <Stack gap="xs" align="center" mb="xl">
+          <Title order={2} fw={600} c="dark">
+            Let's verify your association
+          </Title>
+          <Text size="md" c="gray.7" ta="center">
+            You can edit all the details below to update your profile
+          </Text>
+        </Stack>
+
+        {/* Progress Timeline */}
+        <Box mb="xl">
+          <VerificationTimeline
+            currentStep={currentStep}
+            brandColor={brandColor}
+            stepActiveColor={stepActiveColor}
+            size="md"
+          />
+        </Box>
+
+        {/* Main Content - Two Columns */}
+        <Group gap="xl" align="flex-start" wrap="nowrap">
+          {/* Left Column - Instructions with Image/Video Placeholder */}
+          <Paper
+            p="xl"
+            radius="md"
             style={{
-              width: '100%',
-              height: '200px',
-              backgroundColor: 'var(--mantine-color-gray-1)',
-              borderRadius: 'var(--mantine-radius-md)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-              border: '1px solid var(--mantine-color-gray-3)',
+              flex: 1,
+              backgroundColor: '#FDFBEF', // Fond très clair, proche du design
+              border: '1px solid #EDE6D2',
             }}
           >
-            <Group gap="sm">
-              <Button
-                variant="filled"
-                color="brand"
-                radius="xl"
-                size="lg"
-                style={{ width: '60px', height: '60px' }}
+            <Stack gap="xl">
+              <Title order={4} fw={600} c="dark">
+                To Validate **{selectedGuild.name}**, we will take you through the following 5
+                steps.
+              </Title>
+
+              {/* Instructions */}
+              <Stack gap="xs">
+                <Text size="md" c="dark" fw={500}>
+                  1. Browse to{' '}
+                  <Text component="span" fw={600} style={{ color: brandColor }}>
+                    {selectedGuild.name}.com
+                  </Text>
+                </Text>
+                {/* Ajoutez les étapes 2 à 5 ici si nécessaire, mais l'image n'en montre qu'une */}
+              </Stack>
+
+              {/* Video/Image Placeholder - Utilise le chemin de l'image du prompt si possible, sinon un placeholder stylisé */}
+              <Box
+                style={{
+                  width: '100%',
+                  borderRadius: 'var(--mantine-radius-md)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  aspectRatio: '4 / 3', // Ajuster l'aspect ratio pour correspondre à l'image
+                }}
               >
-                ▶
+                {/* Placeholder stylisé pour correspondre à l'image fournie */}
+                <Image
+                  src="/Main Container.png" // Utilise le nom de l'image uploadée pour le placeholder visuel
+                  alt="Validation steps"
+                  style={{
+                    filter: 'grayscale(10%) brightness(1.1) contrast(1.1)', // Légers ajustements pour un look similaire
+                    objectFit: 'cover',
+                  }}
+                />
+                <Button
+                  variant="filled"
+                  color="dark"
+                  radius="xl"
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 1,
+                    opacity: 0.8,
+                  }}
+                >
+                  ▶
+                </Button>
+              </Box>
+            </Stack>
+
+            {/* Boutons de navigation internes (ajusté pour ne laisser que Next) */}
+            <Group justify="flex-end" mt="xl">
+              <Button
+                variant="subtle"
+                color="dark"
+                size="md"
+                onClick={onNext}
+                style={{ color: brandColor }}
+              >
+                Next &gt;
               </Button>
             </Group>
-          </Box>
-
-          <Button
-            variant="outline"
-            color="brand"
-            size="md"
-            radius="md"
-            onClick={onBack}
-            style={{ alignSelf: 'flex-end' }}
-          >
-            Next &gt;
-          </Button>
-        </Stack>
-
-        {/* Right Column - Form */}
-        <Stack gap="md" style={{ flex: 1 }}>
-          {/* Guild Name */}
-          <Paper p="md" radius="md" style={{ backgroundColor: 'var(--mantine-color-yellow-0)' }}>
-            <Text fw={600} c="brand.8">
-              {selectedGuild.fullName}
-            </Text>
           </Paper>
 
-          {/* Member ID */}
-          <Stack gap="xs">
-            <Text size="sm" fw={500} c="gray.8">
-              Member ID
-            </Text>
-            <TextInput
-              value={memberId}
-              onChange={(e) => setMemberId(e.target.value)}
-              placeholder="Enter member id"
+          {/* Right Column - Form */}
+          <Stack gap="xl" style={{ flex: 1.2 }}>
+            {/* Guild Name Banner */}
+            <Paper
+              p="sm"
               radius="md"
-              size="md"
-              styles={{
-                input: {
-                  borderColor: 'var(--mantine-color-gray-3)',
-                  '&:focus': {
-                    borderColor: 'var(--mantine-color-brand-8)',
-                  },
-                },
-              }}
-            />
-          </Stack>
-
-          {/* Valid Through */}
-          <Stack gap="xs">
-            <Text size="sm" fw={500} c="gray.8">
-              Valid Through
-            </Text>
-            <DatePicker value={validThrough} onChange={setValidThrough} size="md" allowDeselect />
-          </Stack>
-
-          {/* File Upload */}
-          <Stack gap="xs">
-            <Text size="sm" fw={500} c="gray.8">
-              Please upload a screenshot of your Member Card with valid through date shown
-            </Text>
-            <Dropzone
-              onDrop={(files: File[]) => setMemberCardFile(files[0] || null)}
-              onReject={() => {}}
-              maxSize={5 * 1024 * 1024} // 5MB
-              accept={IMAGE_MIME_TYPE}
-              maxFiles={1}
-              radius="md"
-              styles={{
-                root: {
-                  borderColor: 'var(--mantine-color-gray-3)',
-                  backgroundColor: 'var(--mantine-color-gray-0)',
-                  '&:hover': {
-                    borderColor: 'var(--mantine-color-brand-8)',
-                  },
-                },
-              }}
+              style={{ backgroundColor: '#FDFBEF', border: '1px solid #EDE6D2' }}
             >
-              <Group justify="center" gap="xl" mih={120} style={{ pointerEvents: 'none' }}>
-                <IconUpload size={32} color="var(--mantine-color-gray-6)" />
-                <div>
-                  <Text size="xl" inline>
-                    Drag image here or click to select files
-                  </Text>
-                  <Text size="sm" c="dimmed" inline mt={7}>
-                    Attach a screenshot of your member card
-                  </Text>
-                </div>
-              </Group>
-            </Dropzone>
+              <Text fw={600} c="dark">
+                {selectedGuild.fullName}
+              </Text>
+            </Paper>
 
-            {memberCardFile && (
-              <Group gap="xs" mt="xs">
-                <IconCheck size={16} color="var(--mantine-color-success-6)" />
-                <Text size="sm" c="success.6">
-                  {memberCardFile.name} uploaded successfully
-                </Text>
-              </Group>
-            )}
+            {/* Member ID */}
+            <Stack gap={5}>
+              <Text size="sm" fw={500} c="dark">
+                Member ID
+              </Text>
+              <TextInput
+                value={verificationData.memberId || ''}
+                onChange={(e) => updateVerificationData({ memberId: e.target.value })}
+                placeholder="Enter member id"
+                radius="md"
+                size="md"
+                styles={{
+                  input: {
+                    borderColor: '#E0E0E0',
+                    '&:focus': {
+                      borderColor: brandColor,
+                    },
+                  },
+                }}
+              />
+            </Stack>
+
+            {/* Valid Through */}
+            <Stack gap={5}>
+              <Text size="sm" fw={500} c="dark">
+                Valid Through
+              </Text>
+              {/* Utilisation de DatePickerInput pour un look plus proche du design Mantine par défaut */}
+              <DatePickerInput
+                value={verificationData.validThrough}
+                onChange={(value) =>
+                  updateVerificationData({ validThrough: value ? new Date(value) : null })
+                }
+                placeholder="Choose your validation date"
+                radius="md"
+                size="md"
+                clearable
+                styles={{
+                  input: {
+                    borderColor: '#E0E0E0',
+                    '&:focus': {
+                      borderColor: brandColor,
+                    },
+                  },
+                }}
+                rightSection={<IconCalendar size={20} />}
+                valueFormat="DD MMMM YYYY"
+              />
+            </Stack>
+
+            {/* File Upload (Minimalist) */}
+            <Stack gap={5}>
+              <Text size="sm" fw={500} c="dark">
+                Please upload a screenshot of your Member Card with valid through date shown
+              </Text>
+              <MinimalDropzone
+                fileName={verificationData.memberCardFile?.name || null}
+                onDrop={(files) => updateVerificationData({ memberCardFile: files[0] || null })}
+              />
+            </Stack>
           </Stack>
-        </Stack>
-      </Group>
+        </Group>
 
-      {/* Action Button */}
-      <Group justify="flex-end" mt="xl">
-        <Button
-          onClick={handleSubmit}
-          size="lg"
-          radius="md"
-          bg="brand.8"
-          disabled={!isFormValid}
-          styles={{
-            root: {
-              '&:hover': {
-                backgroundColor: 'var(--mantine-color-brand-7)',
-              },
-            },
-          }}
-        >
-          Next
-        </Button>
-      </Group>
+        {/* Action Button - Placé en bas à droite comme dans l'image */}
+        <Group justify="flex-end" mt="xl">
+          <Button
+            onClick={handleSubmit}
+            size="lg"
+            radius="md"
+            bg={brandColor} // Couleur personnalisée
+            disabled={!isFormValid}
+            style={{
+              // Ombre légère pour le bouton, comme dans l'image
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            Next
+          </Button>
+        </Group>
+      </Paper>
     </Box>
   );
 };

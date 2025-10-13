@@ -85,7 +85,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       centered
-      size="lg"
+      size="xl"
       padding="xl"
       radius="md"
       overlayProps={{
