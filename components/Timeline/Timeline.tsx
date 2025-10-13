@@ -68,7 +68,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                 border: `1px solid ${step.id <= currentStep ? brandColor : borderColor}`,
               }}
             >
-              <Text size={fontSize} c={step.id <= currentStep ? 'dark' : 'gray.6'} fw={700}>
+              <Text size={fontSize} c={step.id <= currentStep ? 'white' : 'gray.6'} fw={700}>
                 {step.id}
               </Text>
             </Box>

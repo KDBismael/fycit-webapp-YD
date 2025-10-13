@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { IconCalendar, IconUpload } from '@tabler/icons-react';
-import { Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
+import { IconCalendar, IconUpload, IconX } from '@tabler/icons-react';
+import { ActionIcon, Box, Button, Group, Image, Paper, Stack, Text, TextInput, Title } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { Dropzone } from '@mantine/dropzone';
 import { VerificationTimeline } from '../../components/Timeline';
@@ -21,11 +21,13 @@ interface GuildVerificationFormProps {
   onBack: () => void;
 }
 
+const IMAGE_SIZE = 40;
+
 // Composant pour l'icône de la Marque (FYCit) - Assurez-vous d'avoir l'image à /FYCit.png ou utilisez un placeholder
 const BrandLogo = () => (
-  <Group gap={4}>
-    <Image src="/logo.svg" alt="FYCit Logo" h={20} w={20} />
-  </Group>
+  <Group gap="sm">
+  <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
+</Group>
 );
 
 export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
@@ -52,59 +54,39 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
   const brandColor = '#A98D34'; // Un jaune-doré proche du bouton "Next"
   const stepActiveColor = '#D4B75C'; // Un jaune plus clair pour les cercles de progression
 
-  // --- Composant minimaliste pour le Champ d'Upload de Fichier ---
-  const MinimalDropzone: React.FC<{ fileName: string | null; onDrop: (files: File[]) => void }> = ({
-    fileName,
-    onDrop,
-  }) => {
-    // Placeholder pour l'upload dans le design
-    const UploadPlaceholder = (
-      <Stack align="center" justify="center" h={120} p="md">
-        <IconUpload size={32} style={{ opacity: 0.5 }} />
-      </Stack>
-    );
+  const handleFileDrop = (files: File[]) => {
+    if (files[0]) {
+      updateVerificationData({ memberCardFile: files[0] });
+    }
+  };
 
-    // Affichage du nom de fichier après upload
-    const UploadedFile = (
-      <Stack align="center" justify="center" h={120} p="md">
-        <Text size="sm" c="dark" fw={500} ta="center">
-          {fileName}
-        </Text>
-        <Text size="xs" c="gray.6" ta="center">
-          Click to replace
-        </Text>
-      </Stack>
-    );
+  const removeFile = () => {
+    updateVerificationData({ memberCardFile: null });
+  };
 
+  const renderFilePreview = () => {
+    if (!verificationData.memberCardFile) {
+      return null;
+    }
+
+    const imageUrl = URL.createObjectURL(verificationData.memberCardFile);
     return (
-      <Dropzone
-        onDrop={onDrop}
-        onReject={() => {}}
-        maxSize={5 * 1024 * 1024} // 5MB
-        accept={['image/png', 'image/jpeg', 'image/webp']}
-        maxFiles={1}
-        radius="md"
-        styles={{
-          root: {
-            // Utilise la couleur claire du design pour le fond
-            backgroundColor: '#F7F7F7',
-            border: '1px solid #E0E0E0',
-            minHeight: 120,
-            transition: 'border-color 0.2s',
-            '&:hover': {
-              borderColor: brandColor,
-            },
-          },
+      <Image
+        src={imageUrl}
+        alt="Member Card Preview"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: 'var(--mantine-radius-md)',
         }}
-      >
-        {fileName ? UploadedFile : UploadPlaceholder}
-      </Dropzone>
+        onLoad={() => URL.revokeObjectURL(imageUrl)}
+      />
     );
   };
 
   return (
     <Box p="xl" style={{ maxWidth: '900px', margin: '0 auto' }}>
-      <Paper p="xl" shadow="xs" radius="xl" style={{ border: '1px solid #E0E0E0' }}>
         {/* Header */}
         <Group justify="space-between" mb="xl">
           <BrandLogo />
@@ -176,7 +158,7 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
               >
                 {/* Placeholder stylisé pour correspondre à l'image fournie */}
                 <Image
-                  src="/Main Container.png" // Utilise le nom de l'image uploadée pour le placeholder visuel
+                  src="/images/ProfileCard.png" // Utilise le nom de l'image uploadée pour le placeholder visuel
                   alt="Validation steps"
                   style={{
                     filter: 'grayscale(10%) brightness(1.1) contrast(1.1)', // Légers ajustements pour un look similaire
@@ -277,18 +259,96 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
                 }}
                 rightSection={<IconCalendar size={20} />}
                 valueFormat="DD MMMM YYYY"
+                popoverProps={{
+                  withinPortal: true,
+                  zIndex: 10000,
+                }}
               />
             </Stack>
 
-            {/* File Upload (Minimalist) */}
+            {/* File Upload with Preview */}
             <Stack gap={5}>
               <Text size="sm" fw={500} c="dark">
                 Please upload a screenshot of your Member Card with valid through date shown
               </Text>
-              <MinimalDropzone
-                fileName={verificationData.memberCardFile?.name || null}
-                onDrop={(files) => updateVerificationData({ memberCardFile: files[0] || null })}
-              />
+              
+              {verificationData.memberCardFile ? (
+                <Box
+                  style={{
+                    border: '2px dashed #E0E0E0',
+                    backgroundColor: '#F7F7F7',
+                    borderRadius: 'var(--mantine-radius-md)',
+                    width: '100%',
+                    height: '220px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {renderFilePreview()}
+                  <ActionIcon
+                    color="red"
+                    variant="filled"
+                    radius="xl"
+                    size="sm"
+                    style={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      zIndex: 10,
+                    }}
+                    onClick={removeFile}
+                  >
+                    <IconX size={14} />
+                  </ActionIcon>
+                </Box>
+              ) : (
+                <Dropzone
+                  onDrop={handleFileDrop}
+                  onReject={() => {}}
+                  accept={['image/png', 'image/jpeg', 'image/webp']}
+                  maxFiles={1}
+                  maxSize={5 * 1024 * 1024}
+                  multiple={false}
+                  styles={{
+                    root: {
+                      border: '2px dashed #E0E0E0',
+                      backgroundColor: '#F7F7F7',
+                      borderRadius: 'var(--mantine-radius-md)',
+                      minHeight: 220,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      transition: 'border-color 0.2s',
+                      '&:hover': {
+                        borderColor: brandColor,
+                      },
+                    },
+                  }}
+                >
+                  <Group justify="center" gap="xl" style={{ padding: '1rem' }}>
+                    <Dropzone.Accept>
+                      <IconUpload size={40} color="var(--mantine-color-green-6)" stroke={1.5} />
+                    </Dropzone.Accept>
+                    <Dropzone.Reject>
+                      <IconX size={40} color="var(--mantine-color-red-6)" stroke={1.5} />
+                    </Dropzone.Reject>
+                    <Dropzone.Idle>
+                      <IconUpload size={40} style={{ opacity: 0.5 }} stroke={1.5} />
+                    </Dropzone.Idle>
+
+                    <div>
+                      <Text size="sm" c="gray.6" ta="center">
+                        Click to upload or drag and drop
+                      </Text>
+                      <Text size="xs" c="gray.5" ta="center" mt="xs">
+                        PNG, JPG or WEBP (max 5MB)
+                      </Text>
+                    </div>
+                  </Group>
+                </Dropzone>
+              )}
             </Stack>
           </Stack>
         </Group>
@@ -309,7 +369,6 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
             Next
           </Button>
         </Group>
-      </Paper>
     </Box>
   );
 };
