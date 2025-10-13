@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IconMail, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { IconMail, IconPhoto, IconUpload, IconX, IconTrash, IconKey, IconEdit } from '@tabler/icons-react';
 import {
   ActionIcon,
   Box,
@@ -13,12 +13,17 @@ import {
   Stack,
   Text,
   TextInput,
+  Modal,
 } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { CountryPicker } from '../CountryPicker/CountryPicker';
+import { useDisclosure } from '@mantine/hooks';
 
 export default function MyInfoTab() {
   const [files, setFiles] = useState<File[]>([]);
+  const [changeEmailOpened, { open: openChangeEmail, close: closeChangeEmail }] = useDisclosure(false);
+  const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
+  const [deleteAccountOpened, { open: openDeleteAccount, close: closeDeleteAccount }] = useDisclosure(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
 
   const handleDrop = (newFiles: File[]) => {
     // eslint-disable-next-line no-console
@@ -58,6 +63,27 @@ export default function MyInfoTab() {
   const handleReject = (fileRejections: any[]) => {
     // eslint-disable-next-line no-console
     console.log('Files rejected:', fileRejections);
+  };
+
+  const handleChangeEmail = () => {
+    // eslint-disable-next-line no-console
+    console.log('Change email requested');
+    closeChangeEmail();
+  };
+
+  const handleResetPassword = () => {
+    // eslint-disable-next-line no-console
+    console.log('Reset password requested');
+    closeResetPassword();
+  };
+
+  const handleDeleteAccount = () => {
+    if (deleteConfirmation.toLowerCase() === 'delete') {
+      // eslint-disable-next-line no-console
+      console.log('Account deletion confirmed');
+      closeDeleteAccount();
+      setDeleteConfirmation('');
+    }
   };
 
   return (
@@ -170,23 +196,38 @@ export default function MyInfoTab() {
               }}
             />
 
-            <TextInput
-              label="Email address"
-              placeholder="Enter your email"
-              leftSection={<IconMail size={16} color="#6B7280" />}
-              size="md"
-              radius="md"
-              styles={{
-                input: {
-                  border: '1px solid #E5E7EB',
-                  backgroundColor: '#F5F5F5',
-                  '&:focus': {
-                    borderColor: 'var(--mantine-color-brand-8)',
-                    backgroundColor: 'white',
+            <Box>
+              <TextInput
+                label="Email address"
+                placeholder="Enter your email"
+                leftSection={<IconMail size={16} color="#6B7280" />}
+                size="md"
+                radius="md"
+                styles={{
+                  input: {
+                    border: '1px solid #E5E7EB',
+                    backgroundColor: '#F5F5F5',
+                    '&:focus': {
+                      borderColor: 'var(--mantine-color-brand-8)',
+                      backgroundColor: 'white',
+                    },
                   },
-                },
-              }}
-            />
+                }}
+              />
+              <Button
+                variant="subtle"
+                size="xs"
+                leftSection={<IconEdit size={12} />}
+                onClick={openChangeEmail}
+                style={{
+                  color: '#6B7280',
+                  marginTop: '4px',
+                  padding: '2px 8px',
+                }}
+              >
+                Change email
+              </Button>
+            </Box>
 
             <Box>
               <Text size="sm" fw={500} c="gray.9" mb="xs">
@@ -250,38 +291,19 @@ export default function MyInfoTab() {
               }}
             />
 
-            <Box>
-              <Text size="sm" fw={500} c="gray.9" mb="xs">
-                Phone no (optional)
-              </Text>
-              <Box
-                style={{
-                  display: 'flex',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: 'var(--mantine-radius-md)',
-                  overflow: 'hidden',
-                  backgroundColor: '#F5F5F5',
-                }}
-              >
-                <CountryPicker value="+1" onChange={() => {}} />
-                <Box style={{ width: '1px', backgroundColor: '#E5E7EB' }} />
-                <TextInput
-                  placeholder="Phone no"
-                  radius="md"
-                  size="md"
-                  styles={{
-                    input: {
-                      border: 'none',
-                      borderRadius: 0,
-                      backgroundColor: '#F5F5F5',
-                      '&:focus': {
-                        backgroundColor: 'white',
-                      },
-                    },
-                  }}
-                />
-              </Box>
-            </Box>
+            <Button
+              variant="subtle"
+              size="sm"
+              leftSection={<IconKey size={14} />}
+              onClick={openResetPassword}
+              style={{
+                color: '#6B7280',
+                alignSelf: 'flex-start',
+                padding: '8px 12px',
+              }}
+            >
+              Reset password
+            </Button>
 
             <TextInput
               label="Zip/Postal Code (Optional)"
@@ -305,7 +327,21 @@ export default function MyInfoTab() {
       </Grid>
 
       {/* Save Button */}
-      <Group justify="flex-end">
+      <Group justify="space-between" align="center">
+        <Button
+          variant="subtle"
+          color="red"
+          size="sm"
+          leftSection={<IconTrash size={14} />}
+          onClick={openDeleteAccount}
+          style={{
+            color: '#DC2626',
+            padding: '6px 12px',
+          }}
+        >
+          Delete account
+        </Button>
+        
         <Button
           size="md"
           radius="md"
@@ -319,6 +355,76 @@ export default function MyInfoTab() {
           Save
         </Button>
       </Group>
+
+      {/* Change Email Modal */}
+      <Modal opened={changeEmailOpened} onClose={closeChangeEmail} title="Change Email Address" centered>
+        <Stack gap="md">
+          <Text size="sm" c="gray.6">
+            Enter your new email address. You will receive a verification email to confirm the change.
+          </Text>
+          <TextInput
+            label="New email address"
+            placeholder="Enter new email"
+            type="email"
+            size="md"
+          />
+          <Group justify="flex-end" gap="sm">
+            <Button variant="outline" onClick={closeChangeEmail}>
+              Cancel
+            </Button>
+            <Button onClick={handleChangeEmail}>
+              Send verification
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+
+      {/* Reset Password Modal */}
+      <Modal opened={resetPasswordOpened} onClose={closeResetPassword} title="Reset Password" centered>
+        <Stack gap="md">
+          <Text size="sm" c="gray.6">
+            You will receive an email with instructions to reset your password.
+          </Text>
+          <Group justify="flex-end" gap="sm">
+            <Button variant="outline" onClick={closeResetPassword}>
+              Cancel
+            </Button>
+            <Button onClick={handleResetPassword}>
+              Send reset email
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
+
+      {/* Delete Account Modal */}
+      <Modal opened={deleteAccountOpened} onClose={closeDeleteAccount} title="Delete Account" centered>
+        <Stack gap="md">
+          <Text size="sm" c="red.6" fw={500}>
+            This action cannot be undone. This will permanently delete your account and remove all your data.
+          </Text>
+          <Text size="sm" c="gray.6">
+            To confirm, type "DELETE" in the box below:
+          </Text>
+          <TextInput
+            placeholder="Type DELETE to confirm"
+            value={deleteConfirmation}
+            onChange={(event) => setDeleteConfirmation(event.currentTarget.value)}
+            size="md"
+          />
+          <Group justify="flex-end" gap="sm">
+            <Button variant="outline" onClick={closeDeleteAccount}>
+              Cancel
+            </Button>
+            <Button 
+              color="red" 
+              onClick={handleDeleteAccount}
+              disabled={deleteConfirmation.toLowerCase() !== 'delete'}
+            >
+              Delete account
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Stack>
   );
 }
