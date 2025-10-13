@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   IconBrandApple,
   IconBrandGooglePlay,
@@ -30,9 +30,9 @@ import { useDisclosure } from '@mantine/hooks';
 const getPageTitle = (pathname: string) => {
   const titles: Record<string, string> = {
     '/dashboard': 'Dashboard',
-    '/dashboard/news': 'FYCit News',
     '/dashboard/verification': 'Verifications',
     '/dashboard/profile': 'Profile',
+    '/dashboard/news': 'FYCit News',
     // '/dashboard/favorites': 'Favorites',
   };
   return titles[pathname] || 'Dashboard';
@@ -40,9 +40,9 @@ const getPageTitle = (pathname: string) => {
 
 const navigationItems = [
   { label: 'Dashboard', icon: IconDashboard, href: '/dashboard' },
-  { label: 'FYCit News', icon: IconNews, href: '/dashboard/news' },
   { label: 'Profile', icon: IconUser, href: '/dashboard/profile' },
   { label: 'Verifications', icon: IconShieldCheck, href: '/dashboard/verification' },
+  { label: 'FYCit News', icon: IconNews, href: '/dashboard/news' },
   // { label: 'Favorites', icon: IconHeart, href: '/dashboard/favorites' },
 ];
 
@@ -65,11 +65,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group gap="md">
-            <Image 
-              src="/logo.svg" 
-              alt="FYCit Logo" 
-              h="100%" 
-              w="auto" 
+            <Image
+              src="/logo.svg"
+              alt="FYCit Logo"
+              h="100%"
+              w="auto"
               fit="contain"
               style={{ maxHeight: '40px' }}
             />
@@ -86,11 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <AppShell.Navbar p="md">
         <Stack gap="lg" h="100%">
-          <Divider 
-            size="xs" 
-            color="gray.1" 
-            style={{ opacity: 0.3 }}
-          />
+          <Divider size="xs" color="gray.1" style={{ opacity: 0.3 }} />
 
           {/* Navigation */}
           <Stack gap="xs">
@@ -102,7 +98,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 leftSection={<item.icon size={20} stroke={1.5} />}
                 onClick={() => router.push(item.href)}
                 active={pathname === item.href}
-                variant={pathname === item.href ? "filled" : "subtle"}
+                variant={pathname === item.href ? 'filled' : 'subtle'}
                 color="brand"
                 styles={{
                   root: {
@@ -123,11 +119,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             ))}
           </Stack>
 
-          <Divider 
-            size="xs" 
-            color="gray.1" 
-            style={{ opacity: 0.3 }}
-          />
+          <Divider size="xs" color="gray.1" style={{ opacity: 0.3 }} />
 
           {/* Logout */}
           <NavLink
@@ -148,13 +140,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           />
 
           {/* App download section */}
-          <Box 
-            mt="auto" 
-            p="md" 
-            style={{ 
-              backgroundColor: '#FEF3C7', 
+          <Box
+            mt="auto"
+            p="md"
+            style={{
+              backgroundColor: '#FEF3C7',
               borderRadius: 'var(--mantine-radius-md)',
-              border: '1px solid #FDE68A'
+              border: '1px solid #FDE68A',
             }}
           >
             <Text size="sm" fw={500} mb="sm" c="gray.8" ta="center">

@@ -1,18 +1,18 @@
 import { z } from 'zod';
 
 export const profileCompletionSchema = z.object({
-  guild: z
+  selectedGuild: z.string().min(1, 'Please select a guild'),
+  viewEventsInLocals: z.string().min(1, 'Please select your local area'),
+  myCountry: z.string().min(1, 'Please select your country'),
+  zipPostalCode: z
     .string()
-    .min(1, 'Please select a guild'),
-  locale: z
-    .string()
-    .min(1, 'Please select a locale'),
-  country: z
-    .string()
-    .min(1, 'Please select your country'),
-  zipCode: z
-    .string()
-    .optional(),
+    .optional()
+    .refine((val) => {
+      if (!val) {
+        return true;
+      } // Optional field
+      return val.length >= 3 && val.length <= 10;
+    }, 'Zip/Postal code must be between 3 and 10 characters'),
 });
 
 export type ProfileCompletionFormData = z.infer<typeof profileCompletionSchema>;

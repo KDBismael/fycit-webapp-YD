@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLock, IconMail, IconUser } from '@tabler/icons-react';
@@ -107,7 +106,7 @@ export default function Signup() {
               padding: '1rem',
             }}
           >
-            <Stack gap="md" style={{ maxWidth: '400px', width: '100%' }}>
+            <Stack gap="md" style={{ maxWidth: '500px', width: '100%' }}>
               <Stack gap="sm" align="center">
                 <Group gap="sm">
                   <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
@@ -126,11 +125,9 @@ export default function Signup() {
 
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <Stack gap="sm">
-                    <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        First name
-                      </Text>
+                    <Group gap="xs">
                       <TextInput
+                        label="First name"
                         {...register('firstName')}
                         placeholder="Enter your first name"
                         leftSection={<IconUser size={ICON_SIZE} />}
@@ -138,12 +135,8 @@ export default function Signup() {
                         radius="md"
                         size="sm"
                       />
-                    </Stack>
-                    <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Last name
-                      </Text>
                       <TextInput
+                        label="Last name"
                         {...register('lastName')}
                         placeholder="Enter your last name"
                         leftSection={<IconUser size={ICON_SIZE} />}
@@ -151,13 +144,11 @@ export default function Signup() {
                         radius="md"
                         size="sm"
                       />
-                    </Stack>
+                    </Group>
 
                     <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Email address
-                      </Text>
                       <TextInput
+                        label="Email address"
                         {...register('email')}
                         placeholder="Enter your email"
                         leftSection={<IconMail size={ICON_SIZE} />}
@@ -168,10 +159,8 @@ export default function Signup() {
                     </Stack>
 
                     <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Enter password
-                      </Text>
                       <PasswordInput
+                        label="Password"
                         {...register('password')}
                         placeholder="Enter your password"
                         leftSection={<IconLock size={ICON_SIZE} />}
@@ -182,10 +171,8 @@ export default function Signup() {
                     </Stack>
 
                     <Stack gap="xs">
-                      <Text size="sm" fw={500} c="gray.8">
-                        Confirm password
-                      </Text>
                       <PasswordInput
+                        label="Confirm password"
                         {...register('confirmPassword')}
                         placeholder="Enter your password"
                         leftSection={<IconLock size={ICON_SIZE} />}
