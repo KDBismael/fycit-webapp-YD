@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AwardsSeasonModal } from '../../../../components/auth/AwardsSeasonModal';
 import { GuildVerificationForm } from '../../../../components/auth/GuildVerificationForm';
 import { GuildVerificationModal } from '../../../../components/auth/GuildVerificationModal';
+import { MembershipSummaryModal } from '../../../../components/auth/MembershipSummaryModal';
 import { WelcomeModal } from '../../../../components/auth/WelcomeModal';
 import { ProfileCompletionFormData } from '../../../../validation/profile-completion.validation';
 
@@ -48,11 +49,13 @@ export default function SignupWorkflowPage() {
   const [showAwardsSeasonModal, setShowAwardsSeasonModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
 
   // Workflow state
-  const [currentStep, setCurrentStep] = useState(1);
-  const [profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
+  const [_currentStep, setCurrentStep] = useState(1);
+  const [_profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
   const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
+  const [submittedMembershipData, setSubmittedMembershipData] = useState<any>(null);
 
   const verifiableGuilds = mockGuilds.filter((guild) => guild.isVerifiable);
   const notVerifiableGuilds = mockGuilds.filter((guild) => !guild.isVerifiable);
@@ -107,28 +110,34 @@ export default function SignupWorkflowPage() {
   };
 
   const handleVerificationFormNext = (data: any) => {
+    // eslint-disable-next-line no-console
     console.log('Verification data submitted:', data);
+
+    // Store the submitted membership data
+    const membershipData = {
+      guild: selectedGuild?.fullName || '',
+      memberId: data.memberId || '',
+      validThrough: data.validThrough ? new Date(data.validThrough).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }) : '',
+      memberCardImage: data.memberCardFile ? URL.createObjectURL(data.memberCardFile) : '/images/ProfileCard.png',
+    };
+    setSubmittedMembershipData(membershipData);
 
     // Mark guild as verified
     if (selectedGuild) {
       const updatedGuilds = mockGuilds.map((guild) =>
         guild.id === selectedGuild.id ? { ...guild, isVerified: true } : guild
       );
+      // eslint-disable-next-line no-console
       console.log('Updated guilds:', updatedGuilds);
     }
 
-    // Check if there are more guilds to verify
-    const remainingUnverifiedGuilds = verifiableGuilds.filter((g) => !g.isVerified);
-
-    if (remainingUnverifiedGuilds.length > 1) {
-      // More guilds to verify, go back to modal
-      setShowVerificationForm(false);
-      setShowVerificationModal(true);
-    } else {
-      // All guilds verified, proceed to step 3
-      setCurrentStep(3);
-      handleCompleteVerification();
-    }
+    // Show summary modal instead of continuing to next guild
+    setShowVerificationForm(false);
+    setShowSummaryModal(true);
   };
 
   const handleVerificationFormBack = () => {
@@ -136,8 +145,30 @@ export default function SignupWorkflowPage() {
     setShowVerificationModal(true);
   };
 
+  // Summary Modal Handlers
+  const handleSummaryGoToDashboard = () => {
+    setShowSummaryModal(false);
+    router.push('/dashboard');
+  };
+
+  const handleSummaryContinue = () => {
+    setShowSummaryModal(false);
+    
+    // Check if there are more guilds to verify
+    const remainingUnverifiedGuilds = verifiableGuilds.filter((g) => !g.isVerified);
+    
+    if (remainingUnverifiedGuilds.length > 0) {
+      // More guilds to verify, go back to verification modal
+      setShowVerificationModal(true);
+    } else {
+      // All guilds verified, proceed to completion
+      handleCompleteVerification();
+    }
+  };
+
   const handleCompleteVerification = () => {
     // All verification steps completed, redirect to dashboard
+    // eslint-disable-next-line no-console
     console.log('All verification completed!');
     router.push('/dashboard');
   };
@@ -171,8 +202,7 @@ export default function SignupWorkflowPage() {
         onNext={handleVerificationModalNext}
         verifiableGuilds={verifiableGuilds}
         notVerifiableGuilds={notVerifiableGuilds}
-        currentStep={currentStep}
-        totalSteps={3}
+        currentStep={_currentStep}
       />
 
       {/* Guild Verification Form */}
@@ -205,13 +235,22 @@ export default function SignupWorkflowPage() {
           >
             <GuildVerificationForm
               selectedGuild={selectedGuild}
-              currentStep={currentStep}
-              totalSteps={3}
               onNext={handleVerificationFormNext}
               onBack={handleVerificationFormBack}
             />
           </div>
         </div>
+      )}
+
+      {/* Membership Summary Modal */}
+      {showSummaryModal && submittedMembershipData && (
+        <MembershipSummaryModal
+          opened={showSummaryModal}
+          onClose={handleModalClose}
+          onGoToDashboard={handleSummaryGoToDashboard}
+          onContinue={handleSummaryContinue}
+          membershipData={submittedMembershipData}
+        />
       )}
     </>
   );

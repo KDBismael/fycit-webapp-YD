@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { IconCheck } from '@tabler/icons-react';
 import { Box, Button, Group, Image, List, Modal, Stack, Text, Title } from '@mantine/core';
 
 interface WelcomeModalProps {
@@ -11,6 +10,7 @@ interface WelcomeModalProps {
   onSkip: () => void;
 }
 
+const IMAGE_SIZE = 64;
 export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   opened,
   onClose,
@@ -27,125 +27,55 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
     <Modal
       opened={opened}
       onClose={onClose}
-      withCloseButton={false}
       centered
-      size="md"
+      size="xl"
       padding="xl"
       radius="md"
+    
       overlayProps={{
         backgroundOpacity: 0.55,
         blur: 3,
       }}
     >
       <Stack gap="xl" align="center">
-        {/* Header */}
-        <Group justify="space-between" w="100%">
-          <Group gap="sm">
-            <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} />
+        {/* Header with Logo and Close Button */}
+        <Group justify="center" w="100%">
+          {/* Logo Section */}
+          <Group gap="sm" align="center">
+            <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
           </Group>
-          <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
-            <Text size="lg" fw={500}>
-              ×
-            </Text>
-          </Button>
         </Group>
 
-        {/* Title */}
-        <Stack gap="xs" align="center">
-          <Title order={2} fw={700} c="gray.9" ta="center">
+        {/* Welcome Message */}
+        <Stack gap="md" align="center">
+          <Title order={2} fw={700} c="gray.9" ta="center" size="h2">
             Welcome to our new web platform
           </Title>
-          <Text size="md" c="gray.7" ta="center">
+          <Text size="md" c="gray.7" ta="center" maw={400}>
             Complete the verification steps to ensure your profile is trusted and eligible for guild
             interactions.
           </Text>
         </Stack>
 
-        {/* Illustration */}
+        {/* Profile Verification Image */}
         <Box
           style={{
             width: '100%',
-            height: '120px',
-            backgroundColor: 'var(--mantine-color-gray-1)',
+            maxWidth: '400px',
             borderRadius: 'var(--mantine-radius-md)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'relative',
-            border: '1px solid var(--mantine-color-gray-3)',
+            overflow: 'hidden',
             margin: '1rem 0',
           }}
         >
-          {/* Network illustration placeholder */}
-          <Group gap="sm">
-            <Box
-              style={{
-                width: '60px',
-                height: '60px',
-                borderRadius: '50%',
-                backgroundColor: 'var(--mantine-color-brand-8)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <IconCheck size={24} color="white" />
-            </Box>
-            <Stack gap="xs">
-              <Group gap="xs">
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-              </Group>
-              <Group gap="xs">
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-                <Box
-                  style={{
-                    width: '20px',
-                    height: '20px',
-                    backgroundColor: 'var(--mantine-color-gray-4)',
-                    borderRadius: '4px',
-                  }}
-                />
-              </Group>
-            </Stack>
-          </Group>
+          <Image
+            src="/images/ProfileVerification Image.png"
+            alt="Profile Verification"
+            style={{
+              width: '100%',
+              height: 'auto',
+              objectFit: 'cover',
+            }}
+          />
         </Box>
 
         {/* Benefits Section */}
@@ -156,27 +86,16 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           <List
             spacing="sm"
             size="md"
-            center
-            icon={
-              <Box
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  backgroundColor: 'var(--mantine-color-brand-8)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <IconCheck size={10} color="white" />
-              </Box>
-            }
+            styles={{
+              item: {
+                paddingLeft: '8px',
+              },
+            }}
           >
             {benefits.map((benefit, index) => (
               <List.Item key={index}>
                 <Text size="md" c="gray.7">
-                  {benefit}
+                  {index + 1}. {benefit}
                 </Text>
               </List.Item>
             ))}
@@ -184,29 +103,20 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         </Stack>
 
         {/* Action Buttons */}
-        <Stack gap="md" w="100%" mt="xl">
-          <Button
-            onClick={onStartVerification}
-            fullWidth
-            size="lg"
-            radius="md"
-            bg="brand.8"
-            styles={{
-              root: {
-                '&:hover': {
-                  backgroundColor: 'var(--mantine-color-brand-7)',
-                },
-              },
-            }}
-          >
+        <Stack gap="md" mt="xl">
+          <Button onClick={onStartVerification} fullWidth size="lg" radius="md">
             Start verification
           </Button>
 
           <Text
             size="sm"
-            c="brand.8"
+            c="gray.7"
             ta="center"
-            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+            style={{
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              fontWeight: 400,
+            }}
             onClick={onSkip}
           >
             Skip now

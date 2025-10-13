@@ -359,7 +359,7 @@ export const GuildVerificationForm: React.FC<GuildVerificationFormProps> = ({
             onClick={handleSubmit}
             size="lg"
             radius="md"
-            bg={brandColor} // Couleur personnalisée
+
             disabled={!isFormValid}
             style={{
               // Ombre légère pour le bouton, comme dans l'image
