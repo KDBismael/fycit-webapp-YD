@@ -1,0 +1,97 @@
+/* Verification Page Styles */
+.verificationPage {
+  /* Main container styles if needed */
+}
+
+/* Select Component Styles */
+.filterSelect {
+  /* Root wrapper styles */
+}
+
+.filterSelectInput {
+  background-color: white;
+  border-color: #D1D5DB;
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+  padding-left: 40px;
+}
+
+.filterSelectInput:focus {
+  border-color: var(--mantine-color-brand-8);
+}
+
+.filterSelectSection {
+  left: 8px;
+  right: auto;
+}
+
+.filterSelectDropdown {
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.filterSelectOptions {
+  padding: 4px;
+}
+
+.filterSelectOption {
+  font-size: 14px;
+  color: #374151;
+  padding: 0;
+  background-color: white;
+  border-radius: 4px;
+}
+
+.filterSelectOption[data-selected] {
+  background-color: var(--mantine-color-brand-8) !important;
+  color: white;
+}
+
+.filterSelectOption:hover {
+  background-color: var(--mantine-color-brand-2) !important;
+}
+
+/* Checkbox Styles */
+.checkboxInput {
+  background-color: transparent;
+  border: 1px solid #6B7280;
+  border-radius: 2px;
+}
+
+.checkboxIcon {
+  color: #374151;
+}
+
+/* Verification Cards Grid */
+.verificationGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-md);
+}
+
+/* Key Benefits Section */
+.keyBenefitsPaper {
+  background-color: #FFFBEB;
+  border: 1px solid #FDE68A;
+  padding: 1.5rem;
+}
+
+/* Button Styles */
+.addGuildButton {
+  background-color: #BAAD3E;
+}
+
+.addGuildButton:hover {
+  background-color: #A98A13;
+}
+
+.startVerificationButton {
+  background-color: #BAAD3E;
+}
+
+.startVerificationButton:hover {
+  background-color: #A98A13;
+}

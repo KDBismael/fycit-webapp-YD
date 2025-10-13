@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Group, List, Paper, Select, Stack, Text } from '@mantine/core';
+import { Box, Button, Checkbox, Group, List, Paper, Select, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import VerificationCard from '../../../components/VerificationCard';
+import VerificationModal from '../../../components/VerificationModal';
+import classes from './VerificationPage.module.css';
 
 const verificationData = [
   {
@@ -49,10 +52,17 @@ const verificationData = [
 
 export default function VerificationPage() {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [selectedGuild, setSelectedGuild] = useState<any>(null);
+  const [verificationModalOpened, { open: openVerificationModal, close: closeVerificationModal }] = useDisclosure(false);
 
   const handleAction = (id: string, action: string) => {
     // eslint-disable-next-line no-console
     console.log(`${action} clicked for ${id}`);
+  };
+
+  const handleGuildClick = (guild: any) => {
+    setSelectedGuild(guild);
+    openVerificationModal();
   };
 
   return (
@@ -74,41 +84,51 @@ export default function VerificationPage() {
           onChange={(value) => setSelectedFilter(value || 'all')}
           size="md"
           radius="md"
-          styles={{
-            input: {
-              backgroundColor: '#F9FAFB',
-              borderColor: '#D1D5DB',
-              fontSize: '16px',
-              fontWeight: 500,
-              color: '#374151',
-            },
-            dropdown: {
-              border: '1px solid #E5E7EB',
-              borderRadius: '8px',
-            },
-            option: {
-              fontSize: '14px',
-              color: '#374151',
-              padding: '12px 16px',
-            },
+          rightSection={
+            <Checkbox
+              checked
+              size="sm"
+              classNames={{
+                input: classes.checkboxInput,
+                icon: classes.checkboxIcon,
+              }}
+            />
+          }
+          renderOption={({ option, checked }) => (
+            <Group gap="sm" style={{ padding: '8px 12px' }}>
+              <Checkbox
+                checked={checked}
+                size="sm"
+                classNames={{
+                  input: classes.checkboxInput,
+                  icon: classes.checkboxIcon,
+                }}
+              />
+              <Text size="sm" c={checked ? '#374151' : '#6B7280'} fw={checked ? 500 : 400}>
+                {option.label}
+              </Text>
+            </Group>
+          )}
+          classNames={{
+            wrapper: classes.filterSelect,
+            input: classes.filterSelectInput,
+            section: classes.filterSelectSection,
+            dropdown: classes.filterSelectDropdown,
+            options: classes.filterSelectOptions,
+            option: classes.filterSelectOption,
           }}
         />
         <Button
           size="md"
           radius="md"
-          style={{
-            backgroundColor: '#BAAD3E',
-            '&:hover': {
-              backgroundColor: '#A98A13',
-            },
-          }}
+          className={classes.addGuildButton}
         >
           Add guild
         </Button>
       </Group>
 
       {/* Verification Cards Grid */}
-      <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>
+      <Box className={classes.verificationGrid}>
         {verificationData.map((item) => (
           <VerificationCard
             key={item.id}
@@ -120,6 +140,7 @@ export default function VerificationPage() {
             actionLabel={item.actionLabel}
             actionType={item.actionType}
             onAction={() => handleAction(item.id, item.actionLabel)}
+            onClick={() => handleGuildClick(item)}
           />
         ))}
       </Box>
@@ -128,11 +149,7 @@ export default function VerificationPage() {
       <Paper
         shadow="sm"
         radius="md"
-        style={{
-          backgroundColor: '#FFFBEB',
-          border: '1px solid #FDE68A',
-          padding: '1.5rem',
-        }}
+        className={classes.keyBenefitsPaper}
       >
         <Group justify="space-between" align="flex-start">
           <Box style={{ flex: 1 }}>
@@ -157,17 +174,18 @@ export default function VerificationPage() {
           <Button
             size="md"
             radius="md"
-            style={{
-              backgroundColor: '#BAAD3E',
-              '&:hover': {
-                backgroundColor: '#A98A13',
-              },
-            }}
+            className={classes.startVerificationButton}
           >
             Start verification
           </Button>
         </Group>
       </Paper>
+
+      <VerificationModal
+        opened={verificationModalOpened}
+        onClose={closeVerificationModal}
+        guild={selectedGuild}
+      />
     </Stack>
   );
 }

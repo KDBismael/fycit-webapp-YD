@@ -14,6 +14,7 @@ export interface VerificationCardProps {
   onAction: () => void;
   actionLabel: string;
   actionType?: 'primary' | 'danger';
+  onClick?: () => void;
 }
 
 const getStatusIcon = (status: string) => {
@@ -54,12 +55,13 @@ export default function VerificationCard({
   validUntil,
   onAction,
   actionLabel,
+  onClick,
 }: VerificationCardProps) {
   const statusIcon = getStatusIcon(status);
   const statusColor = getStatusColor(status);
 
   return (
-    <Box className={classes.verificationCard}>
+    <Box className={classes.verificationCard} onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
       <Box className={classes.verificationCardContainer}>
         <div className={classes.cardContent}>
           {/* ID Card Image - Left Side */}
