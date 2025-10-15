@@ -1,36 +1,30 @@
 'use client';
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { useForm } from 'react-hook-form';
 import {
+  Alert,
+  Box,
+  Button,
   Container,
   Grid,
+  Group,
+  Image,
   Paper,
+  Select,
+  Stack,
   Text,
   TextInput,
-  Button,
-  Stack,
-  Image,
-  Box,
   Title,
-  Group,
-  Select,
-  Alert,
 } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { profileCompletionSchema, ProfileCompletionFormData } from '../../validation/profile-completion.validation';
+import { GuildSelector } from '../../components/auth/GuildSelector';
+import {
+  ProfileCompletionFormData,
+  profileCompletionSchema,
+} from '../../validation/profile-completion.validation';
 
 const IMAGE_SIZE = 40;
-
-const guildOptions = [
-  { value: 'ampas', label: 'AMPAS - Motion Picture Academy' },
-  { value: 'ace', label: 'ACE - American Cinema Editors' },
-  { value: 'adg', label: 'ADG - Art Directors Guild' },
-  { value: 'animation', label: 'Animation Guild' },
-  { value: 'asc', label: 'ASC - American Society of Cinematographers' },
-  { value: 'asifa', label: 'ASIFA - International animated film society' },
-];
 
 const localeOptions = [
   { value: 'los-angeles', label: 'Los Angeles, CA' },
@@ -59,10 +53,10 @@ export default function ProfileCompletion() {
   } = useForm<ProfileCompletionFormData>({
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
-      guild: 'ampas',
-      locale: 'los-angeles',
-      country: 'usa',
-      zipCode: '90210',
+      selectedGuild: [],
+      viewEventsInLocals: 'los-angeles',
+      myCountry: 'usa',
+      zipPostalCode: '90210',
     },
   });
 
@@ -101,20 +95,23 @@ export default function ProfileCompletion() {
                 Lorem ipsum dolor sit amet, consectetur.
               </Title>
               <Text size="sm" c="gray.2">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.
+                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+                doloremque laudantium, totam rem aperiam.
               </Text>
             </Paper>
           </Box>
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <Box style={{ 
-            height: '100vh', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            padding: '1rem',
-          }}>
+          <Box
+            style={{
+              height: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '1rem',
+            }}
+          >
             <Stack gap="md" style={{ maxWidth: '400px', width: '100%' }}>
               <Stack gap="sm" align="center">
                 <Group gap="sm">
@@ -144,19 +141,10 @@ export default function ProfileCompletion() {
                       <Text size="sm" fw={500} c="gray.8">
                         Select Guild
                       </Text>
-                      <Select
-                        data={guildOptions}
-                        value={watch('guild')}
-                        onChange={(value) => setValue('guild', value || '')}
-                        placeholder="Select a guild"
-                        error={errors.guild?.message}
-                        radius="md"
-                        size="sm"
-                        styles={{
-                          input: {
-                            borderColor: 'var(--mantine-color-gray-4)',
-                          },
-                        }}
+                      <GuildSelector
+                        value={watch('selectedGuild')}
+                        onChange={(value) => setValue('selectedGuild', value)}
+                        error={errors.selectedGuild?.message}
                       />
                     </Stack>
 
@@ -169,7 +157,8 @@ export default function ProfileCompletion() {
                       p="sm"
                     >
                       <Text size="xs" c="gray.7">
-                        Selecting organizations you are not a member of may prevent you from seeing some events.
+                        Selecting organizations you are not a member of may prevent you from seeing
+                        some events.
                       </Text>
                     </Alert>
 
@@ -179,10 +168,10 @@ export default function ProfileCompletion() {
                       </Text>
                       <Select
                         data={localeOptions}
-                        value={watch('locale')}
-                        onChange={(value) => setValue('locale', value || '')}
+                        value={watch('viewEventsInLocals')}
+                        onChange={(value) => setValue('viewEventsInLocals', value || '')}
                         placeholder="Select a locale"
-                        error={errors.locale?.message}
+                        error={errors.viewEventsInLocals?.message}
                         radius="md"
                         size="sm"
                         styles={{
@@ -199,10 +188,10 @@ export default function ProfileCompletion() {
                       </Text>
                       <Select
                         data={countryOptions}
-                        value={watch('country')}
-                        onChange={(value) => setValue('country', value || '')}
+                        value={watch('myCountry')}
+                        onChange={(value) => setValue('myCountry', value || '')}
                         placeholder="Select your country"
-                        error={errors.country?.message}
+                        error={errors.myCountry?.message}
                         radius="md"
                         size="sm"
                         styles={{
@@ -218,9 +207,9 @@ export default function ProfileCompletion() {
                         Zip/Postal Code (Optional)
                       </Text>
                       <TextInput
-                        {...register('zipCode')}
+                        {...register('zipPostalCode')}
                         placeholder="Enter your zip code"
-                        error={errors.zipCode?.message}
+                        error={errors.zipPostalCode?.message}
                         radius="md"
                         size="sm"
                         styles={{

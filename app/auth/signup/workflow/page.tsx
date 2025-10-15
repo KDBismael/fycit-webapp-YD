@@ -78,9 +78,11 @@ export default function SignupWorkflowPage() {
     setShowAwardsSeasonModal(false);
 
     // Check if user has verifiable guilds
-    const selectedGuild = data.selectedGuild;
+    const selectedGuilds = data.selectedGuild;
     const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
-    const hasVerifiableGuilds = verifiableGuildIds.includes(selectedGuild);
+    const hasVerifiableGuilds = selectedGuilds.some((guildId) =>
+      verifiableGuildIds.includes(guildId)
+    );
 
     if (hasVerifiableGuilds) {
       // User has verifiable guilds, proceed to verification
@@ -117,12 +119,16 @@ export default function SignupWorkflowPage() {
     const membershipData = {
       guild: selectedGuild?.fullName || '',
       memberId: data.memberId || '',
-      validThrough: data.validThrough ? new Date(data.validThrough).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }) : '',
-      memberCardImage: data.memberCardFile ? URL.createObjectURL(data.memberCardFile) : '/images/ProfileCard.png',
+      validThrough: data.validThrough
+        ? new Date(data.validThrough).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : '',
+      memberCardImage: data.memberCardFile
+        ? URL.createObjectURL(data.memberCardFile)
+        : '/images/ProfileCard.png',
     };
     setSubmittedMembershipData(membershipData);
 
@@ -153,10 +159,10 @@ export default function SignupWorkflowPage() {
 
   const handleSummaryContinue = () => {
     setShowSummaryModal(false);
-    
+
     // Check if there are more guilds to verify
     const remainingUnverifiedGuilds = verifiableGuilds.filter((g) => !g.isVerified);
-    
+
     if (remainingUnverifiedGuilds.length > 0) {
       // More guilds to verify, go back to verification modal
       setShowVerificationModal(true);

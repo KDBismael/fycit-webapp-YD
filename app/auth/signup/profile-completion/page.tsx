@@ -58,14 +58,14 @@ export default function ProfileCompletion() {
   } = useForm<ProfileCompletionFormData>({
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
-      selectedGuild: 'AMPAS',
+      selectedGuild: [],
       viewEventsInLocals: 'los-angeles',
       myCountry: 'usa',
       zipPostalCode: '',
     },
   });
 
-  const selectedGuild = watch('selectedGuild');
+  const selectedGuilds = watch('selectedGuild');
 
   const onSubmit = async (data: ProfileCompletionFormData) => {
     try {
@@ -150,10 +150,10 @@ export default function ProfileCompletion() {
                   {/* Select Guild */}
                   <Stack gap="xs">
                     <Text size="sm" fw={500} c="gray.8">
-                      Select Guild
+                      Select Guilds
                     </Text>
                     <GuildSelector
-                      value={selectedGuild}
+                      value={selectedGuilds}
                       onChange={(value) => setValue('selectedGuild', value)}
                       error={errors.selectedGuild?.message}
                     />
@@ -174,8 +174,8 @@ export default function ProfileCompletion() {
                     }}
                   >
                     <Text size="sm" c="gray.7">
-                      Selecting organizations you are not a member of may prevent you from seeing
-                      some events
+                      Selecting guilds you are not a member of may prevent you from seeing some
+                      events
                     </Text>
                   </Alert>
 
@@ -185,7 +185,8 @@ export default function ProfileCompletion() {
                       View events in these locals
                     </Text>
                     <Select
-                      {...register('viewEventsInLocals')}
+                      value={watch('viewEventsInLocals')}
+                      onChange={(value) => setValue('viewEventsInLocals', value || '')}
                       data={localAreas}
                       placeholder="Select your local area"
                       error={errors.viewEventsInLocals?.message}
@@ -208,7 +209,8 @@ export default function ProfileCompletion() {
                       My Country
                     </Text>
                     <Select
-                      {...register('myCountry')}
+                      value={watch('myCountry')}
+                      onChange={(value) => setValue('myCountry', value || '')}
                       data={countries}
                       placeholder="Select your country"
                       error={errors.myCountry?.message}

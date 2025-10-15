@@ -116,7 +116,6 @@ export default function VerifyGuildsPage() {
           verifiableGuilds={verifiableGuilds}
           notVerifiableGuilds={notVerifiableGuilds}
           currentStep={currentStep}
-          totalSteps={3}
         />
       )}
 
@@ -150,8 +149,6 @@ export default function VerifyGuildsPage() {
           >
             <GuildVerificationForm
               selectedGuild={selectedGuild}
-              currentStep={currentStep}
-              totalSteps={3}
               onNext={handleVerificationFormNext}
               onBack={handleVerificationFormBack}
             />

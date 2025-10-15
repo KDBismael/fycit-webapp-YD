@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Box, Tabs } from '@mantine/core';
 import GuildsTab from '@/components/ProfileTabs/GuildsTab';
 import MyInfoTab from '@/components/ProfileTabs/MyInfoTab';
@@ -9,8 +8,8 @@ import classes from './ProfileTabs.module.css';
 
 export default function ProfilePage() {
   return (
-    <Tabs 
-      defaultValue="event-locales" 
+    <Tabs
+      defaultValue="my-info"
       color="brand"
       classNames={{
         root: classes.root,

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const profileCompletionSchema = z.object({
-  selectedGuild: z.string().min(1, 'Please select a guild'),
+  selectedGuild: z.array(z.string()).min(1, 'Please select at least one guild'),
   viewEventsInLocals: z.string().min(1, 'Please select your local area'),
   myCountry: z.string().min(1, 'Please select your country'),
   zipPostalCode: z

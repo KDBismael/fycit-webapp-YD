@@ -20,6 +20,7 @@ import {
   ProfileCompletionFormData,
   profileCompletionSchema,
 } from '../../validation/profile-completion.validation';
+import { GuildSelector } from './GuildSelector';
 
 interface AwardsSeasonModalProps {
   opened: boolean;
@@ -60,7 +61,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
   } = useForm<ProfileCompletionFormData>({
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
-      selectedGuild: 'AMPAS',
+      selectedGuild: ['AMPAS'],
       viewEventsInLocals: 'los-angeles',
       myCountry: 'usa',
       zipPostalCode: '',
@@ -98,7 +99,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
         <Stack gap="md">
           {/* Header with Logo and Close Button */}
           <Group justify="center" w="100%">
-            <Group gap="sm" justify="center" >
+            <Group gap="sm" justify="center">
               <Image src="/logo.svg" alt="FYCit Logo" width={32} height={32} />
             </Group>
             {/* <Button
@@ -138,32 +139,10 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
               <Text size="sm" fw={600} c="gray.9">
                 Select Guild
               </Text>
-              <Select
+              <GuildSelector
                 value={selectedGuild}
-                onChange={(value) => setValue('selectedGuild', value || '')}
-                data={[
-                  { value: 'AMPAS', label: 'AMPAS - Motion Picture Academy' },
-                  { value: 'ADG', label: 'ADG - Art Directors Guild' },
-                  { value: 'ASC', label: 'ASC - American Society of Cinematographers' },
-                  { value: 'ASIFA', label: 'ASIFA - International Animated Film Association' },
-                  { value: 'WGA', label: 'WGA - Writers Guild of America' },
-                  { value: 'SAG', label: 'SAG - Screen Actors Guild' },
-                  { value: 'DGA', label: 'DGA - Directors Guild of America' },
-                ]}
-                placeholder="Select a guild"
+                onChange={(value) => setValue('selectedGuild', value)}
                 error={errors.selectedGuild?.message}
-                radius="md"
-                size="sm"
-                styles={{
-                  input: {
-                    backgroundColor: '#F9FAFB',
-                    borderColor: '#E5E7EB',
-                    '&:focus': {
-                      borderColor: 'var(--mantine-color-brand-8)',
-                      backgroundColor: 'white',
-                    },
-                  },
-                }}
               />
             </Stack>
 
