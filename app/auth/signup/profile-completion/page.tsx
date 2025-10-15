@@ -19,6 +19,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { EventLocalesSelector } from '../../../../components/auth/EventLocalesSelector';
 import { GuildSelector } from '../../../../components/auth/GuildSelector';
 import {
   ProfileCompletionFormData,
@@ -59,7 +60,7 @@ export default function ProfileCompletion() {
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
       selectedGuild: [],
-      viewEventsInLocals: 'los-angeles',
+      viewEventsInLocals: ['los-angeles'],
       myCountry: 'usa',
       zipPostalCode: '',
     },
@@ -184,22 +185,10 @@ export default function ProfileCompletion() {
                     <Text size="sm" fw={500} c="gray.8">
                       View events in these locals
                     </Text>
-                    <Select
+                    <EventLocalesSelector
                       value={watch('viewEventsInLocals')}
-                      onChange={(value) => setValue('viewEventsInLocals', value || '')}
-                      data={localAreas}
-                      placeholder="Select your local area"
+                      onChange={(value) => setValue('viewEventsInLocals', value)}
                       error={errors.viewEventsInLocals?.message}
-                      radius="md"
-                      size="md"
-                      styles={{
-                        input: {
-                          borderColor: 'var(--mantine-color-gray-3)',
-                          '&:focus': {
-                            borderColor: 'var(--mantine-color-brand-8)',
-                          },
-                        },
-                      }}
                     />
                   </Stack>
 

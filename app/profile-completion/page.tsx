@@ -18,6 +18,7 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import { EventLocalesSelector } from '../../components/auth/EventLocalesSelector';
 import { GuildSelector } from '../../components/auth/GuildSelector';
 import {
   ProfileCompletionFormData,
@@ -25,14 +26,6 @@ import {
 } from '../../validation/profile-completion.validation';
 
 const IMAGE_SIZE = 40;
-
-const localeOptions = [
-  { value: 'los-angeles', label: 'Los Angeles, CA' },
-  { value: 'new-york', label: 'New York, NY' },
-  { value: 'london', label: 'London, UK' },
-  { value: 'paris', label: 'Paris, France' },
-  { value: 'toronto', label: 'Toronto, Canada' },
-];
 
 const countryOptions = [
   { value: 'usa', label: 'USA' },
@@ -54,7 +47,7 @@ export default function ProfileCompletion() {
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
       selectedGuild: [],
-      viewEventsInLocals: 'los-angeles',
+      viewEventsInLocals: ['los-angeles'],
       myCountry: 'usa',
       zipPostalCode: '90210',
     },
@@ -166,19 +159,10 @@ export default function ProfileCompletion() {
                       <Text size="sm" fw={500} c="gray.8">
                         View events in these locale
                       </Text>
-                      <Select
-                        data={localeOptions}
+                      <EventLocalesSelector
                         value={watch('viewEventsInLocals')}
-                        onChange={(value) => setValue('viewEventsInLocals', value || '')}
-                        placeholder="Select a locale"
+                        onChange={(value) => setValue('viewEventsInLocals', value)}
                         error={errors.viewEventsInLocals?.message}
-                        radius="md"
-                        size="sm"
-                        styles={{
-                          input: {
-                            borderColor: 'var(--mantine-color-gray-4)',
-                          },
-                        }}
                       />
                     </Stack>
 

@@ -20,6 +20,7 @@ import {
   ProfileCompletionFormData,
   profileCompletionSchema,
 } from '../../validation/profile-completion.validation';
+import { EventLocalesSelector } from './EventLocalesSelector';
 import { GuildSelector } from './GuildSelector';
 
 interface AwardsSeasonModalProps {
@@ -29,14 +30,6 @@ interface AwardsSeasonModalProps {
 }
 
 // Mock data for dropdowns
-const localAreas = [
-  { value: 'los-angeles', label: 'Los Angeles, CA' },
-  { value: 'new-york', label: 'New York, NY' },
-  { value: 'chicago', label: 'Chicago, IL' },
-  { value: 'atlanta', label: 'Atlanta, GA' },
-  { value: 'miami', label: 'Miami, FL' },
-  { value: 'san-francisco', label: 'San Francisco, CA' },
-];
 
 const countries = [
   { value: 'usa', label: 'USA' },
@@ -62,7 +55,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
       selectedGuild: ['AMPAS'],
-      viewEventsInLocals: 'los-angeles',
+      viewEventsInLocals: ['los-angeles'],
       myCountry: 'usa',
       zipPostalCode: '',
     },
@@ -174,24 +167,10 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
               <Text size="sm" fw={600} c="gray.9">
                 View events in these locals
               </Text>
-              <Select
+              <EventLocalesSelector
                 value={viewEventsInLocals}
-                onChange={(value) => setValue('viewEventsInLocals', value || '')}
-                data={localAreas}
-                placeholder="Select your local area"
+                onChange={(value) => setValue('viewEventsInLocals', value)}
                 error={errors.viewEventsInLocals?.message}
-                radius="md"
-                size="sm"
-                styles={{
-                  input: {
-                    backgroundColor: '#F9FAFB',
-                    borderColor: '#E5E7EB',
-                    '&:focus': {
-                      borderColor: 'var(--mantine-color-brand-8)',
-                      backgroundColor: 'white',
-                    },
-                  },
-                }}
               />
             </Stack>
 
