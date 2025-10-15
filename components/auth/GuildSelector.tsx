@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MultiSelect } from '@mantine/core';
+import { Checkbox, Group, MultiSelect, Text } from '@mantine/core';
 
 export interface Guild {
   id: string;
@@ -56,10 +56,27 @@ export const GuildSelector: React.FC<GuildSelectorProps> = ({
       size="md"
       searchable
       clearable
-      checkIconPosition="left"
-      withCheckIcon
+      withCheckIcon={false}
       hidePickedOptions={false}
       nothingFoundMessage="No guild found"
+      renderOption={({ option, checked }) => (
+        <Group gap="sm" wrap="nowrap">
+          <Checkbox
+            checked={checked}
+            onChange={() => {}}
+            tabIndex={-1}
+            color="green"
+            // styles={{
+            //   input: {
+            //     cursor: 'pointer',
+            //     backgroundColor: checked ? '#A98D34' : 'transparent',
+            //     borderColor: checked ? '#A98D34' : '#D1D5DB',
+            //   },
+            // }}
+          />
+          <Text>{option.label}</Text>
+        </Group>
+      )}
       styles={{
         input: {
           borderColor: 'var(--mantine-color-gray-3)',
@@ -67,17 +84,16 @@ export const GuildSelector: React.FC<GuildSelectorProps> = ({
             borderColor: '#A98D34',
           },
         },
+        dropdown: {
+          backgroundColor: '#ECECB8',
+        },
         option: {
+          backgroundColor: 'transparent',
           '&[data-checked]': {
-            backgroundColor: '#D4B75C',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#A98D34',
-            },
+            backgroundColor: 'rgba(169, 141, 52, 0.1)',
           },
-          '&[data-selected]': {
-            backgroundColor: '#D4B75C',
-            color: 'white',
+          '&:hover': {
+            backgroundColor: 'rgba(169, 141, 52, 0.15)',
           },
         },
         pill: {
