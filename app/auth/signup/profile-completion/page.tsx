@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconExclamationMark } from '@tabler/icons-react';
@@ -25,19 +26,47 @@ import {
   ProfileCompletionFormData,
   profileCompletionSchema,
 } from '../../../../validation/profile-completion.validation';
+import { useAuthStore } from '../../../../stores/authStore';
+import { WelcomeModal } from '../../../../components/auth/WelcomeModal';
+import { GuildVerificationModal } from '../../../../components/auth/GuildVerificationModal';
+import { GuildVerificationForm } from '../../../../components/auth/GuildVerificationForm';
+import { MembershipSummaryModal } from '../../../../components/auth/MembershipSummaryModal';
 
 const IMAGE_SIZE = 60;
 
-// Mock data for dropdowns
-const localAreas = [
-  { value: 'los-angeles', label: 'Los Angeles, CA' },
-  { value: 'new-york', label: 'New York, NY' },
-  { value: 'chicago', label: 'Chicago, IL' },
-  { value: 'atlanta', label: 'Atlanta, GA' },
-  { value: 'miami', label: 'Miami, FL' },
-  { value: 'san-francisco', label: 'San Francisco, CA' },
+interface Guild {
+  id: string;
+  name: string;
+  fullName: string;
+  isVerifiable: boolean;
+  isVerified?: boolean;
+}
+
+// Mock data - replace with actual data from context/API
+const mockGuilds: Guild[] = [
+  {
+    id: 'AMPAS',
+    name: 'AMPAS',
+    fullName: 'AMPAS - Motion Picture Academy',
+    isVerifiable: true,
+    isVerified: false,
+  },
+  {
+    id: 'ADG',
+    name: 'ADG',
+    fullName: 'ADG - Art Directors Guild',
+    isVerifiable: true,
+    isVerified: true,
+  },
+  {
+    id: 'ASC',
+    name: 'ASC',
+    fullName: 'ASC - American Society of Cinematographers',
+    isVerifiable: false,
+  },
 ];
 
+// Mock data for dropdowns
 const countries = [
   { value: 'usa', label: 'USA' },
   { value: 'canada', label: 'Canada' },
@@ -49,6 +78,22 @@ const countries = [
 
 export default function ProfileCompletion() {
   const router = useRouter();
+  const { authContext, isEmailVerified, resetAuthStore } = useAuthStore();
+
+  // Modal states
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+
+  // Workflow state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [_profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
+  const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
+  const [submittedMembershipData, setSubmittedMembershipData] = useState<any>(null);
+
+  const verifiableGuilds = mockGuilds.filter((guild) => guild.isVerifiable);
+  const notVerifiableGuilds = mockGuilds.filter((guild) => !guild.isVerifiable);
 
   const {
     register,
@@ -66,17 +111,137 @@ export default function ProfileCompletion() {
     },
   });
 
-  const selectedGuilds = watch('selectedGuild');
+  const selectedGuildsForm = watch('selectedGuild');
+
+  // Route protection: redirect if not signup context or email not verified
+  useEffect(() => {
+    if (authContext !== 'signup' || !isEmailVerified) {
+      router.push('/auth/login');
+    }
+  }, [authContext, isEmailVerified, router]);
 
   const onSubmit = async (data: ProfileCompletionFormData) => {
     try {
+      // eslint-disable-next-line no-console
       console.log('Profile completion data:', data);
 
-      // Redirect to the new unified workflow
-      router.push('/auth/signup/workflow');
+      // Store profile data
+      setProfileData(data);
+
+      // Check if user has verifiable guilds
+      const selectedGuilds = data.selectedGuild;
+      const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
+      const hasVerifiableGuilds = selectedGuilds.some((guildId) =>
+        verifiableGuildIds.includes(guildId)
+      );
+
+      if (hasVerifiableGuilds) {
+        // User has verifiable guilds, show welcome modal first
+        setShowWelcomeModal(true);
+      } else {
+        // No verifiable guilds, go directly to dashboard
+        resetAuthStore();
+        router.push('/dashboard');
+      }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Profile completion error:', error);
     }
+  };
+
+  // Welcome Modal Handlers
+  const handleWelcomeStart = () => {
+    setShowWelcomeModal(false);
+    setShowVerificationModal(true);
+  };
+
+  const handleWelcomeSkip = () => {
+    setShowWelcomeModal(false);
+    resetAuthStore();
+    router.push('/dashboard');
+  };
+
+  // Guild Verification Modal Handlers
+  const handleVerificationModalNext = () => {
+    if (verifiableGuilds.length > 0 && !verifiableGuilds.every((g) => g.isVerified)) {
+      setShowVerificationModal(false);
+      setShowVerificationForm(true);
+      const firstUnverifiedGuild = verifiableGuilds.find((g) => !g.isVerified);
+      if (firstUnverifiedGuild) {
+        setSelectedGuild(firstUnverifiedGuild);
+      }
+    } else {
+      setCurrentStep(2);
+      handleCompleteVerification();
+    }
+  };
+
+  const handleVerificationFormNext = (data: any) => {
+    // eslint-disable-next-line no-console
+    console.log('Verification data submitted:', data);
+
+    const membershipData = {
+      guild: selectedGuild?.fullName || '',
+      memberId: data.memberId || '',
+      validThrough: data.validThrough
+        ? new Date(data.validThrough).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })
+        : '',
+      memberCardImage: data.memberCardFile
+        ? URL.createObjectURL(data.memberCardFile)
+        : '/images/ProfileCard.png',
+    };
+    setSubmittedMembershipData(membershipData);
+
+    if (selectedGuild) {
+      const updatedGuilds = mockGuilds.map((guild) =>
+        guild.id === selectedGuild.id ? { ...guild, isVerified: true } : guild
+      );
+      // eslint-disable-next-line no-console
+      console.log('Updated guilds:', updatedGuilds);
+    }
+
+    setShowVerificationForm(false);
+    setShowSummaryModal(true);
+  };
+
+  const handleVerificationFormBack = () => {
+    setShowVerificationForm(false);
+    setShowVerificationModal(true);
+  };
+
+  // Summary Modal Handlers
+  const handleSummaryGoToDashboard = () => {
+    setShowSummaryModal(false);
+    resetAuthStore();
+    router.push('/dashboard');
+  };
+
+  const handleSummaryContinue = () => {
+    setShowSummaryModal(false);
+
+    const remainingUnverifiedGuilds = verifiableGuilds.filter((g) => !g.isVerified);
+
+    if (remainingUnverifiedGuilds.length > 0) {
+      setShowVerificationModal(true);
+    } else {
+      handleCompleteVerification();
+    }
+  };
+
+  const handleCompleteVerification = () => {
+    // eslint-disable-next-line no-console
+    console.log('All verification completed!');
+    resetAuthStore();
+    router.push('/dashboard');
+  };
+
+  const handleModalClose = () => {
+    resetAuthStore();
+    router.push('/dashboard');
   };
 
   return (
@@ -154,7 +319,7 @@ export default function ProfileCompletion() {
                       Select Guilds
                     </Text>
                     <GuildSelector
-                      value={selectedGuilds}
+                      value={selectedGuildsForm}
                       onChange={(value) => setValue('selectedGuild', value)}
                       error={errors.selectedGuild?.message}
                     />
@@ -258,6 +423,72 @@ export default function ProfileCompletion() {
           </Box>
         </Grid.Col>
       </Grid>
+
+      {/* Welcome Modal */}
+      <WelcomeModal
+        opened={showWelcomeModal}
+        onClose={handleModalClose}
+        onStartVerification={handleWelcomeStart}
+        onSkip={handleWelcomeSkip}
+      />
+
+      {/* Guild Verification Modal */}
+      <GuildVerificationModal
+        opened={showVerificationModal}
+        onClose={handleModalClose}
+        onNext={handleVerificationModalNext}
+        verifiableGuilds={verifiableGuilds}
+        notVerifiableGuilds={notVerifiableGuilds}
+        currentStep={currentStep}
+      />
+
+      {/* Guild Verification Form */}
+      {showVerificationForm && selectedGuild && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '2rem',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 'var(--mantine-radius-md)',
+              padding: '2rem',
+              maxWidth: '900px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <GuildVerificationForm
+              selectedGuild={selectedGuild}
+              onNext={handleVerificationFormNext}
+              onBack={handleVerificationFormBack}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Membership Summary Modal */}
+      {showSummaryModal && submittedMembershipData && (
+        <MembershipSummaryModal
+          opened={showSummaryModal}
+          onClose={handleModalClose}
+          onGoToDashboard={handleSummaryGoToDashboard}
+          onContinue={handleSummaryContinue}
+          membershipData={submittedMembershipData}
+        />
+      )}
     </Container>
   );
 }

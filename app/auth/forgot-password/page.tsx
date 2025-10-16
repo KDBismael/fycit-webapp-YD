@@ -23,11 +23,13 @@ import {
   ForgotPasswordFormData,
   forgotPasswordSchema,
 } from '../../../validation/forgot-password.validation';
+import { useAuthStore } from '../../../stores/authStore';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function ForgotPassword() {
+  const { setAuthContext } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -40,9 +42,16 @@ export default function ForgotPassword() {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      console.log('Forgot password data:', data);
+      // Set auth context to 'password-reset' with email
+      setAuthContext('password-reset', data.email);
+
+      // Navigate to verify account
       router.push('/auth/verify-account');
+      
+      // eslint-disable-next-line no-console
+      console.log('Forgot password data:', data);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Forgot password error:', error);
     }
   };

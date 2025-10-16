@@ -21,11 +21,13 @@ import {
   Title,
 } from '@mantine/core';
 import { SignupFormData, signupSchema } from '../../../validation/signup.validation';
+import { useAuthStore } from '../../../stores/authStore';
 
 const ICON_SIZE = 18;
 
 export default function Signup() {
   const router = useRouter();
+  const { setSignupData, setAuthContext } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -55,9 +57,24 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
+      // Store signup data in Zustand
+      setSignupData({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      });
+
+      // Set auth context to 'signup' with email
+      setAuthContext('signup', data.email);
+
+      // Navigate to verify account
       router.push('/auth/verify-account');
+      
+      // eslint-disable-next-line no-console
       console.log('Signup data:', data);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Signup error:', error);
     }
   };

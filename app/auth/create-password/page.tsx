@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconLock } from '@tabler/icons-react';
 import Lottie from 'lottie-react';
@@ -26,12 +27,15 @@ import {
   CreatePasswordFormData,
   createPasswordSchema,
 } from '../../../validation/create-password.validation';
+import { useAuthStore } from '../../../stores/authStore';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function CreatePassword() {
   const [opened, setOpened] = useState(false);
+  const router = useRouter();
+  const { authContext, resetAuthStore } = useAuthStore();
 
   const {
     register,
@@ -55,13 +59,29 @@ export default function CreatePassword() {
     },
   ];
 
+  // Route protection: redirect if not password-reset context
+  useEffect(() => {
+    if (authContext !== 'password-reset') {
+      router.push('/auth/login');
+    }
+  }, [authContext, router]);
+
   const onSubmit = async (data: CreatePasswordFormData) => {
     try {
+      // eslint-disable-next-line no-console
       console.log('Create password data:', data);
       setOpened(true);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Create password error:', error);
     }
+  };
+
+  const handleModalContinue = () => {
+    setOpened(false);
+    // Reset auth store and navigate to login
+    resetAuthStore();
+    router.push('/auth/login');
   };
 
   return (
@@ -248,7 +268,7 @@ export default function CreatePassword() {
                 backgroundColor: '#B89A1A',
               },
             }}
-            onClick={() => setOpened(false)}
+            onClick={handleModalContinue}
           >
             Continue
           </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { AwardsSeasonModal } from '../../../../components/auth/AwardsSeasonModal';
 import { GuildVerificationForm } from '../../../../components/auth/GuildVerificationForm';
@@ -8,6 +8,7 @@ import { GuildVerificationModal } from '../../../../components/auth/GuildVerific
 import { MembershipSummaryModal } from '../../../../components/auth/MembershipSummaryModal';
 import { WelcomeModal } from '../../../../components/auth/WelcomeModal';
 import { ProfileCompletionFormData } from '../../../../validation/profile-completion.validation';
+import { useAuthStore } from '../../../../stores/authStore';
 
 interface Guild {
   id: string;
@@ -43,6 +44,7 @@ const mockGuilds: Guild[] = [
 
 export default function SignupWorkflowPage() {
   const router = useRouter();
+  const { authContext, isEmailVerified, resetAuthStore } = useAuthStore();
 
   // Modal states
   const [showWelcomeModal, setShowWelcomeModal] = useState(true);
@@ -59,6 +61,13 @@ export default function SignupWorkflowPage() {
 
   const verifiableGuilds = mockGuilds.filter((guild) => guild.isVerifiable);
   const notVerifiableGuilds = mockGuilds.filter((guild) => !guild.isVerifiable);
+
+  // Route protection: redirect if not signup context or email not verified
+  useEffect(() => {
+    if (authContext !== 'signup' || !isEmailVerified) {
+      router.push('/auth/login');
+    }
+  }, [authContext, isEmailVerified, router]);
 
   // Welcome Modal Handlers
   const handleWelcomeStart = () => {
@@ -173,9 +182,10 @@ export default function SignupWorkflowPage() {
   };
 
   const handleCompleteVerification = () => {
-    // All verification steps completed, redirect to dashboard
+    // All verification steps completed, reset auth store and redirect to dashboard
     // eslint-disable-next-line no-console
     console.log('All verification completed!');
+    resetAuthStore();
     router.push('/dashboard');
   };
 

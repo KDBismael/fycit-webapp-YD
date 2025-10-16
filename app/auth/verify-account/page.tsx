@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -23,11 +23,14 @@ import {
   VerifyAccountFormData,
   verifyAccountSchema,
 } from '../../../validation/verify-account.validation';
+import { useAuthStore } from '../../../stores/authStore';
 
 const IMAGE_SIZE = 60;
 
 export default function VerifyAccount() {
   const [otpValue, setOtpValue] = useState('');
+  const router = useRouter();
+  const { authContext, verificationEmail, setEmailVerified, setOtpCode } = useAuthStore();
 
   const {
     handleSubmit,
@@ -40,12 +43,30 @@ export default function VerifyAccount() {
     },
   });
 
-  const router = useRouter();
+  // Route protection: redirect if no auth context
+  useEffect(() => {
+    if (!authContext || !verificationEmail) {
+      router.push('/auth/login');
+    }
+  }, [authContext, verificationEmail, router]);
+
   const onSubmit = async (data: VerifyAccountFormData) => {
     try {
+      // eslint-disable-next-line no-console
       console.log('Verify account data:', data);
-      router.push('/auth/create-password');
+      
+      // Store OTP and mark email as verified
+      setOtpCode(data.code);
+      setEmailVerified(true);
+
+      // Route based on context
+      if (authContext === 'signup') {
+        router.push('/auth/signup/profile-completion');
+      } else if (authContext === 'password-reset') {
+        router.push('/auth/create-password');
+      }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Verify account error:', error);
     }
   };
@@ -101,10 +122,13 @@ export default function VerifyAccount() {
               <Stack gap="lg">
                 <Stack gap="xs" align="center">
                   <Title order={1} size="h2" ta="center" c="gray.9">
-                    Verifying Your Account
+                    {authContext === 'signup' ? 'Verifying Your Account' : 'Verify Your Email'}
                   </Title>
                   <Text size="sm" c="gray.6" ta="center">
-                    Enter the just sent you 4 digit code that we have sent to your email.
+                    Enter the 4 digit code that we have sent to{' '}
+                    <Text component="span" fw={600}>
+                      {verificationEmail}
+                    </Text>
                   </Text>
                 </Stack>
 
