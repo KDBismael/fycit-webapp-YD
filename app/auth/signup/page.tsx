@@ -55,7 +55,7 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      router.push('/auth/2fa');
+      router.push('/auth/verify-account');
       console.log('Signup data:', data);
     } catch (error) {
       console.error('Signup error:', error);
