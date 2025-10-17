@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import {
   Alert,
   Button,
+  Checkbox,
   Group,
   Image,
   Modal,
@@ -223,6 +224,19 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 }}
               />
             </Stack>
+
+            {/* Auto View New Locales Checkbox */}
+            <Checkbox
+              label="Automatically view events in newly added locales"
+              {...register('autoViewNewLocales')}
+              mt="sm"
+              styles={{
+                label: {
+                  fontSize: 'var(--mantine-font-size-sm)',
+                  fontWeight: 500,
+                },
+              }}
+            />
           </Stack>
 
           {/* Action Button */}

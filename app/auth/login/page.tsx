@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {  IconLock, IconMail } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
@@ -21,11 +22,25 @@ import {
   Title,
 } from '@mantine/core';
 import { LoginFormData, loginSchema } from '../../../validation/login.validation';
+import { useUserStore } from '../../../stores/userStore';
+import { AwardsSeasonModal } from '../../../components/auth/AwardsSeasonModal';
+import { GuildConfirmationModal } from '../../../components/auth/GuildConfirmationModal';
+import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
+import { ProfileCompletionFormData } from '../../../validation/profile-completion.validation';
 
 const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function Login() {
+  const router = useRouter();
+  const { setAwards26Viewed, setUserGuilds, setAutoViewNewLocales } = useUserStore();
+  
+  // Modal states
+  const [showAwardsModal, setShowAwardsModal] = useState(false);
+  const [showGuildConfirmation, setShowGuildConfirmation] = useState(false);
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -36,10 +51,83 @@ export default function Login() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
+      // Simulate login API call
       console.log('Login data:', data);
+      
+      // FOR TESTING: Randomly assign IsAwards26Viewed (50% chance)
+      const randomIsAwards26Viewed = Math.random() > 0.5;
+      
+      // Check if user has viewed Awards 2026
+      if (randomIsAwards26Viewed) {
+        // User has already seen Awards 2026 flow
+        setAwards26Viewed(true);
+        router.push('/dashboard');
+      } else {
+        // User needs to go through Awards 2026 flow
+        setShowAwardsModal(true);
+      }
     } catch (error) {
       console.error('Login error:', error);
     }
+  };
+
+  const handleAwardsNext = (data: ProfileCompletionFormData) => {
+    setProfileData(data);
+    setUserGuilds(data.selectedGuild);
+    setAutoViewNewLocales(data.autoViewNewLocales || false);
+    setShowAwardsModal(false);
+    setShowGuildConfirmation(true);
+  };
+
+  const handleGuildConfirmationContinue = () => {
+    setShowGuildConfirmation(false);
+    // Check if user has verifiable guilds
+    const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
+    const hasVerifiableGuilds = profileData?.selectedGuild.some((guildId) =>
+      verifiableGuildIds.includes(guildId)
+    );
+    
+    if (hasVerifiableGuilds) {
+      setShowVerificationForm(true);
+    } else {
+      completeOnboarding();
+    }
+  };
+
+  const completeOnboarding = () => {
+    setAwards26Viewed(true);
+    router.push('/dashboard');
+  };
+
+  // Helper functions
+  const getSelectedGuilds = (data: ProfileCompletionFormData | null) => {
+    if (!data) return [];
+    
+    const guildOptions = [
+      { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true },
+      { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true },
+      { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
+    ];
+    
+    return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
+  };
+
+  const getFirstVerifiableGuild = (data: ProfileCompletionFormData | null) => {
+    if (!data) return null;
+    
+    const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
+    const firstVerifiable = data.selectedGuild.find(guildId => verifiableGuildIds.includes(guildId));
+    
+    if (firstVerifiable) {
+      return {
+        id: firstVerifiable,
+        name: firstVerifiable,
+        fullName: `${firstVerifiable} - Guild Name`,
+        isVerifiable: true,
+      };
+    }
+    
+    return null;
   };
 
   return (
@@ -156,6 +244,62 @@ export default function Login() {
           </Center>
         </Grid.Col>
       </Grid>
+
+      {/* Awards Season Modal */}
+      <AwardsSeasonModal 
+        opened={showAwardsModal}
+        onClose={() => setShowAwardsModal(false)}
+        onNext={handleAwardsNext}
+      />
+      
+      {/* Guild Confirmation Modal */}
+      <GuildConfirmationModal
+        opened={showGuildConfirmation}
+        onClose={() => setShowGuildConfirmation(false)}
+        onContinue={handleGuildConfirmationContinue}
+        onEditGuilds={() => {
+          setShowGuildConfirmation(false);
+          setShowAwardsModal(true);
+        }}
+        selectedGuilds={getSelectedGuilds(profileData)}
+      />
+      
+      {/* Guild Verification Form (skip Good News modal) */}
+      {showVerificationForm && getFirstVerifiableGuild(profileData) && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '2rem',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 'var(--mantine-radius-md)',
+              padding: '2rem',
+              maxWidth: '900px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <GuildVerificationForm
+              selectedGuild={getFirstVerifiableGuild(profileData)!}
+              onNext={completeOnboarding}
+              onBack={() => setShowVerificationForm(false)}
+            />
+          </div>
+        </div>
+      )}
     </Container>
   );
 }

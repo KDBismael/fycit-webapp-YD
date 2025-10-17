@@ -13,6 +13,7 @@ export const profileCompletionSchema = z.object({
       } // Optional field
       return val.length >= 3 && val.length <= 10;
     }, 'Zip/Postal code must be between 3 and 10 characters'),
+  autoViewNewLocales: z.boolean().optional(),
 });
 
 export type ProfileCompletionFormData = z.infer<typeof profileCompletionSchema>;
