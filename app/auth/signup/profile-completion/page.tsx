@@ -286,9 +286,10 @@ export default function ProfileCompletion() {
               height: '100vh',
               backgroundColor: 'white',
               display: 'flex',
-              alignItems: 'center',
+              alignItems: 'flex-start',
               justifyContent: 'center',
               padding: '2rem',
+              overflowY: 'auto',
             }}
           >
             <Stack gap="xl" style={{ maxWidth: '500px', width: '100%' }}>
@@ -298,9 +299,6 @@ export default function ProfileCompletion() {
                   <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
                 </Group>
                 <Stack gap="xs" align="center">
-                  <Text size="sm" c="gray.6" ta="center" fw={500}>
-                    AWARDS SEASON STARTS HERE
-                  </Text>
                   <Title order={1} size="h2" ta="center" c="gray.9" fw={700}>
                     Profile Completion
                   </Title>

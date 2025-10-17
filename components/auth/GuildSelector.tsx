@@ -38,6 +38,7 @@ const guildOptions: GuildOption[] = [
   { value: 'CAS', label: 'CAS - Cinema Audio Society' },
 ];
 
+
 export const GuildSelector: React.FC<GuildSelectorProps> = ({
   value = [],
   onChange,
@@ -47,64 +48,64 @@ export const GuildSelector: React.FC<GuildSelectorProps> = ({
 }) => {
   return (
     <MultiSelect
-      value={value}
-      onChange={onChange}
-      data={data}
-      placeholder={placeholder}
-      error={error}
-      radius="md"
-      size="md"
-      searchable
-      clearable
-      withCheckIcon={false}
-      hidePickedOptions={false}
-      nothingFoundMessage="No guild found"
-      renderOption={({ option, checked }) => (
-        <Group gap="sm" wrap="nowrap">
-          <Checkbox
-            checked={checked}
-            onChange={() => {}}
-            tabIndex={-1}
-            color="green"
-            // styles={{
-            //   input: {
-            //     cursor: 'pointer',
-            //     backgroundColor: checked ? '#A98D34' : 'transparent',
-            //     borderColor: checked ? '#A98D34' : '#D1D5DB',
-            //   },
-            // }}
-          />
-          <Text>{option.label}</Text>
-        </Group>
-      )}
-      styles={{
-        input: {
-          borderColor: 'var(--mantine-color-gray-3)',
-          '&:focus': {
-            borderColor: '#A98D34',
+        value={value}
+        onChange={onChange}
+        data={data}
+        placeholder={placeholder}
+        error={error}
+        radius="md"
+        size="md"
+        searchable
+        clearable
+        withCheckIcon={false}
+        hidePickedOptions={false}
+        nothingFoundMessage="No guild found"
+        renderOption={({ option }) => {
+          const isChecked = value.includes(option.value);
+          return (
+            <Group gap="sm" wrap="nowrap">
+              <Checkbox
+                checked={isChecked}
+                onChange={() => {}}
+                tabIndex={-1}
+                color="green"
+              />
+              <Text>{option.label}</Text>
+            </Group>
+          );
+        }}
+        styles={{
+          input: {
+            borderColor: 'var(--mantine-color-gray-3)',
+            '&:focus': {
+              borderColor: '#A98D34',
+            },
           },
-        },
-        dropdown: {
-          backgroundColor: '#ECECB8',
-        },
-        option: {
-          backgroundColor: 'transparent',
-          '&[data-checked]': {
-            backgroundColor: 'rgba(169, 141, 52, 0.1)',
+          dropdown: {
+            backgroundColor: '#ECECB8',
           },
-          '&:hover': {
-            backgroundColor: 'rgba(169, 141, 52, 0.15)',
+          option: {
+            backgroundColor: 'transparent',
+            '&[data-checked]': {
+              backgroundColor: 'rgba(169, 141, 52, 0.1)',
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(169, 141, 52, 0.15)',
+            },
           },
-        },
-        pill: {
-          backgroundColor: '#A98D34',
-          color: 'white',
-          border: 'none',
-          '&:hover': {
+          pill: {
             backgroundColor: '#A98D34',
+            color: 'white',
+            border: 'none',
+            '&:hover': {
+              backgroundColor: '#A98D34',
+            },
           },
-        },
-      }}
-    />
+          pillsList: {
+            flexWrap: 'wrap',
+            maxWidth: '100%',
+          },
+        }}
+      />
   );
 };

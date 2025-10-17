@@ -57,6 +57,7 @@ export const EventLocalesSelector: React.FC<EventLocalesSelectorProps> = ({
   error,
   placeholder = 'Select locales',
 }) => {
+
   // Helper function to get all children recursively
   const getAllChildren = (parentValue: string): string[] => {
     const directChildren = localesData
@@ -106,8 +107,9 @@ export const EventLocalesSelector: React.FC<EventLocalesSelectorProps> = ({
       withCheckIcon={false}
       hidePickedOptions={false}
       nothingFoundMessage="No locale found"
-      renderOption={({ option, checked }) => {
+      renderOption={({ option }) => {
         const locale = localesData.find((l) => l.value === option.value);
+        const isChecked = value.includes(option.value);
 
         return (
           <Group
@@ -117,30 +119,30 @@ export const EventLocalesSelector: React.FC<EventLocalesSelectorProps> = ({
               paddingLeft: `${(locale?.level || 0) * 20}px`,
             }}
           >
-            <Checkbox checked={checked} onChange={() => {}} tabIndex={-1} color="green" />
+            <Checkbox checked={isChecked} onChange={() => {}} tabIndex={-1} color="green" />
             <Text>{option.label}</Text>
           </Group>
         );
       }}
       styles={{
-        input: {
-          borderColor: 'var(--mantine-color-gray-3)',
-          '&:focus': {
-            borderColor: '#A98D34',
+          input: {
+            borderColor: 'var(--mantine-color-gray-3)',
+            '&:focus': {
+              borderColor: '#A98D34',
+            },
           },
-        },
-        dropdown: {
-          backgroundColor: '#ECECB8',
-        },
-        option: {
-          backgroundColor: 'transparent',
-          '&[data-checked]': {
-            backgroundColor: 'rgba(169, 141, 52, 0.1)',
+          dropdown: {
+            backgroundColor: '#ECECB8',
           },
-          '&:hover': {
-            backgroundColor: 'rgba(169, 141, 52, 0.15)',
+          option: {
+            backgroundColor: 'transparent',
+            '&[data-checked]': {
+              backgroundColor: 'rgba(169, 141, 52, 0.1)',
+            },
+            '&:hover': {
+              backgroundColor: 'rgba(169, 141, 52, 0.15)',
+            },
           },
-        },
         pill: {
           backgroundColor: '#A98D34',
           color: 'white',
@@ -148,6 +150,10 @@ export const EventLocalesSelector: React.FC<EventLocalesSelectorProps> = ({
           '&:hover': {
             backgroundColor: '#A98D34',
           },
+        },
+        pillsList: {
+          flexWrap: 'wrap',
+          maxWidth: '100%',
         },
       }}
     />
