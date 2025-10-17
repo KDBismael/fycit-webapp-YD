@@ -25,6 +25,7 @@ import { LoginFormData, loginSchema } from '../../../validation/login.validation
 import { useUserStore } from '../../../stores/userStore';
 import { AwardsSeasonModal } from '../../../components/auth/AwardsSeasonModal';
 import { GuildConfirmationModal } from '../../../components/auth/GuildConfirmationModal';
+import { GuildVerificationModal } from '../../../components/auth/GuildVerificationModal';
 import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
 import { ProfileCompletionFormData } from '../../../validation/profile-completion.validation';
 
@@ -38,6 +39,7 @@ export default function Login() {
   // Modal states
   const [showAwardsModal, setShowAwardsModal] = useState(false);
   const [showGuildConfirmation, setShowGuildConfirmation] = useState(false);
+  const [showGoodNewsModal, setShowGoodNewsModal] = useState(false);
   const [showVerificationForm, setShowVerificationForm] = useState(false);
   const [profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
 
@@ -88,10 +90,16 @@ export default function Login() {
     );
     
     if (hasVerifiableGuilds) {
-      setShowVerificationForm(true);
+      // For Sign In flow: Skip Welcome Modal, show Good News Modal directly
+      setShowGoodNewsModal(true);
     } else {
       completeOnboarding();
     }
+  };
+
+  const handleGoodNewsModalNext = () => {
+    setShowGoodNewsModal(false);
+    setShowVerificationForm(true);
   };
 
   const completeOnboarding = () => {
@@ -107,6 +115,31 @@ export default function Login() {
       { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true },
       { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true },
       { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
+    ];
+    
+    return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
+  };
+
+  const getVerifiableGuilds = (data: ProfileCompletionFormData | null) => {
+    if (!data) return [];
+    
+    const guildOptions = [
+      { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true, isVerified: false },
+      { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true, isVerified: false },
+      { id: 'WGA', name: 'WGA', fullName: 'WGA - Writers Guild of America', isVerifiable: true, isVerified: false },
+      { id: 'SAG', name: 'SAG', fullName: 'SAG - Screen Actors Guild', isVerifiable: true, isVerified: false },
+      { id: 'DGA', name: 'DGA', fullName: 'DGA - Directors Guild of America', isVerifiable: true, isVerified: false },
+    ];
+    
+    return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
+  };
+
+  const getNotVerifiableGuilds = (data: ProfileCompletionFormData | null) => {
+    if (!data) return [];
+    
+    const guildOptions = [
+      { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
+      { id: 'ASIFA', name: 'ASIFA', fullName: 'ASIFA - International Animated Film Association', isVerifiable: false },
     ];
     
     return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
@@ -264,7 +297,17 @@ export default function Login() {
         selectedGuilds={getSelectedGuilds(profileData)}
       />
       
-      {/* Guild Verification Form (skip Good News modal) */}
+      {/* Good News Modal (Guild Verification Modal) - Skip Welcome Modal for Sign In */}
+      <GuildVerificationModal
+        opened={showGoodNewsModal}
+        onClose={() => setShowGoodNewsModal(false)}
+        onNext={handleGoodNewsModalNext}
+        verifiableGuilds={getVerifiableGuilds(profileData)}
+        notVerifiableGuilds={getNotVerifiableGuilds(profileData)}
+        currentStep={1}
+      />
+      
+      {/* Guild Verification Form */}
       {showVerificationForm && getFirstVerifiableGuild(profileData) && (
         <div
           style={{
