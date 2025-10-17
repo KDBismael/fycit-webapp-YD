@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IconCheck, IconExclamationMark } from '@tabler/icons-react';
+import { IconAlertTriangleFilled, IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
 import {
   Alert,
   Box,
@@ -10,6 +10,7 @@ import {
   Image,
   List,
   Modal,
+  rem,
   Select,
   Stack,
   Tabs,
@@ -18,6 +19,24 @@ import {
 } from '@mantine/core';
 import { VerificationTimeline } from '../../components/Timeline';
 
+export const AlertIcon = () => {
+  return (
+    <Box
+      bd="1px solid var(--mantine-color-brand-8)"
+      p="xs"
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '50%',
+        width: rem(80),
+        height: rem(80),
+      }}
+    >
+      <IconAlertTriangleFilled size={32} color="#A98D34" />
+    </Box>
+  );
+};
 interface Guild {
   id: string;
   name: string;
@@ -34,6 +53,8 @@ interface GuildVerificationModalProps {
   notVerifiableGuilds: Guild[];
   currentStep: number;
 }
+
+const IMAGE_SIZE = 48;
 
 export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
   opened,
@@ -73,21 +94,16 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
       }}
     >
       <Stack gap="md">
-        {/* Header */}
-        <Group justify="space-between" w="100%">
-          <Group gap="sm">
-            <Image src="/logo.svg" alt="FYCit Logo" width={32} height={32} />
+        {/* Header   with Logo */}
+        <Group justify="center" w="100%">
+          <Group gap="sm" align="center">
+            <Image src="/logo.svg" alt="FYCit Logo" width={IMAGE_SIZE} height={IMAGE_SIZE} />
           </Group>
-          <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
-            <Text size="md" fw={400}>
-              ×
-            </Text>
-          </Button>
         </Group>
 
         {/* Title and Subtitle */}
         <Stack gap="xs" align="center">
-          <Title order={3} fw={700} c="gray.9" size="h3">
+          <Title order={3} fw={700} c="gray.9">
             Good News!
           </Title>
           <Text size="sm" c="gray.7" ta="center">
@@ -106,7 +122,23 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
         </Box>
 
         {/* Guild Tabs */}
-        <Tabs value={activeTab} onChange={setActiveTab} mt="md" mb="sm">
+        <Tabs
+          value={activeTab}
+          onChange={setActiveTab}
+          mt="md"
+          mb="sm"
+          styles={{
+            tab: {
+              '&[data-active]': {
+                borderBottomColor: '#BAAD3E',
+                fontWeight: 700,
+              },
+            },
+            tabLabel: {
+              fontWeight: 500,
+            },
+          }}
+        >
           <Tabs.List>
             <Tabs.Tab value="verifiable">Verifiable Guilds</Tabs.Tab>
             <Tabs.Tab value="not-verifiable">Not Verifiable Guilds</Tabs.Tab>
@@ -116,24 +148,16 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
             <Stack w="100%" gap="sm">
               {/* Verifiable Guilds List */}
               {verifiableGuilds.map((guild) => (
-                <Group
-                  key={guild.id}
-                  justify="space-between"
-                  p="sm"
-                  style={{
-                    border: '1px solid var(--mantine-color-gray-3)',
-                    borderRadius: 'var(--mantine-radius-md)',
-                  }}
-                >
+                <Group key={guild.id} justify="flex-start" p="sm">
                   <Text size="sm" fw={500}>
                     {guild.fullName}
                   </Text>
                   {guild.isVerified && (
                     <Group gap="xs">
-                      <IconCheck size={14} color="var(--mantine-color-success-6)" />
-                      <Text size="xs" c="success.6" fw={500}>
-                        Verified
-                      </Text>
+                      <IconRosetteDiscountCheckFilled
+                        size={14}
+                        color="var(--mantine-color-success-6)"
+                      />
                     </Group>
                   )}
                 </Group>
@@ -167,92 +191,71 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
 
               {/* Verification Instructions */}
               <Alert
-                icon={<IconExclamationMark size="1rem" />}
-                title={`To Validate ${verifiableGuilds.find((g) => g.id === selectedGuildForVerification)?.name || 'AMPAS'}, we will take you through the following steps.`}
                 color="yellow"
                 variant="light"
                 radius="md"
                 styles={{
                   root: {
-                    backgroundColor: 'var(--mantine-color-yellow-0)',
-                    border: '1px solid var(--mantine-color-yellow-3)',
-                  },
-                  icon: {
-                    color: 'var(--mantine-color-brand-8)',
-                  },
-                  title: {
-                    color: 'var(--mantine-color-brand-8)',
-                    fontWeight: 700,
-                  },
-                  message: {
-                    color: 'var(--mantine-color-gray-7)',
+                    backgroundColor: '#FEF3C7',
+                    border: '1px solid #FDE68A',
                   },
                 }}
               >
-                <List size="xs" spacing="xs" mt="sm">
-                  {verificationSteps.map((step, index) => (
-                    <List.Item key={index}>
-                      {step.includes(`${selectedGuildName}.com`) ? (
-                        <Text size="xs">
-                          {step.split(`${selectedGuildName}.com`)[0]}
-                          <Text component="span" td="underline" c="brand.8">
-                            {selectedGuildName}.com
+                <Stack gap="sm">
+                  <Text fw={700} c="#A98D34" size="sm">
+                    To Validate{' '}
+                    {verifiableGuilds.find((g) => g.id === selectedGuildForVerification)?.name ||
+                      'AMPAS'}
+                    , we will take you through the following steps.
+                  </Text>
+                  <List size="xs" spacing="xs">
+                    {verificationSteps.map((step, index) => (
+                      <List.Item key={index}>
+                        {step.includes(`${selectedGuildName}.com`) ? (
+                          <Text size="xs">
+                            {step.split(`${selectedGuildName}.com`)[0]}
+                            <Text component="span" td="underline" c="brand.8">
+                              {selectedGuildName}.com
+                            </Text>
+                            {step.split(`${selectedGuildName}.com`)[1]}
                           </Text>
-                          {step.split(`${selectedGuildName}.com`)[1]}
-                        </Text>
-                      ) : (
-                        <Text size="xs">{step}</Text>
-                      )}
-                    </List.Item>
-                  ))}
-                </List>
+                        ) : (
+                          <Text size="xs">{step}</Text>
+                        )}
+                      </List.Item>
+                    ))}
+                  </List>
+                </Stack>
               </Alert>
             </Stack>
           </Tabs.Panel>
 
           <Tabs.Panel value="not-verifiable" pt="sm">
-            <Stack w="100%" gap="sm">
+            <Stack w="100%" gap="md" align="flex-start">
               {/* Not Verifiable Guilds List */}
               {notVerifiableGuilds.map((guild) => (
-                <Text
-                  key={guild.id}
-                  size="sm"
-                  p="sm"
-                  style={{
-                    border: '1px solid var(--mantine-color-gray-3)',
-                    borderRadius: 'var(--mantine-radius-md)',
-                  }}
-                >
+                <Text key={guild.id} size="sm">
                   {guild.fullName}
                 </Text>
               ))}
 
-              {/* Information Alert */}
-              <Alert
-                icon={<IconExclamationMark size="1rem" />}
-                title="We are actively adding new partners"
-                color="yellow"
-                variant="light"
-                radius="md"
-                styles={{
-                  root: {
-                    backgroundColor: 'var(--mantine-color-yellow-0)',
-                    border: '1px solid var(--mantine-color-yellow-3)',
-                  },
-                  icon: {
-                    color: 'var(--mantine-color-brand-8)',
-                  },
-                  title: {
-                    color: 'var(--mantine-color-brand-8)',
-                    fontWeight: 700,
-                  },
-                  message: {
-                    color: 'var(--mantine-color-gray-7)',
-                  },
-                }}
-              >
-                At this time, the guilds you have selected are not yet part of our verification
-                program. We are actively working to include these guilds in a future update.
+              {/* Centered Alert */}
+              <Alert variant="light" radius="md" color="#A98D34" styles={{
+                root: {
+                  backgroundColor: '#FEF3C7',
+                  border: '1px solid #FDE68A',
+                },
+              }}>
+                <Stack gap="xs" align="center">
+                  <AlertIcon />
+                  <Title order={4} fw={700} ta="center">
+                    We are actively adding new partners
+                  </Title>
+                  <Text size="sm" c="gray.7" ta="center">
+                    At this time, the guilds you have selected are not yet part of our verification
+                    program. We are actively working to include these guilds in a future update.
+                  </Text>
+                </Stack>
               </Alert>
             </Stack>
           </Tabs.Panel>
