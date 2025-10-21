@@ -11,6 +11,7 @@ export interface SignupData {
 export type AuthContext = 'signup' | 'password-reset' | null;
 
 interface AuthStore {
+  isLoading: boolean;
   // User data
   signupData: SignupData | null;
 
@@ -27,10 +28,12 @@ interface AuthStore {
   setAuthContext: (context: AuthContext, email?: string) => void;
   setEmailVerified: (verified: boolean) => void;
   setOtpCode: (code: string) => void;
+  setIsLoading: (loading: boolean) => void;
   resetAuthStore: () => void;
 }
 
 const initialState = {
+  isLoading: false,
   signupData: null,
   authContext: null as AuthContext,
   verificationEmail: null,
@@ -60,6 +63,10 @@ export const useAuthStore = create<AuthStore>()(
 
       setOtpCode: (code: string) => {
         set({ otpCode: code });
+      },
+
+      setIsLoading: (loading: boolean) => {
+        set({ isLoading: loading });
       },
 
       resetAuthStore: () => {

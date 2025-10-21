@@ -1,17 +1,6 @@
 'use client';
 
-import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-  IconBrandApple,
-  IconBrandGooglePlay,
-  IconDashboard,
-  // IconHeart,
-  IconLogout,
-  IconNews,
-  IconShieldCheck,
-  IconUser,
-} from '@tabler/icons-react';
+import { signOutUser } from '@/firebase/auth';
 import {
   AppShell,
   Avatar,
@@ -26,6 +15,18 @@ import {
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  IconBrandApple,
+  IconBrandGooglePlay,
+  IconDashboard,
+  // IconHeart,
+  IconLogout,
+  IconNews,
+  IconShieldCheck,
+  IconUser,
+} from '@tabler/icons-react';
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
 
 const getPageTitle = (pathname: string) => {
   const titles: Record<string, string> = {
@@ -126,7 +127,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             href="/auth/login"
             label="Log out"
             leftSection={<IconLogout size={20} stroke={1.5} />}
-            onClick={() => router.push('/auth/login')}
+            onClick={async () => { await signOutUser(), router.push('/auth/login') }}
             styles={{
               root: {
                 borderRadius: 'var(--mantine-radius-md)',

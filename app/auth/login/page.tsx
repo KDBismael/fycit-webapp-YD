@@ -1,10 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { signInWithEmailPassword } from '@/firebase/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {  IconLock, IconMail } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
 import {
   Anchor,
   Box,
@@ -21,12 +18,16 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { LoginFormData, loginSchema } from '../../../validation/login.validation';
-import { useUserStore } from '../../../stores/userStore';
+import { IconLock, IconMail } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { AwardsSeasonModal } from '../../../components/auth/AwardsSeasonModal';
 import { GuildConfirmationModal } from '../../../components/auth/GuildConfirmationModal';
-import { GuildVerificationModal } from '../../../components/auth/GuildVerificationModal';
 import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
+import { GuildVerificationModal } from '../../../components/auth/GuildVerificationModal';
+import { useUserStore } from '../../../stores/userStore';
+import { LoginFormData, loginSchema } from '../../../validation/login.validation';
 import { ProfileCompletionFormData } from '../../../validation/profile-completion.validation';
 
 const IMAGE_SIZE = 60;
@@ -34,8 +35,8 @@ const ICON_SIZE = 18;
 
 export default function Login() {
   const router = useRouter();
-  const { setAwards26Viewed, setUserGuilds, setAutoViewNewLocales } = useUserStore();
-  
+  const { setAwards26Viewed, setUserGuilds, setAutoViewNewLocales, fetchUser, user } = useUserStore();
+
   // Modal states
   const [showAwardsModal, setShowAwardsModal] = useState(false);
   const [showGuildConfirmation, setShowGuildConfirmation] = useState(false);
@@ -52,25 +53,14 @@ export default function Login() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    try {
-      // Simulate login API call
-      console.log('Login data:', data);
-      
-      // FOR TESTING: Randomly assign IsAwards26Viewed (50% chance)
-      const randomIsAwards26Viewed = Math.random() > 0.5;
-      
-      // Check if user has viewed Awards 2026
-      if (randomIsAwards26Viewed) {
-        // User has already seen Awards 2026 flow
-        setAwards26Viewed(true);
-        router.push('/dashboard');
-      } else {
-        // User needs to go through Awards 2026 flow
-        setShowAwardsModal(true);
-      }
-    } catch (error) {
-      console.error('Login error:', error);
+    const result = await signInWithEmailPassword(data.email, data.password);
+    if (result.error) {
+      alert(`Login failed: ${result.error.message}`);
+      return;
     }
+    await fetchUser();
+    console.log('Logged in user:', user);
+    user?.isAward26Viewed ? router.push('/dashboard') : setShowAwardsModal(true);
   };
 
   const handleAwardsNext = (data: ProfileCompletionFormData) => {
@@ -88,7 +78,7 @@ export default function Login() {
     const hasVerifiableGuilds = profileData?.selectedGuild.some((guildId) =>
       verifiableGuildIds.includes(guildId)
     );
-    
+
     if (hasVerifiableGuilds) {
       // For Sign In flow: Skip Welcome Modal, show Good News Modal directly
       setShowGoodNewsModal(true);
@@ -110,19 +100,19 @@ export default function Login() {
   // Helper functions
   const getSelectedGuilds = (data: ProfileCompletionFormData | null) => {
     if (!data) return [];
-    
+
     const guildOptions = [
       { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true },
       { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true },
       { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
     ];
-    
+
     return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
   };
 
   const getVerifiableGuilds = (data: ProfileCompletionFormData | null) => {
     if (!data) return [];
-    
+
     const guildOptions = [
       { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true, isVerified: false },
       { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true, isVerified: false },
@@ -130,27 +120,27 @@ export default function Login() {
       { id: 'SAG', name: 'SAG', fullName: 'SAG - Screen Actors Guild', isVerifiable: true, isVerified: false },
       { id: 'DGA', name: 'DGA', fullName: 'DGA - Directors Guild of America', isVerifiable: true, isVerified: false },
     ];
-    
+
     return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
   };
 
   const getNotVerifiableGuilds = (data: ProfileCompletionFormData | null) => {
     if (!data) return [];
-    
+
     const guildOptions = [
       { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
       { id: 'ASIFA', name: 'ASIFA', fullName: 'ASIFA - International Animated Film Association', isVerifiable: false },
     ];
-    
+
     return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
   };
 
   const getFirstVerifiableGuild = (data: ProfileCompletionFormData | null) => {
     if (!data) return null;
-    
+
     const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
     const firstVerifiable = data.selectedGuild.find(guildId => verifiableGuildIds.includes(guildId));
-    
+
     if (firstVerifiable) {
       return {
         id: firstVerifiable,
@@ -159,7 +149,7 @@ export default function Login() {
         isVerifiable: true,
       };
     }
-    
+
     return null;
   };
 
@@ -279,12 +269,12 @@ export default function Login() {
       </Grid>
 
       {/* Awards Season Modal */}
-      <AwardsSeasonModal 
+      <AwardsSeasonModal
         opened={showAwardsModal}
         onClose={() => setShowAwardsModal(false)}
         onNext={handleAwardsNext}
       />
-      
+
       {/* Guild Confirmation Modal */}
       <GuildConfirmationModal
         opened={showGuildConfirmation}
@@ -296,7 +286,7 @@ export default function Login() {
         }}
         selectedGuilds={getSelectedGuilds(profileData)}
       />
-      
+
       {/* Good News Modal (Guild Verification Modal) - Skip Welcome Modal for Sign In */}
       <GuildVerificationModal
         opened={showGoodNewsModal}
@@ -306,7 +296,7 @@ export default function Login() {
         notVerifiableGuilds={getNotVerifiableGuilds(profileData)}
         currentStep={1}
       />
-      
+
       {/* Guild Verification Form */}
       {showVerificationForm && getFirstVerifiableGuild(profileData) && (
         <div
