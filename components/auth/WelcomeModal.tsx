@@ -27,9 +27,12 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
     <Modal
       opened={opened}
       onClose={onClose}
+      withCloseButton={false}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
       centered
-      size="xl"
-      padding="lg"
+      size={{ base: 'full', sm: 'md', md: 'lg' }}
+      padding={{ base: 'md', sm: 'lg' }}
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,

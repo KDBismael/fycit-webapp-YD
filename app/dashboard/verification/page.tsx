@@ -118,13 +118,6 @@ export default function VerificationPage() {
             option: classes.filterSelectOption,
           }}
         />
-        <Button
-          size="md"
-          radius="md"
-          className={classes.addGuildButton}
-        >
-          Add guild
-        </Button>
       </Group>
 
       {/* Verification Cards Grid */}

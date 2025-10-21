@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {SquarePen} from "lucide-react"
-import { Box, Button, Group, List, Paper, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import GuildBadge from '../GuildBadge';
+import { GuildEditor } from '../GuildEditor';
 
 const verificationBadges = [
   {
@@ -16,7 +18,7 @@ const verificationBadges = [
   },
   {
     name: 'ASC',
-    status: 'rejected' as const,
+    status: 'verifiable' as const,
   },
   {
     name: 'ADG',
@@ -25,6 +27,11 @@ const verificationBadges = [
 ];
 
 export default function GuildsTab() {
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [selectedGuilds, setSelectedGuilds] = useState<string[]>(
+    verificationBadges.map(badge => badge.name)
+  );
+
   return (
     <Stack gap="lg">
       {/* Guild Badges Section */}
@@ -39,6 +46,7 @@ export default function GuildsTab() {
             variant="outline"
             size="sm"
             radius="xl"
+            onClick={openEditModal}
           >
             Add/Edit guilds
           </Button>
@@ -51,47 +59,40 @@ export default function GuildsTab() {
         </Box>
       </Stack>
 
-      {/* Key Benefits Card */}
-      <Paper
-        shadow="sm"
-        withBorder
-        radius="lg"
-        p="xl"
-        style={{
-          backgroundColor: '#FFFFF8',
-          border: '1px solid #FDE68A',
-        }}
+      <Modal
+        opened={editModalOpened}
+        onClose={closeEditModal}
+        title="Edit Guilds"
+        size="lg"
+        centered
       >
-        <Group justify="space-between" mb="lg">
-          <Text size="xl" fw={700} c="gray.9">
-            Key benefits of profile verification
+        <Stack gap="md">
+          <Text size="sm" c="gray.7">
+            Select the guilds you want to associate with your profile. You can add or remove guilds at any time.
           </Text>
-          <Button
-            size="md"
-            style={{
-              backgroundColor: '#BAAD3E',
-              borderRadius: '8px',
-              fontWeight: 600,
-              '&:hover': {
-                backgroundColor: '#A98A13',
-              },
-            }}
-          >
-            Start verification
-          </Button>
-        </Group>
-        <List type="ordered" spacing="md" size="md">
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Gain Credibility Within the Community
-          </List.Item>
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Access Guild or Organization Features
-          </List.Item>
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Ensure Secure and Authentic Interactions
-          </List.Item>
-        </List>
-      </Paper>
+          <GuildEditor
+            value={selectedGuilds}
+            onChange={setSelectedGuilds}
+            placeholder="Add a guild"
+          />
+          <Group justify="flex-end" gap="sm">
+            <Button variant="outline" onClick={closeEditModal}>
+              Cancel
+            </Button>
+            <Button
+              onClick={closeEditModal}
+              style={{
+                backgroundColor: '#BAAD3E',
+                '&:hover': {
+                  backgroundColor: '#A98A13',
+                },
+              }}
+            >
+              Save
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Stack>
   );
 }

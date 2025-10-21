@@ -18,8 +18,9 @@ import {
   Title,
 } from '@mantine/core';
 import GuildBadge from '../../components/GuildBadge';
-import EventCard from '../../components/EventCard';
 import { IconRosetteDiscountCheck } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import { GuildVerificationModal } from '../../components/auth/GuildVerificationModal';
 
 const verificationBadges = [
   {
@@ -36,41 +37,16 @@ const verificationBadges = [
   },
   {
     name: 'ASC',
-    status: 'rejected' as const,
+    status: 'verifiable' as const,
   },
-];
-
-const recentEvents = [
-  {
-    title: 'Awards season starts here',
-    description: 'FYCit is the number one smartphone app for awards voters and guild',
-    location: 'San-francisco theater.',
-    date: '12th July 2025.',
-    time: '10.30 AM.',
-    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
-    imageAlt: 'Film Festival Awards Nomination'
-  },
-  {
-    title: 'Awards season starts here',
-    description: 'FYCit is the number one smartphone app for awards voters and guild',
-    location: 'San-francisco theater.',
-    date: '12th July 2025.',
-    time: '10.30 AM.',
-    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
-    imageAlt: 'Film Awards Lorem Ipsum Dolor'
-  },
-  {
-    title: 'Awards season starts here',
-    description: 'FYCit is the number one smartphone app for awards voters and guild',
-    location: 'San-francisco theater.',
-    date: '12th July 2025.',
-    time: '10.30 AM.',
-    image: 'https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg',
-    imageAlt: 'Film Awards Nominations'
-  }
 ];
 
 export default function DashboardPage() {
+  const [verificationModalOpened, { open: openVerificationModal, close: closeVerificationModal }] = useDisclosure(false);
+
+  const verifiableGuilds = verificationBadges.filter(badge => badge.status === 'verifiable' || badge.status === 'verified');
+  const notVerifiableGuilds = verificationBadges.filter(badge => badge.status === 'pending');
+
   return (
     <Box
       style={{
@@ -103,7 +79,7 @@ export default function DashboardPage() {
               <Image src="/logo.svg" alt="FYCit Logo" width={40} height={40} fit="contain" />
             </Box>
 
-            <Group gap="xl" align="flex-start">
+            <Group gap="xl" align="flex-start" wrap="wrap">
               {/* Image Container */}
               <Box style={{ height: '100%', display: 'flex', alignItems: 'flex-start' }}>
                 <Avatar
@@ -162,6 +138,7 @@ export default function DashboardPage() {
               </Text>
               <Button
                 size="md"
+                onClick={openVerificationModal}
                 style={{
                   backgroundColor: '#BAAD3E',
                   borderRadius: '8px',
@@ -264,29 +241,28 @@ export default function DashboardPage() {
             </Grid>
           </Box>
 
-          {/* Recent Events Section */}
-          <Box>
-            <Text size="xl" fw={700} c="gray.9" mb="lg">
-              Recent events
-            </Text>
-            <Grid>
-              {recentEvents.map((event, index) => (
-                <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
-                  <EventCard
-                    title={event.title}
-                    description={event.description}
-                    location={event.location}
-                    date={event.date}
-                    time={event.time}
-                    image={event.image}
-                    imageAlt={event.imageAlt}
-                  />
-                </Grid.Col>
-              ))}
-            </Grid>
-          </Box>
         </Stack>
       </Container>
+
+      <GuildVerificationModal
+        opened={verificationModalOpened}
+        onClose={closeVerificationModal}
+        onNext={closeVerificationModal}
+        verifiableGuilds={verifiableGuilds.map(badge => ({
+          id: badge.name,
+          name: badge.name,
+          fullName: `${badge.name} - Guild Name`,
+          isVerifiable: true,
+          isVerified: badge.status === 'verified',
+        }))}
+        notVerifiableGuilds={notVerifiableGuilds.map(badge => ({
+          id: badge.name,
+          name: badge.name,
+          fullName: `${badge.name} - Guild Name`,
+          isVerifiable: false,
+        }))}
+        currentStep={1}
+      />
     </Box>
   );
 }
