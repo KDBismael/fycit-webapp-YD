@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Button, Checkbox, Group, List, Paper, Select, Stack, Text } from '@mantine/core';
+import { IconRosetteDiscountCheck } from '@tabler/icons-react';
+import { Box, Card, Checkbox, Grid, Group, Image, Select, Stack, Text, ThemeIcon } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { StartVerificationCard } from '../../../components/StartVerificationCard';
 import VerificationCard from '../../../components/VerificationCard';
 import VerificationModal from '../../../components/VerificationModal';
 import classes from './VerificationPage.module.css';
@@ -53,7 +55,8 @@ const verificationData = [
 export default function VerificationPage() {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedGuild, setSelectedGuild] = useState<any>(null);
-  const [verificationModalOpened, { open: openVerificationModal, close: closeVerificationModal }] = useDisclosure(false);
+  const [verificationModalOpened, { open: openVerificationModal, close: closeVerificationModal }] =
+    useDisclosure(false);
 
   const handleAction = (id: string, action: string) => {
     // eslint-disable-next-line no-console
@@ -139,46 +142,106 @@ export default function VerificationPage() {
       </Box>
 
       {/* Key Benefits Section */}
-      <Paper
-        shadow="sm"
-        radius="md"
-        className={classes.keyBenefitsPaper}
-      >
-        <Group justify="space-between" align="flex-start">
-          <Box style={{ flex: 1 }}>
-            <Text size="lg" fw={600} c="gray.9" mb="md">
-              Key benefits of profile verification
-            </Text>
-            <List
-              type="ordered"
-              spacing="xs"
-              size="md"
-              styles={{
-                itemWrapper: {
-                  marginBottom: 'var(--mantine-spacing-xs)',
-                },
-              }}
-            >
-              <List.Item>Gain Credibility Within the Community</List.Item>
-              <List.Item>Access Guild or Organization Features</List.Item>
-              <List.Item>Ensure Secure and Authentic Interactions</List.Item>
-            </List>
-          </Box>
-          <Button
-            size="md"
-            radius="md"
-            className={classes.startVerificationButton}
-          >
-            Start verification
-          </Button>
-        </Group>
-      </Paper>
+      <StartVerificationCard />
 
       <VerificationModal
         opened={verificationModalOpened}
         onClose={closeVerificationModal}
         guild={selectedGuild}
       />
+
+      {/* Verified Member Benefits Section */}
+      <Box>
+        <Text size="xl" fw={700} c="gray.9" mb="lg">
+          Verified member benefits
+        </Text>
+        <Grid>
+          <Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+            <Card
+              shadow="sm"
+              padding={0}
+              radius="lg"
+              style={{
+                backgroundColor: 'white',
+                border: 'none',
+                overflow: 'hidden',
+                height: '100%',
+              }}
+            >
+               {/* Image Section - Same height as EventCard images */}
+               <Box style={{ position: 'relative', height: '200px' }}>
+                 <Image
+                   src="https://img7.yna.co.kr/mpic/YH/2022/03/31/MYH20220331019600038_P4.jpg"
+                   alt="MovieMaker Magazine"
+                   radius="lg"
+                   style={{
+                     width: '100%',
+                     height: '100%',
+                     objectFit: 'cover',
+                     borderRadius: 'var(--mantine-radius-lg)',
+                   }}
+                 />
+               </Box>
+
+              {/* Content Section */}
+              <Stack
+                gap="md"
+                p="lg"
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  backgroundColor: 'white',
+                }}
+              >
+                <Text size="lg" fw={700} c="gray.9">
+                  50% Discount on FYCit
+                </Text>
+                <Stack gap="xs">
+                  <Group gap="sm" align="flex-start">
+                    <ThemeIcon
+                      color="gray.4"
+                      size={16}
+                      radius="xl"
+                      style={{ backgroundColor: 'transparent' }}
+                    >
+                      <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                    </ThemeIcon>
+                    <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                      Lorem Ipsum is simply dummy text of the print.
+                    </Text>
+                  </Group>
+                  <Group gap="sm" align="flex-start">
+                    <ThemeIcon
+                      color="gray.4"
+                      size={16}
+                      radius="xl"
+                      style={{ backgroundColor: 'transparent' }}
+                    >
+                      <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                    </ThemeIcon>
+                    <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                      Lorem Ipsum is simply dummy text.
+                    </Text>
+                  </Group>
+                  <Group gap="sm" align="flex-start">
+                    <ThemeIcon
+                      color="gray.4"
+                      size={16}
+                      radius="xl"
+                      style={{ backgroundColor: 'transparent' }}
+                    >
+                      <IconRosetteDiscountCheck size={12} color="var(--mantine-color-gray-6)" />
+                    </ThemeIcon>
+                    <Text size="sm" c="gray.7" style={{ flex: 1 }}>
+                      Lorem Ipsum is simply dummy text of the print.
+                    </Text>
+                  </Group>
+                </Stack>
+              </Stack>
+            </Card>
+          </Grid.Col>
+        </Grid>
+      </Box>
     </Stack>
   );
 }

@@ -22,7 +22,7 @@ const getColorValue = (status: string) => {
   const colors = {
     verified: '#22C55E',
     pending: '#F59E0B',
-    verifiable: '#3B82F6'
+    verifiable: '#6B7280'
   };
   return colors[status as keyof typeof colors] || '#6B7280';
 };

@@ -291,20 +291,6 @@ export default function MyInfoTab() {
               }}
             />
 
-            <Button
-              variant="subtle"
-              size="sm"
-              leftSection={<IconKey size={14} />}
-              onClick={openResetPassword}
-              style={{
-                color: '#6B7280',
-                alignSelf: 'flex-start',
-                padding: '8px 12px',
-              }}
-            >
-              Reset password
-            </Button>
-
             <TextInput
               label="Zip/Postal Code (Optional)"
               placeholder="Enter postal code"
@@ -336,6 +322,32 @@ export default function MyInfoTab() {
                 }}
               >
                 Save
+              </Button>
+              
+              <Button
+                fullWidth
+                variant="subtle"
+                size="md"
+                leftSection={<IconEdit size={14} />}
+                onClick={openChangeEmail}
+                style={{
+                  color: '#6B7280',
+                }}
+              >
+                Change email
+              </Button>
+              
+              <Button
+                fullWidth
+                variant="subtle"
+                size="md"
+                leftSection={<IconKey size={14} />}
+                onClick={openResetPassword}
+                style={{
+                  color: '#6B7280',
+                }}
+              >
+                Reset password
               </Button>
               
               <Button

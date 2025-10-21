@@ -62,18 +62,18 @@ export default function GuildsTab() {
       <Modal
         opened={editModalOpened}
         onClose={closeEditModal}
-        title="Edit Guilds"
+        title="Choose your guilds"
         size="lg"
         centered
       >
         <Stack gap="md">
           <Text size="sm" c="gray.7">
-            Select the guilds you want to associate with your profile. You can add or remove guilds at any time.
+            Choose the guilds or organizations you are a member of:
           </Text>
           <GuildEditor
             value={selectedGuilds}
             onChange={setSelectedGuilds}
-            placeholder="Add a guild"
+            mode="list"
           />
           <Group justify="flex-end" gap="sm">
             <Button variant="outline" onClick={closeEditModal}>
@@ -88,7 +88,7 @@ export default function GuildsTab() {
                 },
               }}
             >
-              Save
+              Confirm
             </Button>
           </Group>
         </Stack>

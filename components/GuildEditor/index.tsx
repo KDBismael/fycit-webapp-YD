@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ActionIcon, Box, Checkbox, Group, Select, Stack, Text } from '@mantine/core';
-import { IconX } from '@tabler/icons-react';
+import { Box, Checkbox, Group, Paper, Stack, Text } from '@mantine/core';
+import { IconCheck } from '@tabler/icons-react';
 
 export interface Guild {
   id: string;
@@ -13,7 +13,8 @@ export interface Guild {
 interface GuildEditorProps {
   value?: string[];
   onChange: (value: string[]) => void;
-  placeholder?: string;
+  mode?: 'list' | 'summary';
+  onEditClick?: () => void;
 }
 
 const guildOptions = [
@@ -34,19 +35,15 @@ const guildOptions = [
 export const GuildEditor: React.FC<GuildEditorProps> = ({
   value = [],
   onChange,
-  placeholder = 'Select guild',
+  mode = 'list',
+  onEditClick,
 }) => {
-  const [selectValue, setSelectValue] = useState<string | null>(null);
-
-  const handleAddGuild = (guildValue: string | null) => {
-    if (guildValue && !value.includes(guildValue)) {
+  const handleToggleGuild = (guildValue: string) => {
+    if (value.includes(guildValue)) {
+      onChange(value.filter((v) => v !== guildValue));
+    } else {
       onChange([...value, guildValue]);
-      setSelectValue(null);
     }
-  };
-
-  const handleRemoveGuild = (guildValue: string) => {
-    onChange(value.filter((v) => v !== guildValue));
   };
 
   const getGuildLabel = (guildValue: string) => {
@@ -54,92 +51,115 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
     return guild ? guild.label : guildValue;
   };
 
-  const availableGuilds = guildOptions.filter((guild) => !value.includes(guild.value));
-
-  return (
-    <Stack gap="md">
-      {value.length > 0 && (
-        <Box>
-          <Group gap="sm" style={{ flexWrap: 'wrap' }}>
-            {value.map((guildValue) => (
-              <Box
-                key={guildValue}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  backgroundColor: '#A98D34',
-                  color: 'white',
-                  borderRadius: '20px',
-                  padding: '8px 12px 8px 16px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                }}
-              >
-                <Text size="sm" c="white" fw={500}>
-                  {getGuildLabel(guildValue)}
-                </Text>
-                <ActionIcon
-                  size="xs"
-                  color="white"
-                  variant="transparent"
-                  onClick={() => handleRemoveGuild(guildValue)}
-                  style={{ marginLeft: '8px' }}
-                >
-                  <IconX size={12} />
-                </ActionIcon>
-              </Box>
-            ))}
-          </Group>
-        </Box>
-      )}
-
-      {availableGuilds.length > 0 && (
-        <Select
-          placeholder={placeholder}
-          data={availableGuilds}
-          value={selectValue}
-          onChange={handleAddGuild}
-          radius="md"
-          size="md"
-          searchable
-          clearable
-          nothingFoundMessage="No guild found"
-          renderOption={({ option }) => {
+  // Mode 1: Liste scrollable (pour le modal "Choose your guilds")
+  if (mode === 'list') {
+    return (
+      <Box
+        style={{
+          maxHeight: '400px',
+          overflowY: 'auto',
+          backgroundColor: '#FEFBF3',
+          borderRadius: '8px',
+          padding: '16px',
+        }}
+      >
+        <Stack gap="sm">
+          {guildOptions.map((guild) => {
+            const isSelected = value.includes(guild.value);
             return (
-              <Group gap="sm" wrap="nowrap">
-                <Checkbox
-                  checked={false}
-                  onChange={() => {}}
-                  tabIndex={-1}
-                  color="green"
-                />
-                <Text>{option.label}</Text>
+              <Group
+                key={guild.value}
+                gap="sm"
+                style={{
+                  padding: '8px 12px',
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  '&:hover': {
+                    backgroundColor: 'rgba(169, 141, 52, 0.1)',
+                  },
+                }}
+                onClick={() => handleToggleGuild(guild.value)}
+              >
+                <Box
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    border: '2px solid #D1D5DB',
+                    backgroundColor: isSelected ? '#22C55E' : 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  {isSelected && <IconCheck size={12} color="white" />}
+                </Box>
+                <Text
+                  size="sm"
+                  c={isSelected ? 'dark' : 'gray.6'}
+                  fw={isSelected ? 500 : 400}
+                  style={{ flex: 1 }}
+                >
+                  {guild.label}
+                </Text>
               </Group>
             );
-          }}
-          styles={{
-            input: {
-              borderColor: 'var(--mantine-color-gray-3)',
-              '&:focus': {
-                borderColor: '#A98D34',
-              },
-            },
-            dropdown: {
-              backgroundColor: '#ECECB8',
-            },
-            option: {
-              backgroundColor: 'transparent',
-              '&:hover': {
-                backgroundColor: 'rgba(169, 141, 52, 0.15)',
-              },
-              '&[data-combobox-selected]': {
-                backgroundColor: 'rgba(169, 141, 52, 0.1)',
-              },
-            },
+          })}
+        </Stack>
+      </Box>
+    );
+  }
+
+  // Mode 2: Card de résumé (pour affichage)
+  return (
+    <Paper
+      shadow="sm"
+      radius="md"
+      p="md"
+      style={{
+        backgroundColor: '#FFFFF8',
+        border: '1px solid #FDE68A',
+      }}
+    >
+      <Stack gap="sm">
+        <Text size="lg" fw={700} c="gray.9">
+          Your selected guilds
+        </Text>
+        <Box
+          style={{
+            height: '1px',
+            backgroundColor: '#E5E7EB',
+            width: '100%',
           }}
         />
-      )}
-    </Stack>
+        {value.length > 0 ? (
+          <Stack gap="xs">
+            {value.map((guildValue) => (
+              <Text key={guildValue} size="sm" c="gray.7">
+                {getGuildLabel(guildValue)}
+              </Text>
+            ))}
+          </Stack>
+        ) : (
+          <Text size="sm" c="gray.5">
+            No guilds selected
+          </Text>
+        )}
+        <Text
+          size="sm"
+          c="blue.6"
+          style={{
+            textDecoration: 'underline',
+            cursor: 'pointer',
+            alignSelf: 'flex-start',
+          }}
+          onClick={onEditClick}
+        >
+          Edit guild
+        </Text>
+      </Stack>
+    </Paper>
   );
 };
 

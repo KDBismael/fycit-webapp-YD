@@ -85,7 +85,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
-      closeOnClickOutside={false}
+      closeOnClickOutside={true}
       centered
       size={{ base: 'full', sm: 'lg', md: 'xl' }}
       padding={{ base: 'md', sm: 'lg', md: 'xl' }}

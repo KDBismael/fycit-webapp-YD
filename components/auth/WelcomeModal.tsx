@@ -29,7 +29,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
-      closeOnClickOutside={false}
+      closeOnClickOutside={true}
       centered
       size={{ base: 'full', sm: 'md', md: 'lg' }}
       padding={{ base: 'md', sm: 'lg' }}

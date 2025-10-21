@@ -21,6 +21,7 @@ import GuildBadge from '../../components/GuildBadge';
 import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { GuildVerificationModal } from '../../components/auth/GuildVerificationModal';
+import { StartVerificationCard } from '../../components/StartVerificationCard';
 
 const verificationBadges = [
   {
@@ -121,48 +122,7 @@ export default function DashboardPage() {
           </Card>
 
           {/* Key Benefits Card */}
-          <Paper
-            shadow="lg"
-            withBorder
-            radius="lg"
-            p="xl"
-            style={{
-              backgroundColor: '#FFFFF8',
-              position: 'relative',
-              border: '1px solid #FDE68A',
-            }}
-          >
-            <Group justify="space-between" mb="lg">
-              <Text size="xl" fw={700} c="gray.9">
-                Key benefits of profile verification
-              </Text>
-              <Button
-                size="md"
-                onClick={openVerificationModal}
-                style={{
-                  backgroundColor: '#BAAD3E',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  '&:hover': {
-                    backgroundColor: '#A98A13',
-                  },
-                }}
-              >
-                Start verification
-              </Button>
-            </Group>
-            <List type="ordered" spacing="md" size="md">
-              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-                Gain Credibility Within the Community
-              </List.Item>
-              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-                Access Guild or Organization Features
-              </List.Item>
-              <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-                Ensure Secure and Authentic Interactions
-              </List.Item>
-            </List>
-          </Paper>
+          <StartVerificationCard onStartVerification={openVerificationModal} />
 
           {/* Verified Member Benefits Section */}
           <Box>
