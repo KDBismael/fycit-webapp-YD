@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import {SquarePen} from "lucide-react"
-import { Box, Button, Group, Modal, Stack, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { SquarePen } from "lucide-react";
+import { Box, Button, Group, Stack, Text } from '@mantine/core';
 import GuildBadge from '../GuildBadge';
 import { GuildEditor } from '../GuildEditor';
 
@@ -27,7 +26,7 @@ const verificationBadges = [
 ];
 
 export default function GuildsTab() {
-  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [showEditContainer, setShowEditContainer] = useState(false);
   const [selectedGuilds, setSelectedGuilds] = useState<string[]>(
     verificationBadges.map(badge => badge.name)
   );
@@ -46,9 +45,9 @@ export default function GuildsTab() {
             variant="outline"
             size="sm"
             radius="xl"
-            onClick={openEditModal}
+            onClick={() => setShowEditContainer(!showEditContainer)}
           >
-            Add/Edit guilds
+            {showEditContainer ? 'Done editing' : 'Edit guilds'}
           </Button>
         </Group>
 
@@ -59,13 +58,8 @@ export default function GuildsTab() {
         </Box>
       </Stack>
 
-      <Modal
-        opened={editModalOpened}
-        onClose={closeEditModal}
-        title="Choose your guilds"
-        size="lg"
-        centered
-      >
+      {/* Container d'édition - conditionnellement visible */}
+      {showEditContainer && (
         <Stack gap="md">
           <Text size="sm" c="gray.7">
             Choose the guilds or organizations you are a member of:
@@ -76,23 +70,15 @@ export default function GuildsTab() {
             mode="list"
           />
           <Group justify="flex-end" gap="sm">
-            <Button variant="outline" onClick={closeEditModal}>
-              Cancel
-            </Button>
-            <Button
-              onClick={closeEditModal}
-              style={{
-                backgroundColor: '#BAAD3E',
-                '&:hover': {
-                  backgroundColor: '#A98A13',
-                },
-              }}
+            <Button 
+              variant="outline" 
+              onClick={() => setShowEditContainer(false)}
             >
-              Confirm
+              Done
             </Button>
           </Group>
         </Stack>
-      </Modal>
+      )}
     </Stack>
   );
 }

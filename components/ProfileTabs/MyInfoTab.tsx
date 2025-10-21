@@ -214,7 +214,7 @@ export default function MyInfoTab() {
                   },
                 }}
               />
-              <Button
+              {/* <Button
                 variant="subtle"
                 size="xs"
                 leftSection={<IconEdit size={12} />}
@@ -226,7 +226,7 @@ export default function MyInfoTab() {
                 }}
               >
                 Change email
-              </Button>
+              </Button> */}
             </Box>
 
             <Box>

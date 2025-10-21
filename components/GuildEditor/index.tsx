@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Checkbox, Group, Paper, Stack, Text } from '@mantine/core';
+import React from 'react';
+import { Box, Group, Paper, Stack, Text } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
 
 export interface Guild {
@@ -15,6 +15,8 @@ interface GuildEditorProps {
   onChange: (value: string[]) => void;
   mode?: 'list' | 'summary';
   onEditClick?: () => void;
+  showSelectedGuild?: boolean;
+  isEditing?: boolean;
 }
 
 const guildOptions = [
@@ -37,6 +39,8 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
   onChange,
   mode = 'list',
   onEditClick,
+  showSelectedGuild = true,
+  isEditing = false,
 }) => {
   const handleToggleGuild = (guildValue: string) => {
     if (value.includes(guildValue)) {
@@ -59,31 +63,34 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
           maxHeight: '400px',
           overflowY: 'auto',
           backgroundColor: '#FEFBF3',
-          borderRadius: '8px',
-          padding: '16px',
+          borderRadius: '12px',
+          padding: '20px',
+          border: '1px solid #E5E7EB',
         }}
       >
-        <Stack gap="sm">
+        <Stack gap="xs">
           {guildOptions.map((guild) => {
             const isSelected = value.includes(guild.value);
             return (
               <Group
                 key={guild.value}
-                gap="sm"
+                gap="md"
                 style={{
-                  padding: '8px 12px',
+                  padding: '12px 16px',
                   cursor: 'pointer',
-                  borderRadius: '4px',
+                  borderRadius: '8px',
+                  backgroundColor: 'transparent',
+                  transition: 'background-color 0.2s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(169, 141, 52, 0.1)',
+                    backgroundColor: 'rgba(169, 141, 52, 0.08)',
                   },
                 }}
                 onClick={() => handleToggleGuild(guild.value)}
               >
                 <Box
                   style={{
-                    width: '20px',
-                    height: '20px',
+                    width: '24px',
+                    height: '24px',
                     borderRadius: '50%',
                     border: '2px solid #D1D5DB',
                     backgroundColor: isSelected ? '#22C55E' : 'white',
@@ -91,15 +98,16 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  {isSelected && <IconCheck size={12} color="white" />}
+                  {isSelected && <IconCheck size={14} color="white" />}
                 </Box>
                 <Text
                   size="sm"
-                  c={isSelected ? 'dark' : 'gray.6'}
+                  c={isSelected ? 'dark' : 'gray.7'}
                   fw={isSelected ? 500 : 400}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, lineHeight: 1.4 }}
                 >
                   {guild.label}
                 </Text>
@@ -133,18 +141,22 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
             width: '100%',
           }}
         />
-        {value.length > 0 ? (
-          <Stack gap="xs">
-            {value.map((guildValue) => (
-              <Text key={guildValue} size="sm" c="gray.7">
-                {getGuildLabel(guildValue)}
+        {showSelectedGuild && (
+          <>
+            {value.length > 0 ? (
+              <Stack gap="xs">
+                {value.map((guildValue) => (
+                  <Text key={guildValue} size="sm" c="gray.7">
+                    {getGuildLabel(guildValue)}
+                  </Text>
+                ))}
+              </Stack>
+            ) : (
+              <Text size="sm" c="gray.5">
+                No guilds selected
               </Text>
-            ))}
-          </Stack>
-        ) : (
-          <Text size="sm" c="gray.5">
-            No guilds selected
-          </Text>
+            )}
+          </>
         )}
         <Text
           size="sm"
@@ -156,7 +168,7 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
           }}
           onClick={onEditClick}
         >
-          Edit guild
+          {isEditing ? 'Done editing' : 'Edit guild'}
         </Text>
       </Stack>
     </Paper>
