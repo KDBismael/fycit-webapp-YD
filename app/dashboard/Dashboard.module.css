@@ -9,6 +9,7 @@
 .profileCard {
   /* Padding de base sur mobile (XS/SM) */
   padding: var(--mantine-spacing-lg);
+  position: relative; /* Pour le positionnement absolu des logos */
 }
 
 /* 1. Disposition Générale du Profil */
@@ -75,19 +76,23 @@
 /* Le logo Desktop est visible uniquement à partir de 'sm' (576px) */
 .logoDesktop {
   display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  flex-shrink: 0;
-  text-align: center;
-  margin-top: 5px;
+  z-index: 10;
 }
 
 /* Le logo Mobile est caché sur 'sm' et plus */
 .logoMobile {
   display: flex;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
   align-items: center;
-  flex-shrink: 0;
+  z-index: 10;
 }
 
 @media (min-width: 576px) {

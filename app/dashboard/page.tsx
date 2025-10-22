@@ -43,9 +43,19 @@ export function ProfileCardComponent() {
         overflow: 'hidden',
       }}
     >
-      {/* SECTION DU PROFIL (Avatar, Nom, Adresse, Logo) */}
+      {/* Logo Desktop - Position absolue en haut à droite */}
+      <Box className={classes.logoDesktop}>
+        <Image src="/logo.svg" alt="FYCit Logo" width={50} height={32} fit="contain" />
+      </Box>
+
+      {/* Logo Mobile - Position absolue en haut à droite */}
+      <Box className={classes.logoMobile}>
+        <Image src="/logo.svg" alt="Awards Icon" width={20} height={20} fit="contain" />
+      </Box>
+
+      {/* SECTION DU PROFIL (Avatar, Nom, Adresse) */}
       <Group
-        className={classes.profileGroup} // Classe pour la disposition (flex, gap, wrap, align)
+        className={classes.profileGroup}
         align="flex-start"
         wrap="nowrap"
       >
@@ -55,41 +65,23 @@ export function ProfileCardComponent() {
             src="/images/profile-pic.png"
             alt="Jane Cooper"
             radius="md"
-            // La taille de l'avatar est gérée par la classe CSS
             size="xl" 
             className={classes.profileAvatar}
           />
         </Box>
 
-        {/* 2. Content Container (Nom, Adresse, Logo) */}
+        {/* 2. Content Container (Nom, Adresse) */}
         <Stack className={classes.profileContent} gap={4}>
-          {/* Ligne : Nom et Logo */}
-          <Group justify="space-between" align="center" style={{ width: '100%' }} wrap="nowrap">
-            <Title
-              order={2}
-              className={classes.profileTitle} // Classe pour la taille du titre
-            >
-              Jane Cooper
-            </Title>
+          <Title
+            order={2}
+            className={classes.profileTitle}
+          >
+            Jane Cooper
+          </Title>
 
-            {/* Logo FYCit (Version DÉTAILLÉE pour Desktop) */}
-            <Box className={classes.logoDesktop}> 
-              <Image src="/logo.svg" alt="FYCit Logo" width={50} height={32} fit="contain" />
-              <Text size="xs" c="gray.6" fw={500} style={{ lineHeight: 1.2 }}>
-                AWARDS SEASON STARTS HERE
-              </Text>
-            </Box>
-
-            {/* Logo FYCit (Version MINI pour Mobile/Vertical) */}
-            <Box className={classes.logoMobile}> 
-              <Image src="/logo.svg" alt="Awards Icon" width={20} height={20} fit="contain" />
-            </Box>
-          </Group>
-
-          {/* Ligne : Adresse */}
           <Text
             c="gray.7"
-            className={classes.profileAddress} // Classe pour la taille de l'adresse
+            className={classes.profileAddress}
           >
             23 Main Street
             <br />
