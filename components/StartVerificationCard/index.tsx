@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Group, List, Paper, Text, Title } from '@mantine/core';
+import { Button, Group, List, Paper, Text } from '@mantine/core';
 
 interface StartVerificationCardProps {
   onStartVerification?: () => void;
