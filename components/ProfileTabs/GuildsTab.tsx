@@ -51,7 +51,7 @@ export default function GuildsTab() {
           </Button>
         </Group>
 
-        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>
+        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-sm)' }}>
           {verificationBadges.map((badge) => (
             <GuildBadge key={badge.name} name={badge.name} status={badge.status} />
           ))}

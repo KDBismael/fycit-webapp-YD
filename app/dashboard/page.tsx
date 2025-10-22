@@ -4,14 +4,11 @@ import React from 'react';
 import {
   Avatar,
   Box,
-  Button,
   Card,
   Container,
   Grid,
   Group,
   Image,
-  List,
-  Paper,
   Stack,
   Text,
   ThemeIcon,
@@ -108,7 +105,7 @@ export default function DashboardPage() {
                   <br />
                   United States
                 </Text>
-                <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)', marginTop: 'var(--mantine-spacing-md)' }}>
+                <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-sm)', marginTop: 'var(--mantine-spacing-md)' }}>
                   {verificationBadges.map((badge) => (
                     <GuildBadge
                       key={badge.name}
