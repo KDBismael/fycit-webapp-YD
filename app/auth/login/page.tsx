@@ -108,18 +108,6 @@ export default function Login() {
   };
 
   // Helper functions
-  const getSelectedGuilds = (data: ProfileCompletionFormData | null) => {
-    if (!data) return [];
-    
-    const guildOptions = [
-      { id: 'AMPAS', name: 'AMPAS', fullName: 'AMPAS - Motion Picture Academy', isVerifiable: true },
-      { id: 'ADG', name: 'ADG', fullName: 'ADG - Art Directors Guild', isVerifiable: true },
-      { id: 'ASC', name: 'ASC', fullName: 'ASC - American Society of Cinematographers', isVerifiable: false },
-    ];
-    
-    return guildOptions.filter(guild => data.selectedGuild.includes(guild.id));
-  };
-
   const getVerifiableGuilds = (data: ProfileCompletionFormData | null) => {
     if (!data) return [];
     
@@ -290,11 +278,6 @@ export default function Login() {
         opened={showGuildConfirmation}
         onClose={() => setShowGuildConfirmation(false)}
         onContinue={handleGuildConfirmationContinue}
-        onEditGuilds={() => {
-          setShowGuildConfirmation(false);
-          setShowAwardsModal(true);
-        }}
-        selectedGuilds={getSelectedGuilds(profileData)}
       />
       
       {/* Good News Modal (Guild Verification Modal) - Skip Welcome Modal for Sign In */}

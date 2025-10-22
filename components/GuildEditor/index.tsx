@@ -98,13 +98,12 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
                     padding: '12px 16px',
                     cursor: 'pointer',
                     borderRadius: '8px',
-                    // backgroundColor: isSelected ? 'rgba(34, 197, 94, 0.05)' : 'transparent', // Léger fond vert/crème au survol si vous voulez un effet
                     transition: 'background-color 0.2s ease',
                   }}
                 >
                   <Checkbox
                     onChange={() => handleToggleGuild(guild.value)}
-                    defaultChecked={isSelected}
+                    checked={isSelected}
                     label={guild.label}
                     color="green"
                   />
