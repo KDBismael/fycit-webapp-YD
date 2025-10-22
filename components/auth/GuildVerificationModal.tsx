@@ -84,9 +84,11 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
+      closeOnEscape={false}
+      closeOnClickOutside={true}
       centered
-      size="xl"
-      padding="xl"
+      size={{ base: 'full', sm: 'lg', md: 'xl' }}
+      padding={{ base: 'md', sm: 'lg', md: 'xl' }}
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,

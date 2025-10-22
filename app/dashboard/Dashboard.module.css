@@ -1,0 +1,118 @@
+/* ProfileCard.module.css ou Dashboard.module.css */
+
+/* Définition des breakpoints Mantine (approximatifs) pour une utilisation cohérente */
+/* Note: Mantine utilise des rem pour ses breakpoints, mais les pixels sont plus clairs ici. */
+/* sm (Small/Mobile): ~576px */
+/* md (Medium/Tablet): ~768px */
+/* lg (Large/Desktop): ~992px */
+
+.profileCard {
+  /* Padding de base sur mobile (XS/SM) */
+  padding: var(--mantine-spacing-lg);
+  position: relative; /* Pour le positionnement absolu des logos */
+}
+
+/* 1. Disposition Générale du Profil */
+
+.profileGroup {
+  /* Espace entre l'avatar et le contenu sur mobile */
+  gap: var(--mantine-spacing-md);
+  /* Marge en bas sur mobile */
+  margin-bottom: var(--mantine-spacing-lg);
+  /* Centrage vertical de l'avatar et du texte sur mobile */
+  align-items: center;
+}
+
+/* 2. Taille de l'Avatar */
+
+/* Taille par défaut (mobile) - Mantine Avatar 'lg' ou 100px */
+.profileAvatar {
+  width: 100px !important;
+  height: 100px !important;
+}
+
+/* Taille Desktop (MD et plus) */
+@media (min-width: 768px) {
+  .profileGroup {
+    /* Espace sur Desktop */
+    gap: var(--mantine-spacing-xl);
+    /* Marge en bas sur Desktop */
+    margin-bottom: var(--mantine-spacing-xl);
+    align-items: flex-start; /* Alignement en haut sur desktop */
+  }
+  .profileAvatar {
+    /* Taille large sur desktop - Mantine Avatar 'xl' ou 160px */
+    width: 160px !important;
+    height: 160px !important;
+  }
+}
+
+/* 3. Tailles de Texte */
+
+.profileTitle {
+  /* Taille par défaut du nom (mobile) */
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.profileAddress {
+  /* Taille par défaut de l'adresse (mobile) */
+  font-size: 0.875rem; /* 'sm' Mantine */
+}
+
+/* Ajustement des tailles de texte sur Desktop (SM et plus) */
+@media (min-width: 576px) {
+  .profileTitle {
+    font-size: 2.2rem;
+    font-weight: 600;
+  }
+  .profileAddress {
+    font-size: 1rem; /* 'md' Mantine */
+  }
+}
+
+/* 4. Gestion du Logo */
+
+/* Le logo Desktop est visible uniquement à partir de 'sm' (576px) */
+.logoDesktop {
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  z-index: 10;
+}
+
+/* Le logo Mobile est caché sur 'sm' et plus */
+.logoMobile {
+  display: flex;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  align-items: center;
+  z-index: 10;
+}
+
+@media (min-width: 576px) {
+  .logoDesktop {
+    display: flex;
+  }
+  .logoMobile {
+    display: none;
+  }
+}
+
+/* 5. Séparateur et Badges */
+
+.separator {
+  height: 1px;
+  background-color: #f0f0f0;
+  width: 100%;
+  margin-bottom: var(--mantine-spacing-md);
+}
+
+.guildBadgesContainer {
+  margin-top: var(--mantine-spacing-md);
+}

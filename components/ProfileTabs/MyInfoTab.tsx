@@ -214,7 +214,7 @@ export default function MyInfoTab() {
                   },
                 }}
               />
-              <Button
+              {/* <Button
                 variant="subtle"
                 size="xs"
                 leftSection={<IconEdit size={12} />}
@@ -226,7 +226,7 @@ export default function MyInfoTab() {
                 }}
               >
                 Change email
-              </Button>
+              </Button> */}
             </Box>
 
             <Box>
@@ -291,20 +291,6 @@ export default function MyInfoTab() {
               }}
             />
 
-            <Button
-              variant="subtle"
-              size="sm"
-              leftSection={<IconKey size={14} />}
-              onClick={openResetPassword}
-              style={{
-                color: '#6B7280',
-                alignSelf: 'flex-start',
-                padding: '8px 12px',
-              }}
-            >
-              Reset password
-            </Button>
-
             <TextInput
               label="Zip/Postal Code (Optional)"
               placeholder="Enter postal code"
@@ -322,39 +308,65 @@ export default function MyInfoTab() {
                 },
               }}
             />
+
+            <Stack gap="md">
+              <Button
+                fullWidth
+                size="md"
+                radius="md"
+                style={{
+                  backgroundColor: '#BAAD3E',
+                  '&:hover': {
+                    backgroundColor: '#A98A13',
+                  },
+                }}
+              >
+                Save
+              </Button>
+              
+              <Button
+                fullWidth
+                variant="subtle"
+                size="md"
+                leftSection={<IconEdit size={14} />}
+                onClick={openChangeEmail}
+                style={{
+                  color: '#6B7280',
+                }}
+              >
+                Change email
+              </Button>
+              
+              <Button
+                fullWidth
+                variant="subtle"
+                size="md"
+                leftSection={<IconKey size={14} />}
+                onClick={openResetPassword}
+                style={{
+                  color: '#6B7280',
+                }}
+              >
+                Reset password
+              </Button>
+              
+              <Button
+                fullWidth
+                variant="subtle"
+                color="red"
+                size="md"
+                leftSection={<IconTrash size={14} />}
+                onClick={openDeleteAccount}
+                style={{
+                  color: '#DC2626',
+                }}
+              >
+                Delete account
+              </Button>
+            </Stack>
           </Stack>
         </Grid.Col>
       </Grid>
-
-      {/* Save Button */}
-      <Group justify="space-between" align="center">
-        <Button
-          variant="subtle"
-          color="red"
-          size="sm"
-          leftSection={<IconTrash size={14} />}
-          onClick={openDeleteAccount}
-          style={{
-            color: '#DC2626',
-            padding: '6px 12px',
-          }}
-        >
-          Delete account
-        </Button>
-        
-        <Button
-          size="md"
-          radius="md"
-          style={{
-            backgroundColor: '#BAAD3E',
-            '&:hover': {
-              backgroundColor: '#A98A13',
-            },
-          }}
-        >
-          Save
-        </Button>
-      </Group>
 
       {/* Change Email Modal */}
       <Modal opened={changeEmailOpened} onClose={closeChangeEmail} title="Change Email Address" centered>

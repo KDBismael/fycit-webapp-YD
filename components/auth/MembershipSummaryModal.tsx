@@ -30,9 +30,12 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
     <Modal
       opened={opened}
       onClose={onClose}
+      withCloseButton={false}
+      closeOnEscape={false}
+      closeOnClickOutside={true}
       centered
-      size="xl"
-      padding="lg"
+      size={{ base: 'full', sm: 'md', md: 'lg' }}
+      padding={{ base: 'md', sm: 'lg' }}
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,

@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import {SquarePen} from "lucide-react"
-import { Box, Button, Group, List, Paper, Stack, Text } from '@mantine/core';
+import React, { useState } from 'react';
+import { SquarePen } from 'lucide-react';
+import { Box, Button, Group, Stack, Text } from '@mantine/core';
 import GuildBadge from '../GuildBadge';
+import { GuildEditor } from '../GuildEditor';
 
 const verificationBadges = [
   {
@@ -16,7 +17,7 @@ const verificationBadges = [
   },
   {
     name: 'ASC',
-    status: 'rejected' as const,
+    status: 'verifiable' as const,
   },
   {
     name: 'ADG',
@@ -25,13 +26,18 @@ const verificationBadges = [
 ];
 
 export default function GuildsTab() {
+  const [showEditContainer, setShowEditContainer] = useState(true);
+  const [selectedGuilds, setSelectedGuilds] = useState<string[]>(
+    verificationBadges.map((badge) => badge.name)
+  );
+
   return (
     <Stack gap="lg">
       {/* Guild Badges Section */}
       <Stack gap="md">
         <Group justify="space-between" align="center">
           <Text size="lg" fw={600} c="gray.9">
-            Guild Verification
+            Guilds
           </Text>
           <Button
             color="violet.8"
@@ -39,59 +45,41 @@ export default function GuildsTab() {
             variant="outline"
             size="sm"
             radius="xl"
+            onClick={() => setShowEditContainer(!showEditContainer)}
           >
-            Add/Edit guilds
+            {showEditContainer ? 'Done editing' : 'Edit guilds'}
           </Button>
         </Group>
 
-        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-md)' }}>
+        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-sm)' }}>
           {verificationBadges.map((badge) => (
             <GuildBadge key={badge.name} name={badge.name} status={badge.status} />
           ))}
         </Box>
       </Stack>
 
-      {/* Key Benefits Card */}
-      <Paper
-        shadow="sm"
-        withBorder
-        radius="lg"
-        p="xl"
-        style={{
-          backgroundColor: '#FFFFF8',
-          border: '1px solid #FDE68A',
-        }}
-      >
-        <Group justify="space-between" mb="lg">
-          <Text size="xl" fw={700} c="gray.9">
-            Key benefits of profile verification
-          </Text>
+      <Stack gap="md">
+        <GuildEditor
+          value={selectedGuilds}
+          onChange={setSelectedGuilds}
+          onEditClick={() => setShowEditContainer(!showEditContainer)}
+          mode={showEditContainer ? 'list' : 'summary'}
+          showSelectedGuild
+        />
+        <Group justify="flex-end" gap="sm">
           <Button
-            size="md"
+            onClick={() => setShowEditContainer(false)}
             style={{
               backgroundColor: '#BAAD3E',
-              borderRadius: '8px',
-              fontWeight: 600,
               '&:hover': {
                 backgroundColor: '#A98A13',
               },
             }}
           >
-            Start verification
+            Confirm
           </Button>
         </Group>
-        <List type="ordered" spacing="md" size="md">
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Gain Credibility Within the Community
-          </List.Item>
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Access Guild or Organization Features
-          </List.Item>
-          <List.Item style={{ fontSize: '16px', fontWeight: 500 }}>
-            Ensure Secure and Authentic Interactions
-          </List.Item>
-        </List>
-      </Paper>
+      </Stack>
     </Stack>
   );
 }

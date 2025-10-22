@@ -7,7 +7,7 @@ import classes from './GuildBadge.module.css';
 
 export interface GuildBadgeProps {
   name: string;
-  status: 'verified' | 'pending' | 'rejected';
+  status: 'verified' | 'pending' | 'verifiable';
   className?: string;
 }
 
@@ -20,20 +20,20 @@ const getIcon = (status: string) => {
 
 const getColorValue = (status: string) => {
   const colors = {
-    verified: 'var(--mantine-color-success-6)',
-    pending: 'var(--mantine-color-gray-6)',
-    rejected: 'var(--mantine-color-error-6)'
+    verified: '#22C55E',
+    pending: '#F59E0B',
+    verifiable: '#6B7280'
   };
-  return colors[status as keyof typeof colors] || 'var(--mantine-color-gray-6)';
+  return colors[status as keyof typeof colors] || '#6B7280';
 };
 
 const getTooltipText = (status: string) => {
   const tooltips = {
     verified: 'Verified',
     pending: 'Verification pending',
-    rejected: 'Verification failed'
+    verifiable: 'Verification available'
   };
-  return tooltips[status as keyof typeof tooltips] || 'Verification available';
+  return tooltips[status as keyof typeof tooltips] || 'Unknown status';
 };
 
 export default function GuildBadge({ 

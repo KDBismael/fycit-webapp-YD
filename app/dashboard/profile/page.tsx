@@ -24,19 +24,19 @@ export default function ProfilePage() {
       </Tabs.List>
 
       <Tabs.Panel value="event-locales" pt="lg">
-        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px' }}>
+        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
           <EventLocalesTab />
         </Box>
       </Tabs.Panel>
 
       <Tabs.Panel value="guilds" pt="lg">
-        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px' }}>
+        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
           <GuildsTab />
         </Box>
       </Tabs.Panel>
 
       <Tabs.Panel value="my-info" pt="lg">
-        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px' }}>
+        <Box style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}>
           <MyInfoTab />
         </Box>
       </Tabs.Panel>
