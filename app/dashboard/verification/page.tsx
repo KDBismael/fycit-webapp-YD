@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 import { Box, Card, Checkbox, Grid, Group, Image, Select, Stack, Text, ThemeIcon } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { StartVerificationCard } from '../../../components/StartVerificationCard';
 import VerificationCard from '../../../components/VerificationCard';
-import VerificationModal from '../../../components/VerificationModal';
+import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
 import classes from './VerificationPage.module.css';
 
 const verificationData = [
@@ -55,8 +54,7 @@ const verificationData = [
 export default function VerificationPage() {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedGuild, setSelectedGuild] = useState<any>(null);
-  const [verificationModalOpened, { open: openVerificationModal, close: closeVerificationModal }] =
-    useDisclosure(false);
+  const [showVerificationForm, setShowVerificationForm] = useState(false);
 
   const handleAction = (id: string, action: string) => {
     // eslint-disable-next-line no-console
@@ -65,7 +63,18 @@ export default function VerificationPage() {
 
   const handleGuildClick = (guild: any) => {
     setSelectedGuild(guild);
-    openVerificationModal();
+    setShowVerificationForm(true);
+  };
+
+  const handleVerificationComplete = () => {
+    setShowVerificationForm(false);
+    setSelectedGuild(null);
+    // Optionnel: Rafraîchir les données ou afficher un message de succès
+  };
+
+  const handleVerificationClose = () => {
+    setShowVerificationForm(false);
+    setSelectedGuild(null);
   };
 
   return (
@@ -143,12 +152,6 @@ export default function VerificationPage() {
 
       {/* Key Benefits Section */}
       <StartVerificationCard />
-
-      <VerificationModal
-        opened={verificationModalOpened}
-        onClose={closeVerificationModal}
-        guild={selectedGuild}
-      />
 
       {/* Verified Member Benefits Section */}
       <Box>
@@ -242,6 +245,47 @@ export default function VerificationPage() {
           </Grid.Col>
         </Grid>
       </Box>
+
+      {/* Guild Verification Form Overlay */}
+      {showVerificationForm && selectedGuild && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000,
+            padding: '2rem',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 'var(--mantine-radius-md)',
+              padding: '2rem',
+              maxWidth: '900px',
+              width: '100%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+          >
+            <GuildVerificationForm
+              selectedGuild={{
+                id: selectedGuild.id,
+                name: selectedGuild.title,
+                fullName: `${selectedGuild.title} - Guild Name`,
+              }}
+              onNext={handleVerificationComplete}
+              onBack={handleVerificationClose}
+            />
+          </div>
+        </div>
+      )}
     </Stack>
   );
 }

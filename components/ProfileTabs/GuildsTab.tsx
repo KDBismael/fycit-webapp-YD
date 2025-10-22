@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { SquarePen } from "lucide-react";
-import { Box, Button, Group, Stack, Text } from '@mantine/core';
+import { Box, Button, Group, Stack, Text, Title } from '@mantine/core';
 import GuildBadge from '../GuildBadge';
 import { GuildEditor } from '../GuildEditor';
 
@@ -26,7 +26,7 @@ const verificationBadges = [
 ];
 
 export default function GuildsTab() {
-  const [showEditContainer, setShowEditContainer] = useState(false);
+  const [showEditContainer, setShowEditContainer] = useState(true);
   const [selectedGuilds, setSelectedGuilds] = useState<string[]>(
     verificationBadges.map(badge => badge.name)
   );
@@ -37,7 +37,7 @@ export default function GuildsTab() {
       <Stack gap="md">
         <Group justify="space-between" align="center">
           <Text size="lg" fw={600} c="gray.9">
-            Guild Verification
+            Guilds
           </Text>
           <Button
             color="violet.8"
@@ -61,6 +61,9 @@ export default function GuildsTab() {
       {/* Container d'édition - conditionnellement visible */}
       {showEditContainer && (
         <Stack gap="md">
+          <Title order={4} fw={700} c="gray.9">
+            Choose your guilds
+          </Title>
           <Text size="sm" c="gray.7">
             Choose the guilds or organizations you are a member of:
           </Text>
@@ -71,10 +74,15 @@ export default function GuildsTab() {
           />
           <Group justify="flex-end" gap="sm">
             <Button 
-              variant="outline" 
               onClick={() => setShowEditContainer(false)}
+              style={{
+                backgroundColor: '#BAAD3E',
+                '&:hover': {
+                  backgroundColor: '#A98A13',
+                },
+              }}
             >
-              Done
+              Confirm
             </Button>
           </Group>
         </Stack>

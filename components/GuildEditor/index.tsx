@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Group, Paper, Stack, Text } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
+import { Box, Checkbox, Paper, Stack, Text } from '@mantine/core';
 
 export interface Guild {
   id: string;
@@ -72,46 +71,14 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
           {guildOptions.map((guild) => {
             const isSelected = value.includes(guild.value);
             return (
-              <Group
+              <Checkbox
                 key={guild.value}
-                gap="md"
-                style={{
-                  padding: '12px 16px',
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  backgroundColor: 'transparent',
-                  transition: 'background-color 0.2s ease',
-                  '&:hover': {
-                    backgroundColor: 'rgba(169, 141, 52, 0.08)',
-                  },
-                }}
-                onClick={() => handleToggleGuild(guild.value)}
-              >
-                <Box
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    border: '2px solid #D1D5DB',
-                    backgroundColor: isSelected ? '#22C55E' : 'white',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  {isSelected && <IconCheck size={14} color="white" />}
-                </Box>
-                <Text
-                  size="sm"
-                  c={isSelected ? 'dark' : 'gray.7'}
-                  fw={isSelected ? 500 : 400}
-                  style={{ flex: 1, lineHeight: 1.4 }}
-                >
-                  {guild.label}
-                </Text>
-              </Group>
+                checked={isSelected}
+                onChange={() => handleToggleGuild(guild.value)}
+                radius="sm"
+                label={guild.label}
+                color="green"
+              />
             );
           })}
         </Stack>
@@ -174,4 +141,3 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
     </Paper>
   );
 };
-
