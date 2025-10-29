@@ -1,35 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
-import { SquarePen } from 'lucide-react';
+import { useGuildsStore } from '@/stores/guildsStore';
+import { useUserStore } from '@/stores/userStore';
 import { Box, Button, Group, Stack, Text } from '@mantine/core';
+import { SquarePen } from 'lucide-react';
+import { useState } from 'react';
 import GuildBadge from '../GuildBadge';
 import { GuildEditor } from '../GuildEditor';
 
-const verificationBadges = [
-  {
-    name: 'AMPAS',
-    status: 'verified' as const,
-  },
-  {
-    name: 'ASIFA',
-    status: 'pending' as const,
-  },
-  {
-    name: 'ASC',
-    status: 'verifiable' as const,
-  },
-  {
-    name: 'ADG',
-    status: 'pending' as const,
-  },
-];
+
 
 export default function GuildsTab() {
-  const [showEditContainer, setShowEditContainer] = useState(true);
-  const [selectedGuilds, setSelectedGuilds] = useState<string[]>(
-    verificationBadges.map((badge) => badge.name)
-  );
+  const { user } = useUserStore()
+  const { guilds } = useGuildsStore();
+  const userGuilds = guilds.filter((g) => user?.guild.includes(g.longName))
+  const [showEditContainer, setShowEditContainer] = useState(false);
+  const [selectedGuilds, setSelectedGuilds] = useState<string[]>(user?.guild ?? []);
 
   return (
     <Stack gap="lg">
@@ -51,10 +37,8 @@ export default function GuildsTab() {
           </Button>
         </Group>
 
-        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-sm)' }}>
-          {verificationBadges.map((badge) => (
-            <GuildBadge key={badge.name} name={badge.name} status={badge.status} />
-          ))}
+        <Box style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--mantine-spacing-lg)' }}>
+          <GuildBadge guilds={userGuilds} />
         </Box>
       </Stack>
 

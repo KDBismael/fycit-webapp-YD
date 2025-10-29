@@ -1,8 +1,8 @@
 'use client';
 
-import { Box, Tabs } from '@mantine/core';
 import GuildsTab from '@/components/ProfileTabs/GuildsTab';
 import MyInfoTab from '@/components/ProfileTabs/MyInfoTab';
+import { Box, Tabs } from '@mantine/core';
 import EventLocalesTab from '../../../components/ProfileTabs/EventLocalesTab';
 import classes from './ProfileTabs.module.css';
 

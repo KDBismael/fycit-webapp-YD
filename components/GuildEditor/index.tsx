@@ -37,8 +37,8 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
   };
 
   const getGuildLabel = (guildValue: string) => {
-    const guild = guilds.find((g) => g.value === guildValue);
-    return guild ? guild.label : guildValue;
+    const guild = guilds.find((g) => g.longName === guildValue);
+    return guild ? guild.longName : guildValue;
   };
 
   // Mode 1: Liste scrollable ("Choose your guilds") - Basé sur l'Image 1
@@ -46,7 +46,6 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
     return (
       <Box
         style={{
-          maxHeight: '400px',
           overflowY: 'hidden',
           // Fond crème doux et coins arrondis, similaire à l'image 1
           backgroundColor: '#CBB852', // Couleur légèrement plus pâle pour le fond
@@ -69,16 +68,18 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
             maxHeight: 'calc(400px - 90px)', // Ajustez la hauteur max pour le contenu
             overflowY: 'auto',
             paddingRight: '10px', // Espace pour la barre de défilement
+            paddingBottom: "30px"
           }}
           className={classes.customScrollbar} // Utilisez une classe pour styliser la scrollbar si nécessaire
         >
-          <Stack gap="xs">
+          <Stack gap="xs" style={{ display: "flex", }}>
             {guilds.map((guild) => {
               const isSelected = value.includes(guild.longName);
               return (
                 <Group
-                  key={guild.value}
+                  key={guild.id}
                   gap="md"
+                  justify='center'
                   style={{
                     padding: '12px 16px',
                     cursor: 'pointer',

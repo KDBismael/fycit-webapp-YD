@@ -1,48 +1,49 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { useLocalesStore } from '@/stores/localesStore';
+import { useUserStore } from '@/stores/userStore';
 import { Alert, Checkbox, Stack, Text } from '@mantine/core';
+import { useState } from 'react';
 import { EventLocalesSelector } from '../auth/EventLocalesSelector';
 
 export default function EventLocalesTab() {
-  const [selectedLocales, setSelectedLocales] = useState<string[]>(['los-angeles']);
-  const [autoViewNewLocales, setAutoViewNewLocales] = useState(false);
+  const { user } = useUserStore()
+  const { locales } = useLocalesStore();
+  const [selectedLocales, setSelectedLocales] = useState<string[]>(user?.locale as [] ?? []);
+  const [autoViewNewLocales, setAutoViewNewLocales] = useState(user?.userSettings.automaticallyViewNewLocales ?? false);
 
   return (
     <Stack gap="lg">
       <Alert
-        icon={<IconInfoCircle size={16} />}
         title="FYCit has gone global!"
         color="yellow"
         variant="light"
         styles={{
           root: {
-            backgroundColor: '#FEF3C7',
+            backgroundColor: '#fef3c792',
             border: '1px solid #FCD34D',
           },
           title: {
             fontWeight: 700,
-            color: '#92400E',
+            color: 'black',
           },
           message: {
-            color: '#92400E',
+            color: 'black',
           },
         }}
       >
-        Please choose your preferred locale(s) and decide if you'd like to Automatically View Events
-        in New Locales when they are added.
+        Select the cities you want to follow to see screenings and events happening there. You’ll only see events that take place in or near these locales.
       </Alert>
 
       <Stack gap="md">
         <Text size="lg" fw={600} c="gray.9">
-          Select the cities you want to follow to see screenings and events happening there. You'll
-          only see events that take place in or near these locales.
+          View events in these locales
         </Text>
 
         <EventLocalesSelector
           value={selectedLocales}
           onChange={setSelectedLocales}
+          data={locales}
           placeholder="Select locales"
         />
 
@@ -56,10 +57,6 @@ export default function EventLocalesTab() {
               fontSize: '14px',
               fontWeight: 500,
               color: '#374151',
-            },
-            input: {
-              backgroundColor: '#F9FAFB',
-              borderColor: '#D1D5DB',
             },
           }}
         />
