@@ -107,13 +107,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   root: {
                     borderRadius: 'var(--mantine-radius-md)',
                     padding: '12px 16px',
-                    '&[data-active]': {
+                    '&[dataActive]': {
                       fontWeight: 700,
                       '& .mantine-NavLink-label': {
                         fontWeight: 700,
                       },
                     },
-                    '&:hover:not([data-active])': {
+                    '&:hover:not([dataActive])': {
                       backgroundColor: 'var(--mantine-color-gray-0)',
                     },
                   },

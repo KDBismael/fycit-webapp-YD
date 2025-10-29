@@ -3,6 +3,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Container,
   Grid,
@@ -19,13 +20,17 @@ import { StartVerificationCard } from '../../components/StartVerificationCard';
 // J'ai renommé le fichier CSS en ProfileCard.module.css pour la cohérence
 import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
+import { useRouter } from 'next/navigation';
 import classes from './Dashboard.module.css';
 
 export function ProfileCardComponent() {
+  const Navigation = useRouter()
   const { user } = useUserStore();
   const { guilds } = useGuildsStore()
   const userGuilds = guilds.filter((g) => user?.guild.includes(g.longName))
-
+  const onEdit = () => {
+    Navigation.push('/dashboard/profile')
+  }
   return (
     <Card
       shadow="sm"
@@ -41,12 +46,12 @@ export function ProfileCardComponent() {
     >
       {/* Logo Desktop - Position absolue en haut à droite */}
       <Box className={classes.logoDesktop}>
-        <Image src="/logo.svg" alt="FYCit Logo" width={50} height={32} fit="contain" />
+        <Button onClick={onEdit}>Edit</Button>
       </Box>
 
       {/* Logo Mobile - Position absolue en haut à droite */}
       <Box className={classes.logoMobile}>
-        <Image src="/logo.svg" alt="Awards Icon" width={20} height={20} fit="contain" />
+        <Button onClick={onEdit}>Edit</Button>
       </Box>
 
       {/* SECTION DU PROFIL (Avatar, Nom, Adresse) */}
@@ -95,6 +100,19 @@ export function ProfileCardComponent() {
       >
         <GuildBadge guilds={userGuilds} />
       </Group>
+
+      {/* SECTION DES Locales */}
+      <Box className={classes.separator} />
+      <Group
+        gap="lg"
+        wrap="wrap"
+        className={classes.guildBadgesContainer}
+      >
+        <Text size='lg'>
+          {(user?.locale as string[]).join(", ")}
+        </Text>
+      </Group>
+
     </Card>
   );
 }
