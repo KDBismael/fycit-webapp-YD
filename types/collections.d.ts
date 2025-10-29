@@ -59,6 +59,8 @@ export interface News {
     newsTitle: string;
     dateAdded: Timestamp;
     newsContent: string;
+    dataGroup: string[],
+    tag: string;
 }
 export interface NewEventFavoriteStatus {
     [projectId: string]: number;

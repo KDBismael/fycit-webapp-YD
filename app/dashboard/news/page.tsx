@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Box, Card, Group, Image, Stack, Text, Badge, Button, TextInput, Grid, Avatar } from '@mantine/core';
-import { IconSearch, IconCalendar } from '@tabler/icons-react';
+import { useNewsStore } from '@/stores/news';
+import { useUserStore } from '@/stores/userStore';
+import { Box, Button, Container, Group, Loader, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import NewsletterModal from '../../../components/NewsletterModal';
 
 const articles = [
@@ -116,19 +118,26 @@ const getCategoryColor = (category: string) => {
 };
 
 export default function NewsPage() {
+  const { user } = useUserStore()
+  const { fetchNews, news } = useNewsStore()
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [newsletterOpened, { open: openNewsletter, close: closeNewsletter }] = useDisclosure(false);
 
+  useEffect(() => {
+    fetchNews();
+  }, [])
+
+  if (news.length < 1) return <Stack flex={1} style={{ height: '100%' }} justify='center' align='center'> <Loader /></Stack>
   return (
-    <Stack gap="xl">
+    <Container strategy='grid' >
       {/* Header with Newsletter Button */}
-      <Group justify="space-between" align="center">
+      <Group justify="space-between" align="center" mb={'xl'}>
         <Box>
           <Text size="xl" fw={700} c="gray.9" mb="xs">
-            FYCit News & Updates
+            FYCit News
           </Text>
           <Text size="sm" c="gray.6">
-            Stay up to date with the latest news, announcements, and updates from FYCit
+            Stay up to date with the latest news from FYCit
           </Text>
         </Box>
         <Button
@@ -144,108 +153,41 @@ export default function NewsPage() {
         </Button>
       </Group>
 
-      {/* Search and Filters */}
-      <Stack gap="md">
-        <TextInput
-          placeholder="Search articles..."
-          leftSection={<IconSearch size={16} />}
-          size="md"
-          radius="md"
-          styles={{
-            input: {
-              border: '1px solid #E5E7EB',
-              backgroundColor: 'white',
-            },
-          }}
-        />
 
-        <Group gap="xs" wrap="wrap">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "filled" : "outline"}
-              size="sm"
-              radius="xl"
-              onClick={() => setSelectedCategory(category)}
-              style={{
-                backgroundColor: selectedCategory === category ? '#BAAD3E' : 'transparent',
-                borderColor: '#BAAD3E',
-                color: selectedCategory === category ? 'white' : '#BAAD3E',
+      {/* News Grid - 3 per row */}
+      <Container style={{ justifyContent: 'center', maxHeight: '95%', overflowY: 'auto' }}>
+        {news.filter((n) => n.tag == 'published' && n.dataGroup.includes(user?.dataGroup ?? 'production')).sort((a, b) => b.dateAdded.seconds - a.dateAdded.seconds).map((n) => (
+          <Stack key={n.id} style={{ backgroundColor: '#E4E0A2', borderRadius: '12px', padding: '10px 20px' }} mb={'md'}>
+            <Title size={'27px'} ta={'center'}>{n.newsTitle}</Title>
+            <ReactMarkdown
+              components={{
+                img: ({ node, ...props }) => (
+                  <img
+                    {...props}
+                    style={{
+                      maxWidth: "100%",
+                      height: "auto",
+                      borderRadius: "8px",
+                      objectFit: "contain",
+                      display: "block",
+                      margin: "10px auto"
+                    }}
+                    alt={props.alt || ""}
+                  />
+                ),
               }}
             >
-              {category}
-            </Button>
-          ))}
-        </Group>
-      </Stack>
-
-      {/* Articles Grid - 3 per row */}
-      <Grid gutter="lg">
-        {articles.map((article) => (
-          <Grid.Col key={article.id} span={{ base: 12, sm: 6, md: 4 }}>
-            <Card
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              style={{
-                backgroundColor: 'white',
-                border: '1px solid #E5E7EB',
-                cursor: 'pointer',
-                height: '100%',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '';
-                e.currentTarget.style.transform = '';
-              }}
-            >
-              <Stack gap="md">
-                <Image
-                  src={article.image}
-                  alt={article.title}
-                  height={200}
-                  radius="md"
-                  style={{ objectFit: 'cover' }}
-                  fallbackSrc="https://cdn-cojjl.nitrocdn.com/LMhaNIhdrkvISQIQPzJrudLLcnbTMRZA/assets/images/optimized/rev-ac36b58/www.cornucopia-events.co.uk/wp-content/uploads/2025/01/o-OSCAR-STAGE-ELLEN-facebook.jpg"
-                />
-                
-                <Badge color={getCategoryColor(article.category)} variant="light" size="sm">
-                  {article.category}
-                </Badge>
-
-                <Text size="lg" fw={700} c="gray.9" lineClamp={2}>
-                  {article.title}
-                </Text>
-
-                <Text size="sm" c="gray.7" lineClamp={3}>
-                  {article.excerpt}
-                </Text>
-
-                <Group gap="xs" mt="auto">
-                  <IconCalendar size={14} color="#6B7280" />
-                  <Text size="xs" c="gray.6">
-                    {article.date}
-                  </Text>
-                  <Avatar size="sm" src={article.authorAvatar} />
-                  <Text size="xs" c="gray.6">
-                    {article.author}
-                  </Text>
-                </Group>
-              </Stack>
-            </Card>
-          </Grid.Col>
+              {n.newsContent?.replace(/\\n/g, "\n")}
+            </ReactMarkdown>
+          </Stack>
         ))}
-      </Grid>
+      </Container>
 
       <NewsletterModal
         opened={newsletterOpened}
         onClose={closeNewsletter}
       />
-    </Stack>
+    </Container>
   );
 }
 

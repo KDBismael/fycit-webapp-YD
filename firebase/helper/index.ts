@@ -2,7 +2,7 @@
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase_client_config";
 
-type COLLECTIONS = "users" | "guilds" | "locales" | "guildVerifications" | "notifications" | "screenings" | "venues" | "events" | "projects";
+type COLLECTIONS = "users" | "guilds" | "locales" | "guildVerifications" | "notifications" | "screenings" | "venues" | "events" | "projects" | "fycitNews";
 
 export const readDataFromDb = async <T>(collectionName: COLLECTIONS) => {
     const collectionRef = collection(db, collectionName);

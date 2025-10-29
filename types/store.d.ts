@@ -1,4 +1,4 @@
-import { GuildsType, LocalesType, UsersType } from "./collections";
+import { GuildsType, LocalesType, News, UsersType } from "./collections";
 
 export interface VenueState {
     venues: Venue[];
@@ -75,4 +75,8 @@ interface LocalesStore {
     setLocales: (locales: LocalesType[]) => void;
     fetchLocales: () => Promise<void>;
 }
-
+interface NewStore {
+    news: News[];
+    setNews: (locales: News[]) => void;
+    fetchNews: () => Promise<void>;
+}
