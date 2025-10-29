@@ -3,11 +3,11 @@ import { createTheme } from '@mantine/core';
 export const theme = createTheme({
   fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif',
   fontFamilyMonospace: 'JetBrains Mono, Monaco, Consolas, monospace',
-  
+
   colors: {
     vegasGold: [
       '#FFFBFB',
-      '#FAFBE3', 
+      '#FAFBE3',
       '#F3F7CD',
       '#EDECB0',
       '#E4E0A2',
@@ -32,7 +32,7 @@ export const theme = createTheme({
     brand: [
       '#FFFBFB',
       '#FAFBE3',
-      '#F3F7CD', 
+      '#F3F7CD',
       '#EDECB0',
       '#E4E0A2',
       '#DDD560',
@@ -45,7 +45,7 @@ export const theme = createTheme({
       '#FFFBFB',
       '#FAFBE3',
       '#F3F7CD',
-      '#EDECB0', 
+      '#EDECB0',
       '#E4E0A2',
       '#DDD560',
       '#D3C977',
@@ -133,7 +133,7 @@ export const theme = createTheme({
   defaultRadius: 'md',
   radius: {
     xs: '4px',
-    sm: '6px', 
+    sm: '6px',
     md: '8px',
     lg: '12px',
     xl: '16px'

@@ -9,9 +9,7 @@ export interface VerificationStep {
 }
 
 export interface VerificationData {
-  memberId: string;
-  validThrough: Date | null;
-  memberCardFile: File | null;
+  [key: string]: string | File | number | Date | undefined | null;
 }
 
 interface VerificationStore {
@@ -25,7 +23,7 @@ interface VerificationStore {
   // Actions
   setCurrentStep: (step: number) => void;
   completeStep: (stepId: number) => void;
-  updateVerificationData: (data: Partial<VerificationData>) => void;
+  updateVerificationData: (data: VerificationData | null) => void;
   resetStore: () => void;
 }
 
@@ -53,11 +51,7 @@ const initialSteps: VerificationStep[] = [
   },
 ];
 
-const initialVerificationData: VerificationData = {
-  memberId: '',
-  validThrough: null,
-  memberCardFile: null,
-};
+const initialVerificationData: VerificationData = {};
 
 export const useVerificationStore = create<VerificationStore>((set, get) => ({
   currentStep: 1,
@@ -81,9 +75,9 @@ export const useVerificationStore = create<VerificationStore>((set, get) => ({
     }));
   },
 
-  updateVerificationData: (data: Partial<VerificationData>) => {
+  updateVerificationData: (data: VerificationData | null) => {
     set((state) => ({
-      verificationData: { ...state.verificationData, ...data },
+      verificationData: data ? { ...state.verificationData, ...data } : {},
     }));
   },
 

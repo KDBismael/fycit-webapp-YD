@@ -1,21 +1,4 @@
-import { Timestamp } from "firebase/firestore"
-
-type VerificationStatus = 'pending' | 'approved' | 'rejected' | 'canceled'
-
-type GuildVerification = {
-    id?: string
-    userId: string
-    firstName: string
-    lastName: string
-    email: string
-    guilds: string[]
-    note?: string
-    expirationDate: Timestamp
-    verificationDate: Timestamp
-    proofOfValidMembership: string
-    memberId: string
-    tag: VerificationStatus
-}
+import { Timestamp } from "firebase/firestore";
 
 type UsersType = {
     roleName?: string;
@@ -33,11 +16,12 @@ type UsersType = {
         nanoseconds: number;
         seconds: number;
     };
-    locale: string;
+    locale: string[] | string;
     movieTypes: string[];
     profilePhotoURL: string;
     pushNotificationTokens: string[];
     isAward26Viewed: boolean;
+    verified: boolean;
     userSettings: {
         EMAIL_ABOUT_FEATURES?: boolean;
         FAVORITED_SCREENING_ADDED?: boolean;
@@ -51,6 +35,7 @@ type UsersType = {
         eventAddedAtFavoritedVenue: boolean;
         CapacityChangedToOpen: boolean;
         occasionalImportantUpdates: boolean;
+        automaticallyViewNewLocales: boolean;
     };
     virtualFocusGroup: string;
     zipCode: string;
@@ -138,4 +123,83 @@ export type LocalesType = {
     subgroup?: string;
     group?: string;
     order?: number;
+}
+interface LocaleNode {
+    name: string;
+    id: string;
+    children: LocaleNode[];
+    isLeaf: boolean;
+}
+
+type GuildsType = {
+    id: string;
+    longName: string;
+    shortName: string;
+    tag: string;
+    isVerifiable: boolean;
+    order?: number;
+    dateAdded: { seconds: number; nanoseconds: number };
+    lastEditedDate: {
+        nanoseconds: number;
+        seconds: number;
+    };
+    instructionsMarkdown?: string;
+    instructionsSteps?: InstructionStepsType[];
+    fields?: VerificationField[];
+    editedByRole: {
+        displayName: string;
+        id: number;
+        name: string;
+        priority: number;
+        uid: string;
+    };
+    usersCount?: number;
+    verificationsCount?: number;
+}
+type InstructionStepsType = {
+    id: string;
+    instruction: string;
+};
+type VerificationField = {
+    id: string;
+    label: string;
+    type: "text" | "date" | "image" | "number";
+    enabled: boolean;
+    required: boolean;
+}
+
+type VerificationStatus = "approved" | "pending" | "rejected" | "expired" | 'canceled' | "empty"
+
+type GuildVerificationsType = {
+    email: string;
+    firstName: string;
+    lastName: string;
+    expirationDate: {
+        nanoseconds: number;
+        seconds: number;
+    };
+    validThrough: {
+        nanoseconds: number;
+        seconds: number;
+    };
+    guilds: string[];
+    id: string;
+    memberId: string;
+    note: string;
+    notes?: string;
+    proofOfValidMembership: string;
+    verificationImage?: string;
+    tag: VerificationStatus;
+    userId: string;
+    verificationDate: {
+        nanoseconds: number;
+        seconds: number;
+    };
+    dataGroup: string[];
+    queueUploadMetaInformation?: {
+        timeForUpload: {
+            seconds: number;
+            nanoseconds: number;
+        };
+    };
 }

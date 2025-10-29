@@ -1,7 +1,10 @@
 'use client';
 
-import React from 'react';
+import { formatToOrdinalDate } from '@/helpers';
+import { useVerificationStore } from '@/stores/verificationStore';
+import { GuildsType } from '@/types/collections';
 import { Box, Button, Group, Image, Modal, Stack, Text, Title } from '@mantine/core';
+import React from 'react';
 import { VerificationTimeline } from '../Timeline';
 
 interface MembershipSummaryModalProps {
@@ -9,12 +12,7 @@ interface MembershipSummaryModalProps {
   onClose: () => void;
   onGoToDashboard: () => void;
   onContinue: () => void;
-  membershipData: {
-    guild: string;
-    memberId: string;
-    validThrough: string;
-    memberCardImage: string;
-  };
+  selectedGuild: GuildsType | null
 }
 
 export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
@@ -22,8 +20,9 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
   onClose,
   onGoToDashboard,
   onContinue,
-  membershipData,
+  selectedGuild
 }) => {
+  const { verificationData } = useVerificationStore();
   const brandColor = '#A8B04D';
 
   return (
@@ -32,7 +31,7 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
-      closeOnClickOutside={true}
+      closeOnClickOutside={false}
       centered
       size={{ base: 'full', sm: 'md', md: 'lg' }}
       padding={{ base: 'md', sm: 'lg' }}
@@ -88,75 +87,91 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
           <Stack gap="sm">
             {/* Membership Information - Horizontal Layout */}
             <Group gap="sm" wrap="wrap" justify="space-between">
+
               <Stack gap="xs">
                 <Text size="xs" c="gray.6" fw={400}>
                   Guilds:
                 </Text>
                 <Text size="xs" c="gray.9" fw={600}>
-                  {membershipData.guild}
+                  {selectedGuild?.longName}
                 </Text>
               </Stack>
-              <Stack gap="xs">
-                <Text size="xs" c="gray.6" fw={400}>
-                  Member ID:
-                </Text>
-                <Text size="xs" c="gray.9" fw={600}>
-                  {membershipData.memberId}
-                </Text>
-              </Stack>
-              <Stack gap="xs">
-                <Text size="xs" c="gray.6" fw={400}>
-                  Valid Through:
-                </Text>
-                <Text size="xs" c="gray.9" fw={600}>
-                  {membershipData.validThrough}
-                </Text>
-              </Stack>
+              {selectedGuild?.fields?.map((f) => (<>
+                <Stack gap="xs">
+                  <Text size="xs" c="gray.6" fw={400}>
+                    {f.label} :
+                  </Text>
+                  {f.type == 'number' || f.type == 'text' &&
+                    <Text size="xs" c="gray.9" fw={600}>
+                      {`${verificationData[f.id] ?? ''}`}
+                    </Text>
+                  }
+                  {f.type == 'date' &&
+                    <Text size="xs" c="gray.9" fw={600}>
+                      {formatToOrdinalDate(verificationData[f.id] as Date)}
+                    </Text>
+                  }
+                </Stack>
+                {/* Member Image */}
+                {f.type == 'image' &&
+                  <Stack gap="xs" mt="sm">
+                    <Text size="xs" c="gray.6" fw={400} ta="center">
+                      Your member card:
+                    </Text>
+                    <Box
+                      style={{
+                        border: '1px solid #E5E7EB',
+                        borderRadius: 'var(--mantine-radius-md)',
+                        overflow: 'hidden',
+                        maxWidth: '200px',
+                        margin: '0 auto',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      }}
+                    >
+                      <Image
+                        src={URL.createObjectURL(verificationData[f.id] as File)}
+                        alt="Member Card"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          objectFit: 'cover',
+                          borderRadius: 'var(--mantine-radius-md)',
+                        }}
+                      // onLoad={() => URL.revokeObjectURL()}
+                      />
+                    </Box>
+                  </Stack>
+                }
+              </>
+              ))}
             </Group>
-            
-            {/* Member Card */}
-            <Stack gap="xs" mt="sm">
-              <Text size="xs" c="gray.6" fw={400} ta="center">
-                Your member card:
-              </Text>
-              <Box
-                style={{
-                  border: '1px solid #E5E7EB',
-                  borderRadius: 'var(--mantine-radius-md)',
-                  overflow: 'hidden',
-                  maxWidth: '200px',
-                  margin: '0 auto',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                }}
-              >
-                <Image
-                  src={membershipData.memberCardImage}
-                  alt="Member Card"
-                  style={{
-                    width: '100%',
-                    height: 'auto',
-                    objectFit: 'cover',
-                    borderRadius: 'var(--mantine-radius-md)',
-                  }}
-                />
-              </Box>
-            </Stack>
           </Stack>
         </Box>
 
         {/* Continue Message */}
-        <Text size="sm" c="gray.7" ta="center">
+        {/* <Text size="sm" c="gray.7" ta="center">
           You have more guilds to verify. Click continue to proceed.
-        </Text>
+        </Text> */}
 
         {/* Action Buttons */}
         <Group gap="sm" justify='center' w="100%">
-          <Button onClick={onGoToDashboard} variant="outline" size="sm" radius="md">
+          <Button
+            onClick={onGoToDashboard}
+            size="sm"
+            radius="md"
+            style={{
+              width: '100%',
+              backgroundColor: '#BAAD3E',
+              '&:hover': {
+                backgroundColor: '#A98A13',
+              },
+            }}
+          >
             Go to dashboard
           </Button>
-          <Button 
-            onClick={onContinue} 
-            size="sm" 
+          {/* <Button
+            onClick={onContinue}
+            size="sm"
             radius="md"
             style={{
               backgroundColor: '#BAAD3E',
@@ -166,7 +181,7 @@ export const MembershipSummaryModal: React.FC<MembershipSummaryModalProps> = ({
             }}
           >
             Continue
-          </Button>
+          </Button> */}
         </Group>
       </Stack>
     </Modal>

@@ -1,3 +1,6 @@
+import { auth } from '@/firebase/firebase_client_config';
+import { getGuildVerificationRequests } from '@/firebase/verifications';
+import { GuildVerificationsType } from '@/types/collections';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -8,7 +11,7 @@ export interface SignupData {
   password: string;
 }
 
-export type AuthContext = 'signup' | 'password-reset' | null;
+export type AuthContext = 'signup' | 'password-reset' | 'login' | null;
 
 interface AuthStore {
   isLoading: boolean;
@@ -23,12 +26,17 @@ interface AuthStore {
   isEmailVerified: boolean;
   otpCode: string;
 
+  // guild verification data
+  userVerificationGuilds: GuildVerificationsType[];
+
   // Actions
   setSignupData: (data: SignupData) => void;
   setAuthContext: (context: AuthContext, email?: string) => void;
   setEmailVerified: (verified: boolean) => void;
   setOtpCode: (code: string) => void;
   setIsLoading: (loading: boolean) => void;
+  setUserVerificationGuilds: (data: GuildVerificationsType[]) => void;
+  fetchUserVerificationGuilds: () => Promise<void>;
   resetAuthStore: () => void;
 }
 
@@ -39,12 +47,17 @@ const initialState = {
   verificationEmail: null,
   isEmailVerified: false,
   otpCode: '',
+  userVerificationGuilds: [],
 };
 
 export const useAuthStore = create<AuthStore>()(
   persist(
     (set) => ({
       ...initialState,
+
+      setUserVerificationGuilds: (data) => {
+        set({ userVerificationGuilds: data });
+      },
 
       setSignupData: (data: SignupData) => {
         set({ signupData: data });
@@ -72,6 +85,16 @@ export const useAuthStore = create<AuthStore>()(
       resetAuthStore: () => {
         set(initialState);
       },
+
+      fetchUserVerificationGuilds: async () => {
+        try {
+          const data = await getGuildVerificationRequests(auth.currentUser?.uid ?? '')
+          set({ userVerificationGuilds: data });
+        } catch (error) {
+          console.error("Error fetching userVerificationGuilds", error);
+          set({ userVerificationGuilds: [] });
+        }
+      }
     }),
     {
       name: 'auth-storage',

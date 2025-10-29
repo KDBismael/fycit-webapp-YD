@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
+import { useGuildsStore } from '@/stores/guildsStore';
+import { useLocalesStore } from '@/stores/localesStore';
+import { useUserStore } from '@/stores/userStore';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconExclamationMark } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
 import {
   Alert,
   Button,
@@ -17,6 +17,8 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   ProfileCompletionFormData,
   profileCompletionSchema,
@@ -27,7 +29,7 @@ import { GuildSelector } from './GuildSelector';
 interface AwardsSeasonModalProps {
   opened: boolean;
   onClose: () => void;
-  onNext: (data: ProfileCompletionFormData) => void;
+  onNext: (data: ProfileCompletionFormData) => Promise<void>;
 }
 
 // Mock data for dropdowns
@@ -46,6 +48,9 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
   onClose,
   onNext,
 }) => {
+  const { user } = useUserStore();
+  const { guilds } = useGuildsStore();
+  const { locales } = useLocalesStore();
   const {
     register,
     handleSubmit,
@@ -55,34 +60,47 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
   } = useForm<ProfileCompletionFormData>({
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
-      selectedGuild: ['AMPAS'],
-      viewEventsInLocals: ['los-angeles'],
-      myCountry: 'usa',
+      selectedGuild: [],
+      viewEventsInLocals: [],
+      country: '',
       zipPostalCode: '',
+      autoViewNewLocales: false
     },
   });
 
   const selectedGuild = watch('selectedGuild');
   const viewEventsInLocals = watch('viewEventsInLocals');
-  const myCountry = watch('myCountry');
+  const country = watch('country');
 
   const onSubmit = async (data: ProfileCompletionFormData) => {
     try {
-      onNext(data);
+      await onNext(data);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Awards season modal error:', error);
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      setValue('selectedGuild', user.guild)
+      setValue('viewEventsInLocals', typeof user.locale == 'string' ? [user.locale] : user.locale)
+      // setValue('country', user.country)
+      setValue('zipPostalCode', user.zipCode)
+    }
+  }, [user])
+
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
       centered
       size="xl"
       padding="lg"
+      trapFocus={false}
       radius="md"
       overlayProps={{
         backgroundOpacity: 0.55,
@@ -136,13 +154,14 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
               <GuildSelector
                 value={selectedGuild}
                 onChange={(value) => setValue('selectedGuild', value)}
+                data={guilds}
                 error={errors.selectedGuild?.message}
               />
             </Stack>
 
             {/* Warning Alert */}
             <Alert
-              icon={<IconExclamationMark size={16} />}
+              // icon={<IconExclamationMark size={16} />}
               title="Careful :"
               color="warning"
               variant="light"
@@ -169,6 +188,7 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 View events in these locals
               </Text>
               <EventLocalesSelector
+                data={locales}
                 value={viewEventsInLocals}
                 onChange={(value) => setValue('viewEventsInLocals', value)}
                 error={errors.viewEventsInLocals?.message}
@@ -181,11 +201,11 @@ export const AwardsSeasonModal: React.FC<AwardsSeasonModalProps> = ({
                 My Country
               </Text>
               <Select
-                value={myCountry}
-                onChange={(value) => setValue('myCountry', value || '')}
+                value={country}
+                onChange={(value) => setValue('country', value || '')}
                 data={countries}
                 placeholder="Select your country"
-                error={errors.myCountry?.message}
+                error={errors.country?.message}
                 radius="md"
                 size="sm"
                 styles={{

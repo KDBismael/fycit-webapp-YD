@@ -1,4 +1,4 @@
-import { UsersType } from "./collections";
+import { GuildsType, LocalesType, UsersType } from "./collections";
 
 export interface VenueState {
     venues: Venue[];
@@ -63,3 +63,16 @@ interface UserStore {
     setAutoViewNewLocales: (auto: boolean) => void;
     resetUserStore: () => void;
 }
+
+interface GuildsStore {
+    guilds: GuildsType[];
+    setGuilds: (guilds: GuildsType[]) => void;
+    fetchGuilds: () => Promise<void>;
+}
+
+interface LocalesStore {
+    locales: LocalesType[];
+    setLocales: (locales: LocalesType[]) => void;
+    fetchLocales: () => Promise<void>;
+}
+

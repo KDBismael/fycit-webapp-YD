@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Badge, Group, Text, Tooltip } from '@mantine/core';
 import { IconRosette, IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
 import classes from './GuildBadge.module.css';
@@ -36,10 +35,10 @@ const getTooltipText = (status: string) => {
   return tooltips[status as keyof typeof tooltips] || 'Unknown status';
 };
 
-export default function GuildBadge({ 
-  name, 
+export default function GuildBadge({
+  name,
   status,
-  className 
+  className
 }: GuildBadgeProps) {
   const IconComponent = getIcon(status);
   const colorValue = getColorValue(status);

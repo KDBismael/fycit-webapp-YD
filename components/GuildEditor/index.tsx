@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import { useGuildsStore } from '@/stores/guildsStore';
 import { Box, Checkbox, Group, Paper, Stack, Text } from '@mantine/core';
+import React from 'react';
 import classes from './GuildEditor.module.css'; // Assurez-vous d'avoir ce fichier CSS/module
 
 export interface Guild {
@@ -19,23 +20,6 @@ interface GuildEditorProps {
   // isEditing n'est plus utilisé de manière complexe dans le mode summary
 }
 
-const guildOptions = [
-  // J'ai mis à jour la liste pour inclure AMPAS et ACE (American Cinema Editors)
-  { value: 'AMPAS', label: 'AMPAS - Motion Picture Academy' },
-  { value: 'ACE', label: 'AMPAS - American Cinema Editors' }, // Basé sur l'image 1
-  { value: 'ADG', label: 'ADG - Art Directors Guild' },
-  { value: 'ASC', label: 'ASC - American Society of Cinematographers' },
-  { value: 'ASIFA', label: 'ASIFA - International Animated Film Association' },
-  { value: 'AG', label: 'Animation Guild' }, // Ajouté comme option basée sur l'image 1
-  { value: 'WGA', label: 'WGA - Writers Guild of America' },
-  { value: 'SAG', label: 'SAG - Screen Actors Guild' },
-  { value: 'DGA', label: 'DGA - Directors Guild of America' },
-  { value: 'CDG', label: 'CDG - Costume Designers Guild' },
-  { value: 'MPEG', label: 'MPEG - Motion Picture Editors Guild' },
-  { value: 'PGA', label: 'PGA - Producers Guild of America' },
-  { value: 'CAS', label: 'CAS - Cinema Audio Society' },
-];
-
 export const GuildEditor: React.FC<GuildEditorProps> = ({
   value = [],
   onChange,
@@ -43,6 +27,7 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
   onEditClick,
   showSelectedGuild = true,
 }) => {
+  const { guilds } = useGuildsStore()
   const handleToggleGuild = (guildValue: string) => {
     if (value.includes(guildValue)) {
       onChange(value.filter((v) => v !== guildValue));
@@ -52,7 +37,7 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
   };
 
   const getGuildLabel = (guildValue: string) => {
-    const guild = guildOptions.find((g) => g.value === guildValue);
+    const guild = guilds.find((g) => g.value === guildValue);
     return guild ? guild.label : guildValue;
   };
 
@@ -62,16 +47,16 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
       <Box
         style={{
           maxHeight: '400px',
-          overflowY: 'auto',
+          overflowY: 'hidden',
           // Fond crème doux et coins arrondis, similaire à l'image 1
-          backgroundColor: '#FFFBF5', // Couleur légèrement plus pâle pour le fond
+          backgroundColor: '#CBB852', // Couleur légèrement plus pâle pour le fond
           borderRadius: '16px',
           padding: '24px 20px',
           border: '1px solid #E5E7EB', // Bordure légère
         }}
         className={classes.guildEditorScroll}
       >
-        <Text size="xl" fw={700} ta="center" mb="xs">
+        <Text size="xl" fw={700} ta="center" style={{ color: "white" }} mb="xs">
           Choose your guilds
         </Text>
         <Text size="sm" ta="center" mb="lg" c="gray.6">
@@ -88,8 +73,8 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
           className={classes.customScrollbar} // Utilisez une classe pour styliser la scrollbar si nécessaire
         >
           <Stack gap="xs">
-            {guildOptions.map((guild) => {
-              const isSelected = value.includes(guild.value);
+            {guilds.map((guild) => {
+              const isSelected = value.includes(guild.longName);
               return (
                 <Group
                   key={guild.value}
@@ -102,9 +87,9 @@ export const GuildEditor: React.FC<GuildEditorProps> = ({
                   }}
                 >
                   <Checkbox
-                    onChange={() => handleToggleGuild(guild.value)}
+                    onChange={() => handleToggleGuild(guild.longName)}
                     checked={isSelected}
-                    label={guild.label}
+                    label={guild.longName}
                     color="green"
                   />
                 </Group>

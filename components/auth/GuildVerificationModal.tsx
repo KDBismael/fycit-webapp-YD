@@ -1,22 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IconAlertTriangleFilled, IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
+import { useAuthStore } from '@/stores/authStore';
+import { GuildsType, VerificationStatus } from '@/types/collections';
 import {
   Alert,
   Box,
   Button,
   Group,
   Image,
-  List,
   Modal,
+  Paper,
   rem,
   Select,
   Stack,
   Tabs,
   Text,
-  Title,
+  Title
 } from '@mantine/core';
+import { IconAlertTriangleFilled, IconRosette, IconRosetteDiscountCheckFilled } from '@tabler/icons-react';
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { VerificationTimeline } from '../../components/Timeline';
 
 export const AlertIcon = () => {
@@ -37,21 +40,18 @@ export const AlertIcon = () => {
     </Box>
   );
 };
-interface Guild {
-  id: string;
-  name: string;
-  fullName: string;
-  isVerifiable: boolean;
-  isVerified?: boolean;
-}
+
 
 interface GuildVerificationModalProps {
   opened: boolean;
   onClose: () => void;
   onNext: () => void;
-  verifiableGuilds: Guild[];
-  notVerifiableGuilds: Guild[];
+  verifiableGuilds: GuildsType[];
+  notVerifiableGuilds: GuildsType[];
   currentStep: number;
+  selectedGuildForVerification: string
+  setSelectedGuildForVerification: (guild: string) => void;
+
 }
 
 const IMAGE_SIZE = 48;
@@ -63,21 +63,14 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
   verifiableGuilds,
   notVerifiableGuilds,
   currentStep,
+  selectedGuildForVerification,
+  setSelectedGuildForVerification
 }) => {
+  const { userVerificationGuilds } = useAuthStore();
   const [activeTab, setActiveTab] = useState<string | null>('verifiable');
-  const [selectedGuildForVerification, setSelectedGuildForVerification] = useState<string>('AMPAS');
-
-  const selectedGuildName =
-    verifiableGuilds.find((g) => g.id === selectedGuildForVerification)?.name || 'AMPAS';
-
-  const verificationSteps = [
-    `Browse to ${selectedGuildName}.com`,
-    'Click profile button and sign in to your account',
-    'Click profile and then click visit member dashboard',
-    'Click member card under or next to your name',
-    'Take a screenshot with your member id, name and valid through visible.',
-    'Enter the information in the form and upload this screenshot.',
-  ];
+  const getGuildsByStatus = (status: VerificationStatus) => userVerificationGuilds.filter((v) => v.tag == status).map((v) => v.guilds[0]);
+  const { pendingGuilds, verifiedGuilds } = { pendingGuilds: getGuildsByStatus('pending'), verifiedGuilds: getGuildsByStatus('approved') }
+  const verifiableGuildsNoPendingOrApproved = verifiableGuilds.filter((v) => !pendingGuilds.includes(v.longName) && !verifiedGuilds.includes(v.longName))
 
   return (
     <Modal
@@ -85,7 +78,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
-      closeOnClickOutside={true}
+      closeOnClickOutside={false}
       centered
       size={{ base: 'full', sm: 'lg', md: 'xl' }}
       padding={{ base: 'md', sm: 'lg', md: 'xl' }}
@@ -109,7 +102,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
             Good News!
           </Title>
           <Text size="sm" c="gray.7" ta="center">
-            Two of your selected guilds are verifiable.
+            {`${verifiableGuildsNoPendingOrApproved.length} of your selected guilds are verifiable.`}
           </Text>
         </Stack>
 
@@ -131,7 +124,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
           mb="sm"
           styles={{
             tab: {
-              '&[data-active]': {
+              '&[dataActive]': {
                 borderBottomColor: '#BAAD3E',
                 fontWeight: 700,
               },
@@ -152,13 +145,21 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
               {verifiableGuilds.map((guild) => (
                 <Group key={guild.id} justify="flex-start" p="sm">
                   <Text size="sm" fw={500}>
-                    {guild.fullName}
+                    {guild.longName}
                   </Text>
-                  {guild.isVerified && (
+                  {verifiedGuilds.includes(guild.longName) && (
                     <Group gap="xs">
                       <IconRosetteDiscountCheckFilled
                         size={14}
-                        color="var(--mantine-color-success-6)"
+                        color="#22C55E"
+                      />
+                    </Group>
+                  )}
+                  {pendingGuilds.includes(guild.longName) && (
+                    <Group gap="xs">
+                      <IconRosette
+                        size={14}
+                        color="#F59E0B"
                       />
                     </Group>
                   )}
@@ -173,9 +174,9 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
                 <Select
                   value={selectedGuildForVerification}
                   onChange={(value) => setSelectedGuildForVerification(value || '')}
-                  data={verifiableGuilds.map((guild) => ({
-                    value: guild.id,
-                    label: guild.fullName,
+                  data={verifiableGuildsNoPendingOrApproved.map((guild) => ({
+                    value: guild.longName,
+                    label: guild.longName,
                   }))}
                   placeholder="Select a guild to verify"
                   radius="md"
@@ -190,45 +191,21 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
                   }}
                 />
               </Stack>
+              <Stack>
+                <Paper
+                  p="lg"
+                  radius="md"
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#FDFBEF', // Fond très clair, proche du design
+                    border: '1px solid #EDE6D2',
+                  }}
+                >
+                  <ReactMarkdown>{verifiableGuilds.find((g) => g.longName == selectedGuildForVerification)?.instructionsMarkdown?.replace(/\\n/g, "\n")}</ReactMarkdown>
+                </Paper>
 
-              {/* Verification Instructions */}
-              <Alert
-                color="yellow"
-                variant="light"
-                radius="md"
-                styles={{
-                  root: {
-                    backgroundColor: '#FEF3C7',
-                    border: '1px solid #FDE68A',
-                  },
-                }}
-              >
-                <Stack gap="sm">
-                  <Text fw={700} c="#A98D34" size="sm">
-                    To Validate{' '}
-                    {verifiableGuilds.find((g) => g.id === selectedGuildForVerification)?.name ||
-                      'AMPAS'}
-                    , we will take you through the following steps.
-                  </Text>
-                  <List size="xs" spacing="xs">
-                    {verificationSteps.map((step, index) => (
-                      <List.Item key={index}>
-                        {step.includes(`${selectedGuildName}.com`) ? (
-                          <Text size="xs">
-                            {step.split(`${selectedGuildName}.com`)[0]}
-                            <Text component="span" td="underline" c="brand.8">
-                              {selectedGuildName}.com
-                            </Text>
-                            {step.split(`${selectedGuildName}.com`)[1]}
-                          </Text>
-                        ) : (
-                          <Text size="xs">{step}</Text>
-                        )}
-                      </List.Item>
-                    ))}
-                  </List>
-                </Stack>
-              </Alert>
+              </Stack>
+
             </Stack>
           </Tabs.Panel>
 
@@ -237,7 +214,7 @@ export const GuildVerificationModal: React.FC<GuildVerificationModalProps> = ({
               {/* Not Verifiable Guilds List */}
               {notVerifiableGuilds.map((guild) => (
                 <Text key={guild.id} size="sm">
-                  {guild.fullName}
+                  {guild.longName}
                 </Text>
               ))}
 

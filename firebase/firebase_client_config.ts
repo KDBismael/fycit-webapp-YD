@@ -2,6 +2,7 @@ import { getAnalytics, isSupported } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from 'firebase/functions';
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -31,8 +32,10 @@ if (typeof window !== 'undefined') {
     })
 }
 
+const cloudFunctions = getFunctions(app);
+
 export {
-    analytics, app, auth, db,
+    analytics, app, auth, cloudFunctions, db,
     storage
 };
 

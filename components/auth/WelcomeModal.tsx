@@ -1,7 +1,7 @@
 'use client';
 
+import { Button, Group, Image, List, Modal, Stack, Text, Title } from '@mantine/core';
 import React from 'react';
-import { Box, Button, Group, Image, List, Modal, Stack, Text, Title } from '@mantine/core';
 
 interface WelcomeModalProps {
   opened: boolean;
@@ -29,7 +29,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
-      closeOnClickOutside={true}
+      closeOnClickOutside={false}
       centered
       size={{ base: 'full', sm: 'md', md: 'lg' }}
       padding={{ base: 'md', sm: 'lg' }}
@@ -49,36 +49,15 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         </Group>
 
         {/* Welcome Message */}
-        <Stack gap="sm" align="center">
-          <Title order={3} fw={700} c="gray.9" ta="center" size="h3">
-            Welcome to our new web platform
+        <Stack gap="sm" align="center" mb={20}>
+          <Title order={3} fw={700} c="gray.9" ta="center" size="h3" mb={20}>
+            Welcome to Award 2026 Season.
           </Title>
           <Text size="sm" c="gray.7" ta="center" maw={350}>
             Complete the verification steps to ensure your profile is trusted and eligible for guild
             interactions.
           </Text>
         </Stack>
-
-        {/* Profile Verification Image */}
-        <Box
-          style={{
-            width: '100%',
-            maxWidth: '300px',
-            borderRadius: 'var(--mantine-radius-md)',
-            overflow: 'hidden',
-            margin: '0.5rem 0',
-          }}
-        >
-          <Image
-            src="/images/ProfileVerification Image.png"
-            alt="Profile Verification"
-            style={{
-              width: '100%',
-              height: 'auto',
-              objectFit: 'cover',
-            }}
-          />
-        </Box>
 
         {/* Benefits Section */}
         <Stack gap="md" w="100%">
@@ -107,10 +86,10 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         {/* Action Buttons */}
         <Stack gap="sm" mt="md">
           <Button onClick={onStartVerification} fullWidth size="md" radius="md">
-            Start verification
+            Next
           </Button>
 
-          <Text
+          {/* <Text
             size="sm"
             c="gray.7"
             ta="center"
@@ -122,7 +101,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
             onClick={onSkip}
           >
             Skip now
-          </Text>
+          </Text> */}
         </Stack>
       </Stack>
     </Modal>

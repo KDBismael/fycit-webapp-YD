@@ -1,9 +1,11 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { signUpWithEmailPassword } from '@/firebase/auth';
+import { createUserData } from '@/firebase/user';
+import { useLoadInitialData } from '@/hooks/useInitialData';
+import { useUserStore } from '@/stores/userStore';
+import { UsersType } from '@/types/collections';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLock, IconMail, IconUser } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
 import {
   Anchor,
   Box,
@@ -20,14 +22,19 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { SignupFormData, signupSchema } from '../../../validation/signup.validation';
+import { IconLock, IconMail, IconUser } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../../../stores/authStore';
+import { SignupFormData, signupSchema } from '../../../validation/signup.validation';
 
 const ICON_SIZE = 18;
 
 export default function Signup() {
+  useLoadInitialData();
   const router = useRouter();
   const { setSignupData, setAuthContext } = useAuthStore();
+  const { setUser } = useUserStore();
   const {
     register,
     handleSubmit,
@@ -36,9 +43,9 @@ export default function Signup() {
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      firstName: 'Sean',
-      lastName: 'Napier',
-      email: 'Sean123@domain.com',
+      firstName: '',
+      lastName: '',
+      email: '',
     },
   });
 
@@ -57,6 +64,10 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
+      await signUpWithEmailPassword(data.email, data.password);
+      const user = await createUserData({ ...data });
+      if (!user) return;
+      setUser(user as UsersType);
       // Store signup data in Zustand
       setSignupData({
         firstName: data.firstName,
@@ -70,11 +81,10 @@ export default function Signup() {
 
       // Navigate to verify account
       router.push('/auth/verify-account');
-      
-      // eslint-disable-next-line no-console
+
       console.log('Signup data:', data);
+      // await sendOtpEmail(verificationEmail!);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Signup error:', error);
     }
   };

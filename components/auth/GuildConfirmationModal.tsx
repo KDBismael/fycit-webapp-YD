@@ -1,23 +1,22 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  Box,
   Button,
   Group,
   Image,
   Modal,
   Stack,
   Text,
-  Title,
+  Title
 } from '@mantine/core';
-import { GuildEditor } from '../GuildEditor';
+import React, { useState } from 'react';
 import { useUserStore } from '../../stores/userStore';
+import { GuildEditor } from '../GuildEditor';
 
 interface GuildConfirmationModalProps {
   opened: boolean;
   onClose: () => void;
-  onContinue: () => void;
+  onContinue: () => Promise<void>;
 }
 
 const IMAGE_SIZE = 48;
@@ -28,6 +27,7 @@ export const GuildConfirmationModal: React.FC<GuildConfirmationModalProps> = ({
   onContinue,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { userGuilds, setUserGuilds } = useUserStore();
 
   const handleGuildChange = (newGuilds: string[]) => {
@@ -37,10 +37,19 @@ export const GuildConfirmationModal: React.FC<GuildConfirmationModalProps> = ({
   const handleEditClick = () => {
     setIsEditing(!isEditing);
   };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    await onContinue();
+    setIsSubmitting(false);
+  }
+
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={() => { }}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
       withCloseButton={false}
       centered
       size="md"
@@ -53,11 +62,11 @@ export const GuildConfirmationModal: React.FC<GuildConfirmationModalProps> = ({
     >
       <Stack gap="lg" style={{ position: 'relative' }}>
         {/* Close Button - Absolute Position */}
-        <Box style={{ position: 'absolute', top: '0', right: '0', zIndex: 10 }}>
+        {/* <Box style={{ position: 'absolute', top: '0', right: '0', zIndex: 10 }}>
           <Button variant="subtle" color="gray" onClick={onClose} style={{ padding: 0 }}>
             <Text size="lg" fw={400}>×</Text>
           </Button>
-        </Box>
+        </Box> */}
 
         {/* Header with Logo */}
         <Group justify="center" w="100%">
@@ -106,7 +115,8 @@ export const GuildConfirmationModal: React.FC<GuildConfirmationModalProps> = ({
         {!isEditing && (
           <Group justify="center">
             <Button
-              onClick={onContinue}
+              loading={isSubmitting}
+              onClick={handleSubmit}
               size="lg"
               radius="md"
               styles={{

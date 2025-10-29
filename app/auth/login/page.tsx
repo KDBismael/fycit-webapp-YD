@@ -1,6 +1,9 @@
 'use client';
 
 import { signInWithEmailPassword } from '@/firebase/auth';
+import { sendOtpEmail } from '@/firebase/functions';
+import { useLoadInitialData } from '@/hooks/useInitialData';
+import { useAuthStore } from '@/stores/authStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Anchor,
@@ -22,10 +25,6 @@ import { IconLock, IconMail } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { AwardsSeasonModal } from '../../../components/auth/AwardsSeasonModal';
-import { GuildConfirmationModal } from '../../../components/auth/GuildConfirmationModal';
-import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
-import { GuildVerificationModal } from '../../../components/auth/GuildVerificationModal';
 import { useUserStore } from '../../../stores/userStore';
 import { LoginFormData, loginSchema } from '../../../validation/login.validation';
 import { ProfileCompletionFormData } from '../../../validation/profile-completion.validation';
@@ -34,7 +33,9 @@ const IMAGE_SIZE = 60;
 const ICON_SIZE = 18;
 
 export default function Login() {
+  useLoadInitialData();
   const router = useRouter();
+  const { setAuthContext, fetchUserVerificationGuilds } = useAuthStore();
   const { setAwards26Viewed, setUserGuilds, setAutoViewNewLocales, fetchUser, user } = useUserStore();
 
   // Modal states
@@ -58,8 +59,17 @@ export default function Login() {
       alert(`Login failed: ${result.error.message}`);
       return;
     }
-    await fetchUser();
+
+    await Promise.all([fetchUserVerificationGuilds(), fetchUser()]);
+
     console.log('Logged in user:', user);
+    if (!user?.verified) {
+      await sendOtpEmail(user!.email);
+      setAuthContext('login', user!.email);
+      router.push('/auth/verify-account');
+      return;
+    }
+
     user?.isAward26Viewed ? router.push('/dashboard') : setShowAwardsModal(true);
   };
 
@@ -73,18 +83,15 @@ export default function Login() {
 
   const handleGuildConfirmationContinue = () => {
     setShowGuildConfirmation(false);
-    // Check if user has verifiable guilds
-    const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
-    const hasVerifiableGuilds = profileData?.selectedGuild.some((guildId) =>
-      verifiableGuildIds.includes(guildId)
-    );
 
-    if (hasVerifiableGuilds) {
-      // For Sign In flow: Skip Welcome Modal, show Good News Modal directly
-      setShowGoodNewsModal(true);
-    } else {
-      completeOnboarding();
-    }
+
+    setShowGoodNewsModal(true);
+    // if (hasVerifiableGuilds) {
+    //   // For Sign In flow: Skip Welcome Modal, show Good News Modal directly
+
+    // } else {
+    //   completeOnboarding();
+    // }
   };
 
   const handleGoodNewsModalNext = () => {
@@ -141,6 +148,8 @@ export default function Login() {
 
     return null;
   };
+
+
 
   return (
     <Container fluid p={0} style={{ height: '100vh' }}>
@@ -258,31 +267,31 @@ export default function Login() {
       </Grid>
 
       {/* Awards Season Modal */}
-      <AwardsSeasonModal
+      {/* <AwardsSeasonModal
         opened={showAwardsModal}
         onClose={() => setShowAwardsModal(false)}
         onNext={handleAwardsNext}
-      />
+      /> */}
 
       {/* Guild Confirmation Modal */}
-      <GuildConfirmationModal
+      {/* <GuildConfirmationModal
         opened={showGuildConfirmation}
         onClose={() => setShowGuildConfirmation(false)}
         onContinue={handleGuildConfirmationContinue}
-      />
+      /> */}
 
       {/* Good News Modal (Guild Verification Modal) - Skip Welcome Modal for Sign In */}
-      <GuildVerificationModal
+      {/* <GuildVerificationModal
         opened={showGoodNewsModal}
         onClose={() => setShowGoodNewsModal(false)}
         onNext={handleGoodNewsModalNext}
         verifiableGuilds={getVerifiableGuilds(profileData)}
         notVerifiableGuilds={getNotVerifiableGuilds(profileData)}
         currentStep={1}
-      />
+      /> */}
 
       {/* Guild Verification Form */}
-      {showVerificationForm && getFirstVerifiableGuild(profileData) && (
+      {/* {showVerificationForm && getFirstVerifiableGuild(profileData) && (
         <div
           style={{
             position: 'fixed',
@@ -316,7 +325,7 @@ export default function Login() {
             />
           </div>
         </div>
-      )}
+      )} */}
     </Container>
   );
 }

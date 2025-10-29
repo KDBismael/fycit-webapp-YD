@@ -1,10 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { EventLocalesSelector } from '@/components/auth/EventLocalesSelector';
+import NotVerifiableModal from '@/components/auth/NotVerifiableModal';
+import { updateUserInfo } from '@/firebase/user';
+import { sendGuildVerificationRequestNew } from '@/firebase/verifications';
+import { useGuildsStore } from '@/stores/guildsStore';
+import { useLocalesStore } from '@/stores/localesStore';
+import { useUserStore } from '@/stores/userStore';
+import { useVerificationStore } from '@/stores/verificationStore';
+import { GuildsType, UsersType } from '@/types/collections';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconExclamationMark } from '@tabler/icons-react';
-import { useForm } from 'react-hook-form';
 import {
   Alert,
   Box,
@@ -20,51 +25,20 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { EventLocalesSelector } from '../../../../components/auth/EventLocalesSelector';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { GuildSelector } from '../../../../components/auth/GuildSelector';
+import { GuildVerificationForm } from '../../../../components/auth/GuildVerificationForm';
+import { GuildVerificationModal } from '../../../../components/auth/GuildVerificationModal';
+import { MembershipSummaryModal } from '../../../../components/auth/MembershipSummaryModal';
+import { useAuthStore } from '../../../../stores/authStore';
 import {
   ProfileCompletionFormData,
   profileCompletionSchema,
 } from '../../../../validation/profile-completion.validation';
-import { useAuthStore } from '../../../../stores/authStore';
-import { WelcomeModal } from '../../../../components/auth/WelcomeModal';
-import { GuildVerificationModal } from '../../../../components/auth/GuildVerificationModal';
-import { GuildVerificationForm } from '../../../../components/auth/GuildVerificationForm';
-import { MembershipSummaryModal } from '../../../../components/auth/MembershipSummaryModal';
 
 const IMAGE_SIZE = 60;
-
-interface Guild {
-  id: string;
-  name: string;
-  fullName: string;
-  isVerifiable: boolean;
-  isVerified?: boolean;
-}
-
-// Mock data - replace with actual data from context/API
-const mockGuilds: Guild[] = [
-  {
-    id: 'AMPAS',
-    name: 'AMPAS',
-    fullName: 'AMPAS - Motion Picture Academy',
-    isVerifiable: true,
-    isVerified: false,
-  },
-  {
-    id: 'ADG',
-    name: 'ADG',
-    fullName: 'ADG - Art Directors Guild',
-    isVerifiable: true,
-    isVerified: true,
-  },
-  {
-    id: 'ASC',
-    name: 'ASC',
-    fullName: 'ASC - American Society of Cinematographers',
-    isVerifiable: false,
-  },
-];
 
 // Mock data for dropdowns
 const countries = [
@@ -78,22 +52,32 @@ const countries = [
 
 export default function ProfileCompletion() {
   const router = useRouter();
-  const { authContext, isEmailVerified, resetAuthStore } = useAuthStore();
+  const { guilds } = useGuildsStore();
+  const { locales } = useLocalesStore();
+  const { fetchUserVerificationGuilds } = useAuthStore();
+  const { userGuilds, setUserGuilds, setAutoViewNewLocales, user, setUser } = useUserStore();
+  const { updateVerificationData, verificationData, } = useVerificationStore();
+  const { resetAuthStore } = useAuthStore();
 
-  // Modal states
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
-  const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [showVerificationForm, setShowVerificationForm] = useState(false);
-  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [activeModal, setActiveModal] = useState<
+    | 'welcome'
+    | 'awards'
+    | 'guildConfirmation'
+    | 'guildVerification'
+    | 'verificationForm'
+    | 'verificationSummary'
+    | 'notVerifiable'
+    | null
+  >(null);
+  const openModal = (key: typeof activeModal) => setActiveModal(key);
+  const closeModal = () => setActiveModal(null);
 
   // Workflow state
   const [currentStep, setCurrentStep] = useState(1);
   const [_profileData, setProfileData] = useState<ProfileCompletionFormData | null>(null);
-  const [selectedGuild, setSelectedGuild] = useState<Guild | null>(null);
-  const [submittedMembershipData, setSubmittedMembershipData] = useState<any>(null);
+  const [selectedGuild, setSelectedGuild] = useState<GuildsType | null>(null);
+  const [submittedMembershipData, setSubmittedMembershipData] = useState(false);
 
-  const verifiableGuilds = mockGuilds.filter((guild) => guild.isVerifiable);
-  const notVerifiableGuilds = mockGuilds.filter((guild) => !guild.isVerifiable);
 
   const {
     register,
@@ -105,131 +89,81 @@ export default function ProfileCompletion() {
     resolver: zodResolver(profileCompletionSchema),
     defaultValues: {
       selectedGuild: [],
-      viewEventsInLocals: ['los-angeles'],
-      myCountry: 'usa',
+      viewEventsInLocals: [],
+      country: 'usa',
       zipPostalCode: '',
     },
   });
 
   const selectedGuildsForm = watch('selectedGuild');
 
-  // Route protection: redirect if not signup context or email not verified
-  useEffect(() => {
-    if (authContext !== 'signup' || !isEmailVerified) {
-      router.push('/auth/login');
-    }
-  }, [authContext, isEmailVerified, router]);
-
   const onSubmit = async (data: ProfileCompletionFormData) => {
     try {
-      // eslint-disable-next-line no-console
       console.log('Profile completion data:', data);
+      const userData: Partial<UsersType> = {
+        country: data.country,
+        guild: data.selectedGuild,
+        locale: data.viewEventsInLocals,
+        zipCode: data.zipPostalCode,
+        userSettings: {
+          ...user!.userSettings,
+          automaticallyViewNewLocales: data.autoViewNewLocales ?? false,
+        }
+      }
+      await updateUserInfo(userData);
+      setUser({ ...user, ...userData } as UsersType);
+      setUserGuilds(data.selectedGuild);
+      setAutoViewNewLocales(data.autoViewNewLocales || false);
+      const isVerifiable = guilds.filter((g) => data.selectedGuild.includes(g.longName)).some((g) => g.isVerifiable)
 
-      // Store profile data
-      setProfileData(data);
-
-      // Check if user has verifiable guilds
-      const selectedGuilds = data.selectedGuild;
-      const verifiableGuildIds = ['AMPAS', 'ADG', 'WGA', 'SAG', 'DGA'];
-      const hasVerifiableGuilds = selectedGuilds.some((guildId) =>
-        verifiableGuildIds.includes(guildId)
-      );
-
-      if (hasVerifiableGuilds) {
-        // User has verifiable guilds, show welcome modal first
-        setShowWelcomeModal(true);
+      if (isVerifiable) {
+        setSelectedGuild(getVerifiableGuilds()[0]);
+        openModal('guildVerification');
       } else {
-        // No verifiable guilds, go directly to dashboard
-        resetAuthStore();
-        router.push('/dashboard');
+        openModal('notVerifiable');
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Profile completion error:', error);
     }
   };
 
-  // Welcome Modal Handlers
-  const handleWelcomeStart = () => {
-    setShowWelcomeModal(false);
-    setShowVerificationModal(true);
-  };
-
-  const handleWelcomeSkip = () => {
-    setShowWelcomeModal(false);
-    resetAuthStore();
-    router.push('/dashboard');
-  };
-
   // Guild Verification Modal Handlers
   const handleVerificationModalNext = () => {
-    if (verifiableGuilds.length > 0 && !verifiableGuilds.every((g) => g.isVerified)) {
-      setShowVerificationModal(false);
-      setShowVerificationForm(true);
-      const firstUnverifiedGuild = verifiableGuilds.find((g) => !g.isVerified);
-      if (firstUnverifiedGuild) {
-        setSelectedGuild(firstUnverifiedGuild);
-      }
-    } else {
-      setCurrentStep(2);
-      handleCompleteVerification();
-    }
+    openModal("verificationForm");
   };
 
-  const handleVerificationFormNext = (data: any) => {
-    // eslint-disable-next-line no-console
+  const handleVerificationFormNext = async (data: any) => {
     console.log('Verification data submitted:', data);
+    await sendGuildVerificationRequestNew([selectedGuild?.longName ?? ''], verificationData, user!);
+    await fetchUserVerificationGuilds();
+    setSubmittedMembershipData(true);
+    // eslint-disable-next-line no-console
+    const verifiableGuilds = getVerifiableGuilds();
+    const pendingOrApproved = useAuthStore.getState().userVerificationGuilds.filter((v) => v.tag == 'pending' || v.tag == 'approved').map((v) => v.guilds[0]);
+    const verifiable = verifiableGuilds.map((v) => v.longName).filter((v) => !pendingOrApproved.includes(v));
 
-    const membershipData = {
-      guild: selectedGuild?.fullName || '',
-      memberId: data.memberId || '',
-      validThrough: data.validThrough
-        ? new Date(data.validThrough).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })
-        : '',
-      memberCardImage: data.memberCardFile
-        ? URL.createObjectURL(data.memberCardFile)
-        : '/images/ProfileCard.png',
-    };
-    setSubmittedMembershipData(membershipData);
-
-    if (selectedGuild) {
-      const updatedGuilds = mockGuilds.map((guild) =>
-        guild.id === selectedGuild.id ? { ...guild, isVerified: true } : guild
-      );
-      // eslint-disable-next-line no-console
-      console.log('Updated guilds:', updatedGuilds);
+    if (verifiable.length > 0) {
+      updateVerificationData(null);
+      setSelectedGuild(verifiableGuilds.find((v) => v.longName == verifiable[0]) ?? null)
+      //set the right guild
+      setSubmittedMembershipData(false);
+      console.log("guildVerification")
+      openModal('guildVerification');
+    } else {
+      console.log("verificationSummary")
+      openModal('verificationSummary');
     }
-
-    setShowVerificationForm(false);
-    setShowSummaryModal(true);
   };
 
   const handleVerificationFormBack = () => {
-    setShowVerificationForm(false);
-    setShowVerificationModal(true);
+
   };
 
   // Summary Modal Handlers
   const handleSummaryGoToDashboard = () => {
-    setShowSummaryModal(false);
     resetAuthStore();
     router.push('/dashboard');
-  };
-
-  const handleSummaryContinue = () => {
-    setShowSummaryModal(false);
-
-    const remainingUnverifiedGuilds = verifiableGuilds.filter((g) => !g.isVerified);
-
-    if (remainingUnverifiedGuilds.length > 0) {
-      setShowVerificationModal(true);
-    } else {
-      handleCompleteVerification();
-    }
+    closeModal();
   };
 
   const handleCompleteVerification = () => {
@@ -240,8 +174,23 @@ export default function ProfileCompletion() {
   };
 
   const handleModalClose = () => {
+    closeModal();
     resetAuthStore();
     router.push('/dashboard');
+  };
+
+  function handleSelectedGuild(data: string) {
+    setSelectedGuild(guilds.find((g) => g.longName == data) ?? null);
+  }
+
+  const getVerifiableGuilds = () => {
+    if (!userGuilds) return [];
+    return guilds.filter((g) => userGuilds.includes(g.longName) && g.isVerifiable);
+  };
+
+  const getNotVerifiableGuilds = () => {
+    if (!userGuilds) return [];
+    return guilds.filter((g) => userGuilds.includes(g.longName) && !g.isVerifiable);
   };
 
   return (
@@ -317,6 +266,7 @@ export default function ProfileCompletion() {
                       Select Guilds
                     </Text>
                     <GuildSelector
+                      data={guilds}
                       value={selectedGuildsForm}
                       onChange={(value) => setValue('selectedGuild', value)}
                       error={errors.selectedGuild?.message}
@@ -325,8 +275,7 @@ export default function ProfileCompletion() {
 
                   {/* Warning Alert */}
                   <Alert
-                    icon={<IconExclamationMark size={16} />}
-                    title="Careful"
+                    title="Careful:"
                     color="warning"
                     variant="light"
                     radius="md"
@@ -343,12 +292,13 @@ export default function ProfileCompletion() {
                     </Text>
                   </Alert>
 
-                  {/* View events in these locals */}
+                  View events in these locals
                   <Stack gap="xs">
                     <Text size="sm" fw={500} c="gray.8">
                       View events in these locals
                     </Text>
                     <EventLocalesSelector
+                      data={locales}
                       value={watch('viewEventsInLocals')}
                       onChange={(value) => setValue('viewEventsInLocals', value)}
                       error={errors.viewEventsInLocals?.message}
@@ -361,11 +311,11 @@ export default function ProfileCompletion() {
                       My Country
                     </Text>
                     <Select
-                      value={watch('myCountry')}
-                      onChange={(value) => setValue('myCountry', value || '')}
+                      value={watch('country')}
+                      onChange={(value) => setValue('country', value || '')}
                       data={countries}
                       placeholder="Select your country"
-                      error={errors.myCountry?.message}
+                      error={errors.country?.message}
                       radius="md"
                       size="md"
                       styles={{
@@ -422,26 +372,20 @@ export default function ProfileCompletion() {
         </Grid.Col>
       </Grid>
 
-      {/* Welcome Modal */}
-      <WelcomeModal
-        opened={showWelcomeModal}
-        onClose={handleModalClose}
-        onStartVerification={handleWelcomeStart}
-        onSkip={handleWelcomeSkip}
-      />
-
       {/* Guild Verification Modal */}
       <GuildVerificationModal
-        opened={showVerificationModal}
-        onClose={handleModalClose}
+        opened={activeModal === 'guildVerification'}
+        onClose={closeModal}
         onNext={handleVerificationModalNext}
-        verifiableGuilds={verifiableGuilds}
-        notVerifiableGuilds={notVerifiableGuilds}
+        verifiableGuilds={getVerifiableGuilds()}
+        notVerifiableGuilds={getNotVerifiableGuilds()}
         currentStep={currentStep}
+        selectedGuildForVerification={selectedGuild?.longName ?? ''}
+        setSelectedGuildForVerification={handleSelectedGuild}
       />
 
       {/* Guild Verification Form */}
-      {showVerificationForm && selectedGuild && (
+      {activeModal === 'verificationForm' && selectedGuild && (
         <div
           style={{
             position: 'fixed',
@@ -478,15 +422,25 @@ export default function ProfileCompletion() {
       )}
 
       {/* Membership Summary Modal */}
-      {showSummaryModal && submittedMembershipData && (
+      {activeModal === 'verificationSummary' && submittedMembershipData && (
         <MembershipSummaryModal
-          opened={showSummaryModal}
+          opened={activeModal === 'verificationSummary'}
           onClose={handleModalClose}
           onGoToDashboard={handleSummaryGoToDashboard}
-          onContinue={handleSummaryContinue}
-          membershipData={submittedMembershipData}
+          onContinue={() => { }}
+          selectedGuild={selectedGuild}
         />
       )}
+
+      {/* Not verifiable guild modal */}
+      <NotVerifiableModal
+        onNext={() => {
+          resetAuthStore();
+          router.push('/dashboard');
+        }}
+        onClose={() => { }}
+        opened={activeModal == 'notVerifiable'}
+      />
     </Container>
   );
 }
