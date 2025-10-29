@@ -4,7 +4,7 @@ import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
 import { Box, Button, Group, Stack, Text } from '@mantine/core';
 import { SquarePen } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import GuildBadge from '../GuildBadge';
 import { GuildEditor } from '../GuildEditor';
 
@@ -15,7 +15,12 @@ export default function GuildsTab() {
   const { guilds } = useGuildsStore();
   const userGuilds = guilds.filter((g) => user?.guild.includes(g.longName))
   const [showEditContainer, setShowEditContainer] = useState(false);
-  const [selectedGuilds, setSelectedGuilds] = useState<string[]>(user?.guild ?? []);
+  const [selectedGuilds, setSelectedGuilds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user)
+      setSelectedGuilds(user?.guild ?? [])
+  }, [user])
 
   return (
     <Stack gap="lg">

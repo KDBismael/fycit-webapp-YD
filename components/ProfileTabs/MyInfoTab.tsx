@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IconMail, IconPhoto, IconUpload, IconX, IconTrash, IconKey, IconEdit } from '@tabler/icons-react';
+import { useUserStore } from '@/stores/userStore';
 import {
   ActionIcon,
   Box,
@@ -9,16 +8,20 @@ import {
   Grid,
   Group,
   Image,
+  Modal,
   Select,
   Stack,
   Text,
   TextInput,
-  Modal,
 } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
+import { IconMail, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 
 export default function MyInfoTab() {
+  const { user, setUser } = useUserStore();
+  const [info, setInfo] = useState({ firstName: '', lastName: '', country: '', zipCode: '' })
   const [files, setFiles] = useState<File[]>([]);
   const [changeEmailOpened, { open: openChangeEmail, close: closeChangeEmail }] = useDisclosure(false);
   const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
@@ -85,6 +88,11 @@ export default function MyInfoTab() {
       setDeleteConfirmation('');
     }
   };
+
+  useEffect(() => {
+    if (user)
+      setInfo({ firstName: user?.firstName, lastName: user?.lastName, country: user?.country, zipCode: user?.zipCode })
+  }, [user])
 
   return (
     <Stack gap="xl">
@@ -180,6 +188,8 @@ export default function MyInfoTab() {
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Stack gap="md">
             <TextInput
+              value={info.firstName}
+              onChange={(e) => setInfo({ ...info, firstName: e.target.value })}
               label="First name"
               placeholder="Enter your first name"
               size="md"
@@ -198,6 +208,7 @@ export default function MyInfoTab() {
 
             <Box>
               <TextInput
+                value={user?.email}
                 label="Email address"
                 placeholder="Enter your email"
                 leftSection={<IconMail size={16} color="#6B7280" />}
@@ -214,19 +225,6 @@ export default function MyInfoTab() {
                   },
                 }}
               />
-              {/* <Button
-                variant="subtle"
-                size="xs"
-                leftSection={<IconEdit size={12} />}
-                onClick={openChangeEmail}
-                style={{
-                  color: '#6B7280',
-                  marginTop: '4px',
-                  padding: '2px 8px',
-                }}
-              >
-                Change email
-              </Button> */}
             </Box>
 
             <Box>
@@ -243,6 +241,8 @@ export default function MyInfoTab() {
                 }}
               >
                 <Select
+                  value={info.country}
+                  onChange={(e) => setInfo({ ...info, firstName: e ?? '' })}
                   placeholder="Select country"
                   data={[
                     { value: 'usa', label: '🇺🇸 USA' },
@@ -251,7 +251,6 @@ export default function MyInfoTab() {
                     { value: 'uk', label: '🇬🇧 United Kingdom' },
                     { value: 'germany', label: '🇩🇪 Germany' },
                   ]}
-                  defaultValue="usa"
                   size="md"
                   styles={{
                     root: {
@@ -275,6 +274,8 @@ export default function MyInfoTab() {
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Stack gap="md">
             <TextInput
+              value={info.lastName}
+              onChange={(e) => setInfo({ ...info, lastName: e.target.value })}
               label="Last name"
               placeholder="Enter your last name"
               size="md"
@@ -292,6 +293,8 @@ export default function MyInfoTab() {
             />
 
             <TextInput
+              value={info.zipCode}
+              onChange={(e) => setInfo({ ...info, zipCode: e.target.value })}
               label="Zip/Postal Code (Optional)"
               placeholder="Enter postal code"
               defaultValue="95624"
@@ -323,12 +326,11 @@ export default function MyInfoTab() {
               >
                 Save
               </Button>
-              
+
               <Button
                 fullWidth
-                variant="subtle"
+                variant="outline"
                 size="md"
-                leftSection={<IconEdit size={14} />}
                 onClick={openChangeEmail}
                 style={{
                   color: '#6B7280',
@@ -336,12 +338,11 @@ export default function MyInfoTab() {
               >
                 Change email
               </Button>
-              
+
               <Button
                 fullWidth
-                variant="subtle"
+                variant="outline"
                 size="md"
-                leftSection={<IconKey size={14} />}
                 onClick={openResetPassword}
                 style={{
                   color: '#6B7280',
@@ -349,13 +350,12 @@ export default function MyInfoTab() {
               >
                 Reset password
               </Button>
-              
+
               <Button
                 fullWidth
                 variant="subtle"
                 color="red"
                 size="md"
-                leftSection={<IconTrash size={14} />}
                 onClick={openDeleteAccount}
                 style={{
                   color: '#DC2626',
@@ -427,8 +427,8 @@ export default function MyInfoTab() {
             <Button variant="outline" onClick={closeDeleteAccount}>
               Cancel
             </Button>
-            <Button 
-              color="red" 
+            <Button
+              color="red"
               onClick={handleDeleteAccount}
               disabled={deleteConfirmation.toLowerCase() !== 'delete'}
             >

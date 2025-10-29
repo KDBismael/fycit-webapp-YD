@@ -52,7 +52,7 @@ export default function GuildBadge({
     const tooltipText = getTooltipText(status);
 
     return (
-      <Tooltip label={tooltipText} position="top" withArrow>
+      <Tooltip label={guild.isVerifiable ? tooltipText : 'Not Verifiable'} position="top" withArrow>
         <Badge
           variant="outline"
           size="xl"
@@ -64,7 +64,7 @@ export default function GuildBadge({
             <Text className={classes.text} fw={600} c={colorValue}>
               {guild.shortName}
             </Text>
-            <IconComponent className={classes.icon} color={colorValue} />
+            {guild.isVerifiable && <IconComponent className={classes.icon} color={colorValue} />}
           </Group>
         </Badge>
       </Tooltip>

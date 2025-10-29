@@ -3,14 +3,19 @@
 import { useLocalesStore } from '@/stores/localesStore';
 import { useUserStore } from '@/stores/userStore';
 import { Alert, Checkbox, Stack, Text } from '@mantine/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EventLocalesSelector } from '../auth/EventLocalesSelector';
 
 export default function EventLocalesTab() {
   const { user } = useUserStore()
   const { locales } = useLocalesStore();
-  const [selectedLocales, setSelectedLocales] = useState<string[]>(user?.locale as [] ?? []);
+  const [selectedLocales, setSelectedLocales] = useState<string[]>([]);
   const [autoViewNewLocales, setAutoViewNewLocales] = useState(user?.userSettings.automaticallyViewNewLocales ?? false);
+
+  useEffect(() => {
+    if (user)
+      setSelectedLocales(user?.locale as [] ?? [])
+  }, [user])
 
   return (
     <Stack gap="lg">

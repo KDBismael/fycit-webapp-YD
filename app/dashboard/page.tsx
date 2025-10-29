@@ -109,7 +109,7 @@ export function ProfileCardComponent() {
         className={classes.guildBadgesContainer}
       >
         <Text size='lg'>
-          {(user?.locale as string[]).join(", ")}
+          {(user?.locale as string[])?.join(", ")}
         </Text>
       </Group>
 
