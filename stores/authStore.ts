@@ -52,7 +52,7 @@ const initialState = {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setUserVerificationGuilds: (data) => {
@@ -83,7 +83,7 @@ export const useAuthStore = create<AuthStore>()(
       },
 
       resetAuthStore: () => {
-        set(initialState);
+        set((state) => ({ ...initialState, userVerificationGuilds: state.userVerificationGuilds }));
       },
 
       fetchUserVerificationGuilds: async () => {

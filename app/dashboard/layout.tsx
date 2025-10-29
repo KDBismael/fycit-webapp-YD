@@ -1,6 +1,7 @@
 'use client';
 
 import { signOutUser } from '@/firebase/auth';
+import { useUserStore } from '@/stores/userStore';
 import {
   AppShell,
   Avatar,
@@ -48,6 +49,7 @@ const navigationItems = [
 ];
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { user } = useUserStore();
   const [opened, { toggle }] = useDisclosure();
   const router = useRouter();
   const pathname = usePathname();
@@ -79,7 +81,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Text>
           </Group>
           <Group gap="sm">
-            <Avatar size="sm" src="/images/profile-pic.png" alt="User profile" />
+            <Avatar size="sm" src={user?.profilePhotoURL ?? ''} alt="User profile" />
             <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           </Group>
         </Group>
