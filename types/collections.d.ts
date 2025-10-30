@@ -170,7 +170,7 @@ type VerificationField = {
     required: boolean;
 }
 
-type VerificationStatus = "approved" | "pending" | "rejected" | "expired" | 'canceled' | "empty"
+type VerificationStatus = "approved" | "pending" | "rejected" | "expired" | 'canceled' | "empty" | 'notVerifiable'
 
 type GuildVerificationsType = {
     email: string;

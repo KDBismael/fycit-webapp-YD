@@ -32,6 +32,7 @@ const STATUS_RANK: Record<VerificationStatus, number> = {
     expired: 4,
     canceled: 5,
     empty: 6,
+    notVerifiable: 7
 };
 
 export const buildGuildStatusIndex = (
@@ -58,6 +59,7 @@ export const sortByVerificationStatus = (
 ): GuildsType[] => {
     const statusOf = makeStatusGetter(statusIndex);
     return [...data].sort(
-        (a, b) => STATUS_RANK[statusOf(a.longName)] - STATUS_RANK[statusOf(b.longName)]
+        (a, b) => a.isVerifiable && b.isVerifiable ?
+            STATUS_RANK[statusOf(a.longName)] - STATUS_RANK[statusOf(b.longName)] : -1
     );
 };

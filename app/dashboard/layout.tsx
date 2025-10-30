@@ -54,6 +54,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const pathname = usePathname();
 
+  const handleSignOut = async () => {
+    await signOutUser();
+    localStorage.clear();
+    router.push('/auth/login');
+  }
   return (
     <AppShell
       header={{ height: 60 }}
@@ -129,7 +134,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             href="/auth/login"
             label="Log out"
             leftSection={<IconLogout size={20} stroke={1.5} />}
-            onClick={async () => { await signOutUser(), router.push('/auth/login') }}
+            onClick={handleSignOut}
             styles={{
               root: {
                 borderRadius: 'var(--mantine-radius-md)',

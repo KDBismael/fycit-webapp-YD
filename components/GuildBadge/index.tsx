@@ -52,7 +52,7 @@ export default function GuildBadge({
     const tooltipText = getTooltipText(status);
 
     return (
-      <Tooltip label={guild.isVerifiable ? tooltipText : 'Not Verifiable'} position="top" withArrow>
+      <Tooltip key={guild.id} label={guild.isVerifiable ? tooltipText : 'Not Verifiable'} position="top" withArrow>
         <Badge
           variant="outline"
           size="xl"
