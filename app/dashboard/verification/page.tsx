@@ -9,7 +9,7 @@ import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
 import { useVerificationStore } from '@/stores/verificationStore';
 import { GuildsType } from '@/types/collections';
-import { Box, Card, Checkbox, Grid, Group, Image, Select, Stack, Text, ThemeIcon } from '@mantine/core';
+import { Box, Card, Checkbox, Grid, Group, Image, Select, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -176,6 +176,18 @@ export default function VerificationPage() {
 
       {/* Key Benefits Section */}
       {verifiable.length > 0 && <StartVerificationCard onStartVerification={() => openModal('guildVerification')} />}
+
+      {verifiable.length == 0 && verifiedOrPending.length == 0 &&
+        <Stack align="center" ta="center">
+          <Title order={3}>We are actively adding new partners</Title>
+
+          <Text c="dimmed" maw={420}>
+            At this time, the guilds you have selected are not yet part of our
+            verification program. We are actively working to include these guilds
+            in a future update.
+          </Text>
+        </Stack>
+      }
 
 
       {/* Verified Member Benefits Section */}
