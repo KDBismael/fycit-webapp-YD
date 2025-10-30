@@ -78,15 +78,15 @@ export function ProfileCardComponent() {
             order={2}
             className={classes.profileTitle}
           >
-            {`${user?.firstName} ${user?.lastName}`}
+            {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`}
           </Title>
           <Text
             c="gray.7"
             className={classes.profileAddress}
           >
-            {`${user?.zipCode}`}
+            {`${user?.zipCode ?? ''}`}
             {user?.zipCode && <br />}
-            {`${user?.country}`}
+            {`${user?.country ?? ''}`}
           </Text>
         </Stack>
       </Group>

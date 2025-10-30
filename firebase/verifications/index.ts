@@ -1,4 +1,4 @@
-import { GuildVerificationsType, UsersType } from "@/types/collections";
+import { GuildVerificationsType, UsersType, VerificationStatus } from "@/types/collections";
 import {
     collection,
     doc,
@@ -89,7 +89,7 @@ export async function createGuildVerificationRequest(
  */
 export async function changeGuildVerificationStatus(
     guildVerificationId: string,
-    status: string
+    status: VerificationStatus
 ): Promise<void> {
     const docRef = doc(db, "guildVerificationRequest", guildVerificationId);
     await setDoc(docRef, { tag: status }, { merge: true });

@@ -3,7 +3,7 @@
 import { GuildVerificationForm } from '@/components/auth/GuildVerificationForm';
 import { GuildVerificationModal } from '@/components/auth/GuildVerificationModal';
 import { MembershipSummaryModal } from '@/components/auth/MembershipSummaryModal';
-import { sendGuildVerificationRequestNew } from '@/firebase/verifications';
+import { changeGuildVerificationStatus, sendGuildVerificationRequestNew } from '@/firebase/verifications';
 import { useAuthStore } from '@/stores/authStore';
 import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
@@ -41,9 +41,10 @@ export default function VerificationPage() {
   const [selectedGuild, setSelectedGuild] = useState<GuildsType | null>(null);
   const [submittedMembershipData, setSubmittedMembershipData] = useState(false);
 
-  const handleRestartVerification = (id: string) => {
-    // eslint-disable-next-line no-console
+  const handleRestartVerification = async (id: string) => {
     console.log(`clicked for ${id}`);
+    await changeGuildVerificationStatus(id, 'canceled');
+    await fetchUserVerificationGuilds();
   };
   // Guild Verification Modal Handlers
   const handleVerificationModalNext = () => {
