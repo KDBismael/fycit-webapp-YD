@@ -1,6 +1,8 @@
 'use client';
 
+import { updateUserInfo } from '@/firebase/user';
 import { useUserStore } from '@/stores/userStore';
+import { UsersType } from '@/types/collections';
 import {
   ActionIcon,
   Box,
@@ -27,6 +29,7 @@ export default function MyInfoTab() {
   const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
   const [deleteAccountOpened, { open: openDeleteAccount, close: closeDeleteAccount }] = useDisclosure(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleDrop = (newFiles: File[]) => {
     // eslint-disable-next-line no-console
@@ -88,6 +91,19 @@ export default function MyInfoTab() {
       setDeleteConfirmation('');
     }
   };
+
+  const onSave = async () => {
+    setIsLoading(true)
+    const userData: Partial<UsersType> = {
+      firstName: info.firstName,
+      lastName: info.lastName,
+      country: info.country,
+      zipCode: info.zipCode,
+    }
+    await updateUserInfo(userData);
+    setUser({ ...user, ...userData } as UsersType);
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     if (user)
@@ -313,9 +329,16 @@ export default function MyInfoTab() {
 
             <Stack gap="md">
               <Button
+                loading={isLoading}
+                disabled={user?.firstName == info.firstName &&
+                  user?.lastName == info.lastName &&
+                  user?.country == info.country &&
+                  user?.zipCode == info.zipCode
+                }
                 fullWidth
                 size="md"
                 radius="md"
+                onClick={onSave}
                 style={{
                   backgroundColor: '#BAAD3E',
                   '&:hover': {

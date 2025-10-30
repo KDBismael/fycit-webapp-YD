@@ -1,7 +1,9 @@
 'use client';
 
+import { updateUserInfo } from '@/firebase/user';
 import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
+import { UsersType } from '@/types/collections';
 import { Box, Button, Group, Stack, Text } from '@mantine/core';
 import { SquarePen } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -11,11 +13,27 @@ import { GuildEditor } from '../GuildEditor';
 
 
 export default function GuildsTab() {
-  const { user } = useUserStore()
+  const { user, setUser } = useUserStore()
   const { guilds } = useGuildsStore();
   const userGuilds = guilds.filter((g) => user?.guild.includes(g.longName))
   const [showEditContainer, setShowEditContainer] = useState(false);
   const [selectedGuilds, setSelectedGuilds] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSave = async () => {
+    if (user?.guild == selectedGuilds) {
+      setShowEditContainer(false)
+      return;
+    }
+    setIsLoading(true)
+    const userData: Partial<UsersType> = {
+      guild: selectedGuilds,
+    }
+    await updateUserInfo(userData);
+    setUser({ ...user, ...userData } as UsersType);
+    setShowEditContainer(false)
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     if (user)
@@ -57,7 +75,9 @@ export default function GuildsTab() {
         />
         <Group justify="flex-end" gap="sm">
           <Button
-            onClick={() => setShowEditContainer(false)}
+            loading={isLoading}
+            disabled={!showEditContainer}
+            onClick={onSave}
             style={{
               backgroundColor: '#BAAD3E',
               '&:hover': {
@@ -65,7 +85,7 @@ export default function GuildsTab() {
               },
             }}
           >
-            Confirm
+            save
           </Button>
         </Group>
       </Stack>

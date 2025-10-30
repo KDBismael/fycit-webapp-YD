@@ -1,20 +1,39 @@
 'use client';
 
+import { updateUserInfo } from '@/firebase/user';
 import { useLocalesStore } from '@/stores/localesStore';
 import { useUserStore } from '@/stores/userStore';
-import { Alert, Checkbox, Stack, Text } from '@mantine/core';
+import { UsersType } from '@/types/collections';
+import { Alert, Button, Checkbox, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { EventLocalesSelector } from '../auth/EventLocalesSelector';
 
 export default function EventLocalesTab() {
-  const { user } = useUserStore()
+  const { user, setUser } = useUserStore()
   const { locales } = useLocalesStore();
   const [selectedLocales, setSelectedLocales] = useState<string[]>([]);
   const [autoViewNewLocales, setAutoViewNewLocales] = useState(user?.userSettings.automaticallyViewNewLocales ?? false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSave = async () => {
+    setIsLoading(true)
+    const userData: Partial<UsersType> = {
+      locale: selectedLocales,
+      userSettings: {
+        ...user!.userSettings,
+        automaticallyViewNewLocales: autoViewNewLocales ?? false,
+      }
+    }
+    await updateUserInfo(userData);
+    setUser({ ...user, ...userData } as UsersType);
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    if (user)
+    if (user) {
       setSelectedLocales(user?.locale as [] ?? [])
+      setAutoViewNewLocales(user.userSettings.automaticallyViewNewLocales)
+    }
   }, [user])
 
   return (
@@ -65,6 +84,25 @@ export default function EventLocalesTab() {
             },
           }}
         />
+
+        <Group>
+          <Button
+            loading={isLoading}
+            disabled={user?.locale == selectedLocales && autoViewNewLocales == (user?.userSettings.automaticallyViewNewLocales ?? false)}
+            size="md"
+            radius="md"
+            onClick={onSave}
+            style={{
+              marginLeft: 'auto',
+              backgroundColor: '#BAAD3E',
+              '&:hover': {
+                backgroundColor: '#A98A13',
+              },
+            }}
+          >
+            Save
+          </Button>
+        </Group>
       </Stack>
     </Stack>
   );
