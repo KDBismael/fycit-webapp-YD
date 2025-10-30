@@ -1,80 +1,104 @@
 'use client';
 
-import React, { useState } from 'react';
-import { IconRosetteDiscountCheck } from '@tabler/icons-react';
+import { GuildVerificationForm } from '@/components/auth/GuildVerificationForm';
+import { GuildVerificationModal } from '@/components/auth/GuildVerificationModal';
+import { MembershipSummaryModal } from '@/components/auth/MembershipSummaryModal';
+import { sendGuildVerificationRequestNew } from '@/firebase/verifications';
+import { useAuthStore } from '@/stores/authStore';
+import { useGuildsStore } from '@/stores/guildsStore';
+import { useUserStore } from '@/stores/userStore';
+import { useVerificationStore } from '@/stores/verificationStore';
+import { GuildsType } from '@/types/collections';
 import { Box, Card, Checkbox, Grid, Group, Image, Select, Stack, Text, ThemeIcon } from '@mantine/core';
+import { IconRosetteDiscountCheck } from '@tabler/icons-react';
+import dayjs from 'dayjs';
+import { useState } from 'react';
 import { StartVerificationCard } from '../../../components/StartVerificationCard';
 import VerificationCard from '../../../components/VerificationCard';
-import { GuildVerificationForm } from '../../../components/auth/GuildVerificationForm';
 import classes from './VerificationPage.module.css';
 
-const verificationData = [
-  {
-    id: 'ampas',
-    title: 'AMPAS',
-    status: 'verified' as const,
-    memberId: '986545',
-    websiteLink: 'Television academy',
-    validUntil: '25/12/25',
-    actionLabel: 'Resubmit',
-    actionType: 'primary' as const,
-  },
-  {
-    id: 'asifa',
-    title: 'ASIFA',
-    status: 'pending' as const,
-    memberId: '986545',
-    websiteLink: 'Television academy',
-    validUntil: '25/12/25',
-    actionLabel: 'Resubmit',
-    actionType: 'primary' as const,
-  },
-  {
-    id: 'adg',
-    title: 'ADG',
-    status: 'inactive' as const,
-    memberId: undefined,
-    websiteLink: undefined,
-    validUntil: undefined,
-    actionLabel: 'Complete',
-    actionType: 'primary' as const,
-  },
-  {
-    id: 'asc',
-    title: 'ASC',
-    status: 'rejected' as const,
-    memberId: '986545',
-    websiteLink: 'Television academy',
-    validUntil: '25/12/25',
-    actionLabel: 'Delete',
-    actionType: 'danger' as const,
-  },
-];
 
 export default function VerificationPage() {
+  const { userVerificationGuilds, fetchUserVerificationGuilds } = useAuthStore();
+  const { updateVerificationData, verificationData } = useVerificationStore();
+  const { user } = useUserStore();
+  const { guilds } = useGuildsStore();
+  const verifiedOrPending = userVerificationGuilds.filter((v) => v.tag == 'approved' || v.tag == 'pending');
+  const verifiable = guilds.filter((g) => g.isVerifiable && user?.guild.includes(g.longName) && !verifiedOrPending.map((v) => v.guilds[0]).includes(g.longName))
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [selectedGuild, setSelectedGuild] = useState<any>(null);
-  const [showVerificationForm, setShowVerificationForm] = useState(false);
+  const [activeModal, setActiveModal] = useState<
+    | 'welcome'
+    | 'awards'
+    | 'guildConfirmation'
+    | 'guildVerification'
+    | 'verificationForm'
+    | 'verificationSummary'
+    | 'notVerifiable'
+    | null
+  >(null);
+  const openModal = (key: typeof activeModal) => setActiveModal(key);
+  const closeModal = () => setActiveModal(null);
+  const [selectedGuild, setSelectedGuild] = useState<GuildsType | null>(null);
+  const [submittedMembershipData, setSubmittedMembershipData] = useState(false);
 
-  const handleAction = (id: string, action: string) => {
+  const handleRestartVerification = (id: string) => {
     // eslint-disable-next-line no-console
-    console.log(`${action} clicked for ${id}`);
+    console.log(`clicked for ${id}`);
+  };
+  // Guild Verification Modal Handlers
+  const handleVerificationModalNext = () => {
+    updateVerificationData(null);
+    openModal("verificationForm");
   };
 
-  const handleGuildClick = (guild: any) => {
-    setSelectedGuild(guild);
-    setShowVerificationForm(true);
+  const handleVerificationFormNext = async (data: any) => {
+    console.log('Verification data submitted:', data);
+    await sendGuildVerificationRequestNew([selectedGuild?.longName ?? ''], verificationData, user!);
+    await fetchUserVerificationGuilds();
+    setSubmittedMembershipData(true);
+    // eslint-disable-next-line no-console
+    const verifiableGuilds = getVerifiableGuilds();
+    const pendingOrApproved = useAuthStore.getState().userVerificationGuilds.filter((v) => v.tag == 'pending' || v.tag == 'approved').map((v) => v.guilds[0]);
+    const verifiable = verifiableGuilds.map((v) => v.longName).filter((v) => !pendingOrApproved.includes(v));
+
+    if (verifiable.length > 0) {
+      updateVerificationData(null);
+      setSelectedGuild(verifiableGuilds.find((v) => v.longName == verifiable[0]) ?? null)
+      //set the right guild
+      setSubmittedMembershipData(false);
+      console.log("guildVerification")
+      openModal('guildVerification');
+    } else {
+      console.log("verificationSummary")
+      openModal('verificationSummary');
+    }
   };
 
-  const handleVerificationComplete = () => {
-    setShowVerificationForm(false);
-    setSelectedGuild(null);
-    // Optionnel: Rafraîchir les données ou afficher un message de succès
+  const handleVerificationFormBack = () => {
+
   };
 
-  const handleVerificationClose = () => {
-    setShowVerificationForm(false);
-    setSelectedGuild(null);
+  // Summary Modal Handlers
+  const handleSummaryGoToDashboard = () => {
+    closeModal();
+  };
+
+  const handleModalClose = () => {
+    closeModal();
+  };
+
+  function handleSelectedGuild(data: string) {
+    setSelectedGuild(guilds.find((g) => g.longName == data) ?? null);
+  }
+
+  const getVerifiableGuilds = () => {
+    if (!user?.guild) return [];
+    return guilds.filter((g) => user?.guild.includes(g.longName) && g.isVerifiable);
+  };
+
+  const getNotVerifiableGuilds = () => {
+    if (!user?.guild) return [];
+    return guilds.filter((g) => user?.guild.includes(g.longName) && !g.isVerifiable);
   };
 
   return (
@@ -100,6 +124,7 @@ export default function VerificationPage() {
             <Checkbox
               checked
               size="sm"
+              onChange={() => { }}
               classNames={{
                 input: classes.checkboxInput,
                 icon: classes.checkboxIcon,
@@ -111,6 +136,7 @@ export default function VerificationPage() {
               <Checkbox
                 checked={checked}
                 size="sm"
+                onChange={() => { }}
                 classNames={{
                   input: classes.checkboxInput,
                   icon: classes.checkboxIcon,
@@ -134,24 +160,22 @@ export default function VerificationPage() {
 
       {/* Verification Cards Grid */}
       <Box className={classes.verificationGrid}>
-        {verificationData.map((item) => (
+        {verifiedOrPending.map((item) => (
           <VerificationCard
             key={item.id}
-            title={item.title}
-            status={item.status}
+            title={item.guilds[0]}
+            status={item.tag}
+            image={item.verificationImage ?? item.proofOfValidMembership}
+            validThrough={dayjs((item.validThrough ?? item.expirationDate).seconds * 1000).format('DD/MM/YYYY')}
             memberId={item.memberId}
-            websiteLink={item.websiteLink}
-            validUntil={item.validUntil}
-            actionLabel={item.actionLabel}
-            actionType={item.actionType}
-            onAction={() => handleAction(item.id, item.actionLabel)}
-            onClick={() => handleGuildClick(item)}
+            onAction={() => handleRestartVerification(item.id)}
           />
         ))}
       </Box>
 
       {/* Key Benefits Section */}
-      <StartVerificationCard />
+      {verifiable.length > 0 && <StartVerificationCard onStartVerification={() => openModal('guildVerification')} />}
+
 
       {/* Verified Member Benefits Section */}
       <Box>
@@ -171,20 +195,20 @@ export default function VerificationPage() {
                 height: '100%',
               }}
             >
-               {/* Image Section - Same height as EventCard images */}
-               <Box style={{ position: 'relative', height: '200px' }}>
-                 <Image
-                   src="https://img7.yna.co.kr/mpic/YH/2022/03/31/MYH20220331019600038_P4.jpg"
-                   alt="MovieMaker Magazine"
-                   radius="lg"
-                   style={{
-                     width: '100%',
-                     height: '100%',
-                     objectFit: 'cover',
-                     borderRadius: 'var(--mantine-radius-lg)',
-                   }}
-                 />
-               </Box>
+              {/* Image Section - Same height as EventCard images */}
+              <Box style={{ position: 'relative', height: '200px' }}>
+                <Image
+                  src="https://img7.yna.co.kr/mpic/YH/2022/03/31/MYH20220331019600038_P4.jpg"
+                  alt="MovieMaker Magazine"
+                  radius="lg"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: 'var(--mantine-radius-lg)',
+                  }}
+                />
+              </Box>
 
               {/* Content Section */}
               <Stack
@@ -246,8 +270,20 @@ export default function VerificationPage() {
         </Grid>
       </Box>
 
-      {/* Guild Verification Form Overlay */}
-      {showVerificationForm && selectedGuild && (
+      {/* Guild Verification Modal */}
+      <GuildVerificationModal
+        opened={activeModal === 'guildVerification'}
+        onClose={closeModal}
+        onNext={handleVerificationModalNext}
+        verifiableGuilds={getVerifiableGuilds()}
+        notVerifiableGuilds={getNotVerifiableGuilds()}
+        currentStep={1}
+        selectedGuildForVerification={selectedGuild?.longName ?? ''}
+        setSelectedGuildForVerification={handleSelectedGuild}
+      />
+
+      {/* Guild Verification Form */}
+      {activeModal === 'verificationForm' && selectedGuild && (
         <div
           style={{
             position: 'fixed',
@@ -275,16 +311,23 @@ export default function VerificationPage() {
             }}
           >
             <GuildVerificationForm
-              selectedGuild={{
-                id: selectedGuild.id,
-                name: selectedGuild.title,
-                fullName: `${selectedGuild.title} - Guild Name`,
-              }}
-              onNext={handleVerificationComplete}
-              onBack={handleVerificationClose}
+              selectedGuild={selectedGuild}
+              onNext={handleVerificationFormNext}
+              onBack={handleVerificationFormBack}
             />
           </div>
         </div>
+      )}
+
+      {/* Membership Summary Modal */}
+      {activeModal === 'verificationSummary' && submittedMembershipData && (
+        <MembershipSummaryModal
+          opened={activeModal === 'verificationSummary'}
+          onClose={handleModalClose}
+          onGoToDashboard={handleSummaryGoToDashboard}
+          onContinue={() => { }}
+          selectedGuild={selectedGuild}
+        />
       )}
     </Stack>
   );

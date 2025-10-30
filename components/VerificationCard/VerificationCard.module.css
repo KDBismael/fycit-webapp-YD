@@ -66,7 +66,7 @@
 
 .actionButton {
   width: 100%;
-  border-color: #BAAD3E;
+  /* border-color: #BAAD3E; */
   color: #BAAD3E;
   background-color: white;
 }
@@ -90,15 +90,15 @@
     flex: 0 0 calc(50% - var(--mantine-spacing-md) / 2);
     max-width: calc(50% - var(--mantine-spacing-md) / 2);
   }
-  
+
   .idCardSection {
     max-width: 180px;
   }
-  
+
   .idCardImage {
     height: 100px;
   }
-  
+
   .title {
     font-size: 16px;
   }
@@ -110,26 +110,26 @@
     flex: 1 1 100%;
     max-width: 100%;
   }
-  
+
   .cardContent {
     flex-direction: column;
     gap: var(--mantine-spacing-md);
   }
-  
+
   .idCardSection {
     max-width: 100%;
     align-self: center;
   }
-  
+
   .idCardImage {
     height: 150px;
     max-width: 250px;
   }
-  
+
   .detailsSection {
     min-width: unset;
   }
-  
+
   .title {
     font-size: 16px;
   }
@@ -140,12 +140,12 @@
   .verificationCardContainer {
     padding: 0.75rem;
   }
-  
+
   .idCardImage {
     height: 120px;
     max-width: 200px;
   }
-  
+
   .title {
     font-size: 14px;
   }

@@ -18,6 +18,7 @@ import { IconRosetteDiscountCheck } from '@tabler/icons-react';
 import GuildBadge from '../../components/GuildBadge';
 import { StartVerificationCard } from '../../components/StartVerificationCard';
 // J'ai renommé le fichier CSS en ProfileCard.module.css pour la cohérence
+import { useAuthStore } from '@/stores/authStore';
 import { useGuildsStore } from '@/stores/guildsStore';
 import { useUserStore } from '@/stores/userStore';
 import { useRouter } from 'next/navigation';
@@ -119,7 +120,11 @@ export function ProfileCardComponent() {
 
 // ... (le reste du composant DashboardPage est inchangé)
 export default function DashboardPage() {
-
+  const { userVerificationGuilds } = useAuthStore();
+  const { user } = useUserStore();
+  const { guilds } = useGuildsStore();
+  const verifiedOrPending = userVerificationGuilds.filter((v) => v.tag == 'approved' || v.tag == 'pending');
+  const verifiable = guilds.filter((g) => g.isVerifiable && user?.guild.includes(g.longName) && !verifiedOrPending.map((v) => v.guilds[0]).includes(g.longName))
   return (
     <Box
       style={{
@@ -134,7 +139,7 @@ export default function DashboardPage() {
           <ProfileCardComponent />
 
           {/* Key Benefits Card */}
-          <StartVerificationCard onStartVerification={() => { }} />
+          {verifiable.length > 0 && <StartVerificationCard onStartVerification={() => { }} />}
 
           {/* Verified Member Benefits Section */}
           <Box>
@@ -229,26 +234,6 @@ export default function DashboardPage() {
           </Box>
         </Stack>
       </Container>
-
-      {/* <GuildVerificationModal
-        opened={verificationModalOpened}
-        onClose={closeVerificationModal}
-        onNext={closeVerificationModal}
-        verifiableGuilds={verifiableGuilds.map((badge) => ({
-          id: badge.name,
-          name: badge.name,
-          fullName: `${badge.name} - Guild Name`,
-          isVerifiable: true,
-          isVerified: badge.status === 'verified',
-        }))}
-        notVerifiableGuilds={notVerifiableGuilds.map((badge) => ({
-          id: badge.name,
-          name: badge.name,
-          fullName: `${badge.name} - Guild Name`,
-          isVerifiable: false,
-        }))}
-        currentStep={1}
-      /> */}
     </Box>
   );
 }

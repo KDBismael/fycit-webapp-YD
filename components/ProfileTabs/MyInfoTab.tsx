@@ -297,7 +297,6 @@ export default function MyInfoTab() {
               onChange={(e) => setInfo({ ...info, zipCode: e.target.value })}
               label="Zip/Postal Code (Optional)"
               placeholder="Enter postal code"
-              defaultValue="95624"
               size="md"
               radius="md"
               styles={{
