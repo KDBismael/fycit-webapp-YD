@@ -1,5 +1,6 @@
 'use client';
 
+import { uploadUserProfilePhoto } from '@/firebase/helper';
 import { updateUserInfo } from '@/firebase/user';
 import { useUserStore } from '@/stores/userStore';
 import { UsersType } from '@/types/collections';
@@ -16,15 +17,22 @@ import {
   Text,
   TextInput,
 } from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Dropzone, IMAGE_MIME_TYPE, type FileRejection } from '@mantine/dropzone';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { IconMail, IconPhoto, IconUpload, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 export default function MyInfoTab() {
   const { user, setUser } = useUserStore();
-  const [info, setInfo] = useState({ firstName: '', lastName: '', country: '', zipCode: '' })
+  const [info, setInfo] = useState<Pick<UsersType, 'firstName' | 'lastName' | 'country' | 'zipCode'>>({
+    firstName: '',
+    lastName: '',
+    country: '',
+    zipCode: '',
+  });
   const [files, setFiles] = useState<File[]>([]);
+  const [hasProfilePhotoChanged, setHasProfilePhotoChanged] = useState(false);
   const [changeEmailOpened, { open: openChangeEmail, close: closeChangeEmail }] = useDisclosure(false);
   const [resetPasswordOpened, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
   const [deleteAccountOpened, { open: openDeleteAccount, close: closeDeleteAccount }] = useDisclosure(false);
@@ -34,7 +42,8 @@ export default function MyInfoTab() {
   const handleDrop = (newFiles: File[]) => {
     // eslint-disable-next-line no-console
     console.log('Files dropped:', newFiles);
-    setFiles(newFiles);
+    setFiles(newFiles.slice(0, 1));
+    setHasProfilePhotoChanged(true);
   };
 
   const removeFile = (index: number) => {
@@ -46,6 +55,9 @@ export default function MyInfoTab() {
     // eslint-disable-next-line no-console
     console.log('New files after filter:', newFiles);
     setFiles(newFiles);
+    if (newFiles.length === 0) {
+      setHasProfilePhotoChanged(false);
+    }
   };
 
   const previews = files.map((file, index) => {
@@ -58,7 +70,8 @@ export default function MyInfoTab() {
         style={{
           width: '100%',
           height: '100%',
-          objectFit: 'cover',
+          objectFit: 'contain',
+          alignSelf: 'center',
           borderRadius: 'var(--mantine-radius-md)',
         }}
         onLoad={() => URL.revokeObjectURL(imageUrl)}
@@ -66,7 +79,7 @@ export default function MyInfoTab() {
     );
   });
 
-  const handleReject = (fileRejections: any[]) => {
+  const handleReject = (fileRejections: FileRejection[]) => {
     // eslint-disable-next-line no-console
     console.log('Files rejected:', fileRejections);
   };
@@ -93,22 +106,62 @@ export default function MyInfoTab() {
   };
 
   const onSave = async () => {
-    setIsLoading(true)
-    const userData: Partial<UsersType> = {
-      firstName: info.firstName,
-      lastName: info.lastName,
-      country: info.country,
-      zipCode: info.zipCode,
+    setIsLoading(true);
+    try {
+      let profilePhotoURL = user?.profilePhotoURL ?? '';
+
+      if (hasProfilePhotoChanged && files[0]) {
+        profilePhotoURL = await uploadUserProfilePhoto(files[0]);
+      }
+
+      const userData: Partial<UsersType> = {
+        firstName: info.firstName,
+        lastName: info.lastName,
+        country: info.country,
+        zipCode: info.zipCode,
+        profilePhotoURL,
+      };
+      await updateUserInfo(userData);
+      setUser({ ...user, ...userData } as UsersType);
+      setFiles([]);
+      setHasProfilePhotoChanged(false);
+      notifications.show({
+        color: 'green',
+        message: 'Profile information updated.',
+      });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to update profile information', error);
+      notifications.show({
+        color: 'red',
+        message: 'Could not update your profile. Please try again.',
+      });
+    } finally {
+      setIsLoading(false);
     }
-    await updateUserInfo(userData);
-    setUser({ ...user, ...userData } as UsersType);
-    setIsLoading(false)
-  }
+  };
 
   useEffect(() => {
-    if (user)
-      setInfo({ firstName: user?.firstName, lastName: user?.lastName, country: user?.country, zipCode: user?.zipCode })
-  }, [user])
+    if (user) {
+      setInfo({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        country: user.country,
+        zipCode: user.zipCode,
+      });
+    }
+    setFiles([]);
+    setHasProfilePhotoChanged(false);
+  }, [user]);
+
+  const hasInfoChanged =
+    !!user &&
+    (user.firstName !== info.firstName ||
+      user.lastName !== info.lastName ||
+      user.country !== info.country ||
+      user.zipCode !== info.zipCode);
+
+  const isSaveDisabled = !hasInfoChanged && !hasProfilePhotoChanged;
 
   return (
     <Stack gap="xl">
@@ -118,66 +171,48 @@ export default function MyInfoTab() {
           Profile picture
         </Text>
 
-        <Box style={{ display: 'flex', justifyContent: 'flex-start', position: 'relative' }}>
-          {files.length > 0 ? (
-            <Box
-              style={{
+        {/* Upload input */}
+        <Box
+          style={{
+            position: 'relative',
+            width: '300px',
+            height: '220px',
+            maxWidth: '100%',
+          }}
+        >
+          <Dropzone
+            onDrop={handleDrop}
+            onReject={handleReject}
+            accept={IMAGE_MIME_TYPE}
+            maxFiles={1}
+            maxSize={5 * 1024 * 1024}
+            multiple={false}
+            styles={{
+              root: {
                 border: '2px dashed #D1D5DB',
                 backgroundColor: '#F9FAFB',
                 borderRadius: 'var(--mantine-radius-md)',
-                width: '300px',
-                height: '220px',
-                maxWidth: '100%',
-                position: 'relative',
-                overflow: 'hidden',
-              }}
-            >
-              {previews}
-              <ActionIcon
-                color="red"
-                variant="filled"
-                radius="xl"
-                size="sm"
+                width: '100%',
+                height: '100%',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+              },
+            }}
+          >
+            {!files.length && !user?.profilePhotoURL && (
+              <Group
+                justify="center"
+                gap="xl"
                 style={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  zIndex: 10,
-                }}
-                onClick={() => {
-                  // eslint-disable-next-line no-console
-                  console.log('ActionIcon clicked');
-                  removeFile(0);
+                  padding: '1rem',
+                  width: '100%',
+                  justifyContent: 'center',
+                  textAlign: 'center',
                 }}
               >
-                <IconX size={14} />
-              </ActionIcon>
-            </Box>
-          ) : (
-            <Dropzone
-              onDrop={handleDrop}
-              onReject={handleReject}
-              accept={IMAGE_MIME_TYPE}
-              maxFiles={1}
-              maxSize={5 * 1024 * 1024}
-              multiple={false}
-              styles={{
-                root: {
-                  border: '2px dashed #D1D5DB',
-                  backgroundColor: '#F9FAFB',
-                  borderRadius: 'var(--mantine-radius-md)',
-                  width: '300px',
-                  height: '220px',
-                  maxWidth: '100%',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: 0,
-                },
-              }}
-            >
-              <Group justify="center" gap="xl" style={{ padding: '1rem' }}>
                 <Dropzone.Accept>
                   <IconUpload size={40} color="var(--mantine-color-green-6)" stroke={1.5} />
                 </Dropzone.Accept>
@@ -194,7 +229,84 @@ export default function MyInfoTab() {
                   </Text>
                 </div>
               </Group>
-            </Dropzone>
+            )}
+          </Dropzone>
+
+          {files.length > 0 && (
+            <>
+              <Box
+                style={{
+                  pointerEvents: 'none',
+                  position: 'absolute',
+                  inset: 0,
+                  padding: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxSizing: 'border-box',
+                  overflow: 'hidden',
+                }}
+              >
+                <Box
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {previews[0]}
+                </Box>
+              </Box>
+              <ActionIcon
+                color="red"
+                variant="filled"
+                radius="xl"
+                size="sm"
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  zIndex: 10,
+                  boxShadow: '0 0 6px rgba(0, 0, 0, 0.25)',
+                }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  removeFile(0);
+                }}
+              >
+                <IconX size={14} />
+              </ActionIcon>
+            </>
+          )}
+          {!files.length && user?.profilePhotoURL && (
+            <Box
+              style={{
+                pointerEvents: 'none',
+                position: 'absolute',
+                inset: 0,
+                padding: '0.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxSizing: 'border-box',
+                overflow: 'hidden',
+              }}
+            >
+              <Image
+                src={user.profilePhotoURL}
+                alt="Profile preview"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  borderRadius: 'var(--mantine-radius-md)',
+                }}
+              />
+            </Box>
           )}
         </Box>
       </Stack>
@@ -224,7 +336,8 @@ export default function MyInfoTab() {
 
             <Box>
               <TextInput
-                value={user?.email}
+                value={user?.email ?? ''}
+                disabled
                 label="Email address"
                 placeholder="Enter your email"
                 leftSection={<IconMail size={16} color="#6B7280" />}
@@ -258,7 +371,7 @@ export default function MyInfoTab() {
               >
                 <Select
                   value={info.country}
-                  onChange={(e) => setInfo({ ...info, firstName: e ?? '' })}
+                  onChange={(value) => setInfo({ ...info, country: value ?? '' })}
                   placeholder="Select country"
                   data={[
                     { value: 'usa', label: '🇺🇸 USA' },
@@ -330,11 +443,7 @@ export default function MyInfoTab() {
             <Stack gap="md">
               <Button
                 loading={isLoading}
-                disabled={user?.firstName == info.firstName &&
-                  user?.lastName == info.lastName &&
-                  user?.country == info.country &&
-                  user?.zipCode == info.zipCode
-                }
+                disabled={isSaveDisabled}
                 fullWidth
                 size="md"
                 radius="md"
