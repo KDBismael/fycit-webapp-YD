@@ -1,0 +1,10 @@
+{
+    "github.copilot.inlineSuggest.enable": true,
+    "github.copilot.chat.codeReferences.enabled": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.suggest.preview": true,
+    "editor.acceptSuggestionOnEnter": "off",
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

@@ -9,7 +9,8 @@
 .profileCard {
   /* Padding de base sur mobile (XS/SM) */
   padding: var(--mantine-spacing-lg);
-  position: relative; /* Pour le positionnement absolu des logos */
+  position: relative;
+  /* Pour le positionnement absolu des logos */
 }
 
 /* 1. Disposition Générale du Profil */
@@ -38,8 +39,10 @@
     gap: var(--mantine-spacing-xl);
     /* Marge en bas sur Desktop */
     margin-bottom: var(--mantine-spacing-xl);
-    align-items: flex-start; /* Alignement en haut sur desktop */
+    align-items: flex-start;
+    /* Alignement en haut sur desktop */
   }
+
   .profileAvatar {
     /* Taille large sur desktop - Mantine Avatar 'xl' ou 160px */
     width: 160px !important;
@@ -57,7 +60,8 @@
 
 .profileAddress {
   /* Taille par défaut de l'adresse (mobile) */
-  font-size: 0.875rem; /* 'sm' Mantine */
+  font-size: 0.875rem;
+  /* 'sm' Mantine */
 }
 
 /* Ajustement des tailles de texte sur Desktop (SM et plus) */
@@ -66,8 +70,10 @@
     font-size: 2.2rem;
     font-weight: 600;
   }
+
   .profileAddress {
-    font-size: 1rem; /* 'md' Mantine */
+    font-size: 1rem;
+    /* 'md' Mantine */
   }
 }
 
@@ -99,6 +105,7 @@
   .logoDesktop {
     display: flex;
   }
+
   .logoMobile {
     display: none;
   }
